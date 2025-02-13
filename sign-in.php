@@ -88,7 +88,7 @@
     <style>
       body {
         margin: 0;
-        background-color: #212121;
+        background-color: #cfd8dc;
         position: relative;
         display: flex;
         justify-content: center;
@@ -170,7 +170,7 @@
       }
 
       .forgot-password a {
-        color: #311b92;
+        color: #212121;
         text-decoration: none;
       }
 
@@ -199,6 +199,14 @@
         background-color: #212121;
         opacity: 0.8;
       }
+
+      /* havent acc*/
+      .signup a{
+        padding: 10px;
+        color: #212121;
+        text-decoration: none;
+      }
+
     </style>
   </head>
   <body>
@@ -220,12 +228,13 @@
               <a href="#">Forgot Password?</a>
             </div>
           </div>
-
           <div id="button-login">
             <input type="submit" id="submit" name="submit" value="Login" />
-          </div>
-          <a href="index.php">Haven't account yet? Sign in</a>
+          </div>          
         </div>
+          <div class="signup">
+            <a href="index.php">Haven't account yet? Sign in</a>
+          </div>
       </form>
     </div>
   </body>

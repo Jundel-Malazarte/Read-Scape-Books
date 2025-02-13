@@ -58,7 +58,7 @@ if (isset($_POST["submit"])) {
 <style>
     body {
     margin: auto;
-    background-color: #212121;
+    background-color: #cfd8dc;
     position: relative;
     display: flex;
     justify-content: center;
@@ -129,6 +129,12 @@ if (isset($_POST["submit"])) {
     background-color: #212121;
     opacity: 0.8;
 }
+.sign-in a{
+    margin-top: 10px;
+    color: #212121;
+    text-decoration: none;
+}
+
 </style>
     <body>
     <!-- Container box -->
@@ -144,10 +150,10 @@ if (isset($_POST["submit"])) {
                     <input type="text" id="address" name="address" placeholder="Address" required><br>       
                     <div id="button-add">
                             <input type="submit" id="sign-up" name="submit" value="Sign up">                         
-                        </div>
-                        <div class="sign-in">
+                    </div>
+                    <div class="sign-in">
                             <a href="./sign-in.php">Have already an account? Sign in</a>
-                        </div>   
+                    </div>   
                 </form>
         </div>       
     </body>
