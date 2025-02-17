@@ -19,7 +19,7 @@
             justify-content: space-between;
             align-items: center;
             background-color: #333;
-            padding: 10px 5px;
+            padding: 10px 20px;
         }
 
         .navbar a {
@@ -35,7 +35,7 @@
 
         .nav-links {
             display: flex;
-            gap: 10px;
+            gap: 15px;
         }
 
         .logout {
@@ -49,7 +49,7 @@
         /* Profile Card Styles */
         .profile-card {
             width: 400px;
-            margin: 10px auto;
+            margin: 30px auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -62,7 +62,7 @@
             height: 180px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 5px;
+            margin-bottom: 15px;
             margin-left: auto;
             margin-right: auto;
             display: block;
@@ -93,7 +93,7 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 20px;
             align-items: center;
         }
 
@@ -119,7 +119,7 @@
             outline: none;
         }
 
-        .btn {
+        .btn-update {
             width: 100%;
             padding: 10px;
             border: none;
@@ -137,15 +137,9 @@
             opacity: 0.8;
         }
 
-        .cancel, .cancel a {
-            margin-top: 10px; 
-            background-color: #f41304;
-        }
-
-        .cancel:hover {
-            background-color: #f41304;
-            opacity: 0.8;
-        }
+        /*
+        */
+        
     </style>
 </head>
 <body>
@@ -161,10 +155,10 @@
             @include 'db_connect.php';
 
             session_start();
-
+            
             if (!isset($_SESSION['id'])) {
                 // Redirect to login page if not logged in
-                header("Location: sign-in.php");
+                header("Location: profile.php");
                 exit();
             }
 
@@ -198,18 +192,15 @@
         <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
         <div class="profile-details">
             <form action="update-profile.php" method="post" enctype="multipart/form-data">
-                <label for="fname"><strong>First Name:</strong></label>
-                <input type="text" id="fname" name="fname" value="<?php echo $fname; ?>" required>
-                <br>
-                <label for="lname"><strong>Last Name:</strong></label>
-                <input type="text" id="lname" name="lname" value="<?php echo $lname; ?>" required>
-                <br>
                 <label for="profile_image"><strong>Profile Image:</strong></label>
                 <input type="file" id="profile_image" name="profile_image">
-                <br>
+                <label for="fname"><strong>First Name:</strong></label>
+                <input type="text" id="fname" name="fname" value="<?php echo $fname; ?>" required>
+                <label for="lname"><strong>Last Name:</strong></label>
+                <input type="text" id="lname" name="lname" value="<?php echo $lname; ?>" required>
                 <div class="action-button">
-                    <button type="submit" class="btn">Update</button>
-                    <a href="profile.php" class="btn cancel">Cancel</a>
+                    <button type="submit" class="btn-update">Update</button>
+                    <button type="reset" class="btn-cancel"><a href="profile.php">Cancel</button>
                 </div>
             </form>
         </div>
