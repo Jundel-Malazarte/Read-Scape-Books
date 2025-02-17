@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Change Password</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="./images/icon.png">
     <style>
         * {
             box-sizing: border-box;
@@ -53,11 +54,12 @@
         .container {
             background: white;
             padding: 30px;
+            margin-top: 20px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             width: 400px;
             text-align: center;
-            margin: 80px auto 0; /* Adjusted margin to prevent navbar overlap */
+            margin: 90px auto 0; /* Adjusted margin to prevent navbar overlap */
         }
 
         h1 {
@@ -69,7 +71,7 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             align-items: center;
         }
 
@@ -121,7 +123,7 @@
             <a href="dashboard.php">Home</a>
             <a href="#profile">Profile</a>
             <a href="#contact">Contact</a>
-            <a href="./changepass.php">Change password</a>
+            <a href="changepass.php">Change password</a>
         </div>
         <div>
             <a href=""><?php
@@ -131,7 +133,7 @@
                 
 
                 if (!isset($_SESSION['id'])) {
-                    // Redirect to login page if not logged in
+                    // Redirect to login page after changing password
                     header("Location: sign-in.php");
                     exit();
                 }
@@ -172,6 +174,46 @@
 
             <button type="submit" class="btn">Update Password</button>
         </form>            
+        <?php
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                @include 'db_connect.php';
+
+                $old_password = $_POST['old-password'];
+                $new_password = $_POST['new-password'];
+                $confirm_password = $_POST['confirm-password'];
+
+                if ($new_password !== $confirm_password) {
+                    echo "<p style='color: red;'>New passwords do not match.</p>";
+                } else {
+                    $sql = "SELECT pass FROM `users` WHERE id = ?";
+                    $stmt = mysqli_prepare($conn, $sql);
+                    mysqli_stmt_bind_param($stmt, "i", $user_id);
+                    mysqli_stmt_execute($stmt);
+                    $result = mysqli_stmt_get_result($stmt);
+
+                    if ($row = mysqli_fetch_assoc($result)) {
+                        if (password_verify($old_password, $row['pass'])) {
+                            $new_password_hashed = password_hash($new_password, PASSWORD_DEFAULT);
+                            $sql = "UPDATE `users` SET pass = ? WHERE id = ?";
+                            $stmt = mysqli_prepare($conn, $sql);
+                            mysqli_stmt_bind_param($stmt, "si", $new_password_hashed, $user_id);
+                            if (mysqli_stmt_execute($stmt)) {
+                                echo "<script>alert('Password Updated Successfully!'); window.location.href='changepass.php';</script>";
+                            } else {
+                                echo "<p style='color: red;'>Error updating password.</p>";
+                            }
+                        } else {
+                            echo "<p style='color: red;'>Old password is incorrect.</p>";
+                        }
+                    } else {
+                        echo "<p style='color: red;'>User not found.</p>";
+                    }
+
+                    mysqli_stmt_close($stmt);
+                    mysqli_close($conn);
+                }
+            }
+        ?>
     </div>
 </body>
 </html>

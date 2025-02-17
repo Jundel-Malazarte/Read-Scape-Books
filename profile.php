@@ -8,6 +8,7 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="">
+    <link rel="icon" href="./images/icon.png">
     <style>
         body {
             margin: 0;
@@ -123,10 +124,10 @@
 <body>
     <div class="navbar">
         <div class="nav-links">
-            <a href="dashboard.php">Menu</a>
+            <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="#contact">Contact</a>
-            <a href="#account">Change password</a>
+            <a href="changepass.php">Change password</a>
         </div>
         <div>
             <?php
@@ -200,7 +201,7 @@
 
     <div class="profile-card">
         <div>
-            <h2>User Profile</h2>gi
+            <h2>User Profile</h2>
         </div>
 
 

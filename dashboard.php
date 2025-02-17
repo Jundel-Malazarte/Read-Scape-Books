@@ -7,7 +7,7 @@
     <title>Dashboard</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
+    <link rel="icon" href="./images/icon.png">
     <style>
         body {
             margin: 0;
@@ -117,11 +117,9 @@
     <div class="navbar">
         <div class="nav-links">
             <a href="dashboard.php">Home</a>
-            <a href="#profile">Profile</a>
-            <a href="dashboard.php">Menu</a>
             <a href="profile.php">Profile</a>
             <a href="#contact">Contact</a>
-            <a href="./changepass.php">Change password</a>
+            <a href="changepass.php">Change password</a>
         </div>
         <div>
             <?php
@@ -166,5 +164,4 @@
 
 
 </body>
-
 </html>

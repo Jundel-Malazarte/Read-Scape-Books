@@ -70,7 +70,8 @@ if (isset($_POST["submit"])) {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-</head>
+        <link rel="icon" href="./images/icon.png">
+    </head>
 <style>
     body {
     margin: auto;
