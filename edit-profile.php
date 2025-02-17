@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Profile</title>
+    <title>Edit Profile</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
     <link rel="icon" href="./images/icon.png">
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            /* Light background for better contrast */
         }
 
         .navbar {
@@ -22,7 +19,7 @@
             justify-content: space-between;
             align-items: center;
             background-color: #333;
-            padding: 10px 20px;
+            padding: 10px 5px;
         }
 
         .navbar a {
@@ -38,7 +35,7 @@
 
         .nav-links {
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
 
         .logout {
@@ -51,38 +48,29 @@
 
         /* Profile Card Styles */
         .profile-card {
-            width: 1000px;
-            /* Adjusted width */
-            margin: 30px auto;
-            /* Centered with more top margin */
+            width: 400px;
+            margin: 10px auto;
             padding: 20px;
             background-color: #fff;
-            /* White background for the card */
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            /* Subtle shadow effect */
             text-align: center;
-            /* Center content within the card */
         }
 
         .profile-card img {
             width: 180px;
-            /* Adjusted size */
             height: 180px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 15px;
-            /* Increased spacing */
-            /* Ensures proper margin */
+            margin-bottom: 5px;
             margin-left: auto;
             margin-right: auto;
             display: block;
-            /* Remove automatic margin */
         }
 
         .profile-card h2 {
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             text-align: center;
             color: #333;
         }
@@ -98,55 +86,81 @@
             color: #333;
         }
 
-        /* Profile Details Styles */
         .profile-details {
             text-align: center;
-            /* Center the text */
         }
 
-        /* Action button profile */
-        .action-button {
+        form {
             display: flex;
-            text-decoration: none;
-            justify-content: center;
-            margin-top: 20px;
+            flex-direction: column;
             gap: 10px;
+            align-items: center;
         }
 
-        .action-button a {
-            display: block;
-            padding: 10px 20px;
-            text-decoration: none;
-            color: white;
-            border-radius: 5px;
+        label {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: left;
+            width: 100%;
+            color: #444;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="file"]:focus {
+            border-color: #1e88e5;
+            outline: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
             border: none;
+            border-radius: 6px;
+            background: #1e88e5;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
         }
 
-        .action-button a.edit-profile {
-            background-color: #1e88e5;
+        .btn:hover {
+            background: #1e88e5;
+            opacity: 0.8;
         }
 
-        .action-button a.deactive-account {
+        .cancel, .cancel a {
+            margin-top: 10px; 
             background-color: #f41304;
         }
 
+        .cancel:hover {
+            background-color: #f41304;
+            opacity: 0.8;
+        }
     </style>
 </head>
-
 <body>
     <div class="navbar">
         <div class="nav-links">
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="#contact">Contact</a>
-            <a href="./changepass.php">Change password</a>
+            <a href="changepass.php">Change password</a>
         </div>
         <div>
             <?php
             @include 'db_connect.php';
 
             session_start();
-
 
             if (!isset($_SESSION['id'])) {
                 // Redirect to login page if not logged in
@@ -156,7 +170,7 @@
 
             $user_id = $_SESSION['id']; // Get logged-in user's ID
 
-            $sql = "SELECT fname, lname FROM `users` WHERE id = ?";
+            $sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, "i", $user_id);
             mysqli_stmt_execute($stmt);
@@ -165,7 +179,7 @@
             if ($row = mysqli_fetch_assoc($result)) {
                 $fname = htmlspecialchars($row['fname']);
                 $lname = htmlspecialchars($row['lname']);
-
+                $profile_image = htmlspecialchars($row['profile_image']);
                 echo "<a href='#' >Welcome, $fname $lname!</a>"; //added anchor tag
             } else {
                 echo "User not found.";
@@ -177,56 +191,28 @@
             <a href="sign-in.php">Log Out</a>
         </div>
     </div>
-    <div class="container">
-
-    </div>
-
-    <?php
-    @include 'db_connect.php';
-
-
-    if (!isset($_SESSION['id'])) {
-        header("Location: sign-in.php");
-        exit();
-    }
-
-    $user_id = $_SESSION['id'];
-
-    $sql = "SELECT fname, lname, profile_image, email FROM `users` WHERE id = ?"; //added email
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $user_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-
-    if ($row = mysqli_fetch_assoc($result)) {
-        $fname = htmlspecialchars($row['fname']);
-        $lname = htmlspecialchars($row['lname']);
-        $profile_image = htmlspecialchars($row['profile_image']);
-        $email = htmlspecialchars($row['email']); //added email
-    } else {
-        echo "User not found.";
-    }
-
-    mysqli_stmt_close($stmt);
-    mysqli_close($conn);
-    ?>
-
     <div class="profile-card">
         <div>
-            <h2>User Profile</h2>
+            <h2>Update Profile</h2>
         </div>
-
         <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
         <div class="profile-details">
-            <p><strong>First Name:</strong> <?php echo "$fname "; ?></p>
-            <p><strong>Last Name:</strong> <?php echo "$lname"; ?></p>
-            <p><strong>Email:</strong> <?php echo $email; ?></p>
-            <div class="action-button">
-                <a href="edit-profile.php" class="edit-profile">Edit Profile</a>
-                <a href="deactive.php" class="deactive-account">Deactive Account</a>
-            </div>
+            <form action="update-profile.php" method="post" enctype="multipart/form-data">
+                <label for="fname"><strong>First Name:</strong></label>
+                <input type="text" id="fname" name="fname" value="<?php echo $fname; ?>" required>
+                <br>
+                <label for="lname"><strong>Last Name:</strong></label>
+                <input type="text" id="lname" name="lname" value="<?php echo $lname; ?>" required>
+                <br>
+                <label for="profile_image"><strong>Profile Image:</strong></label>
+                <input type="file" id="profile_image" name="profile_image">
+                <br>
+                <div class="action-button">
+                    <button type="submit" class="btn">Update</button>
+                    <a href="profile.php" class="btn cancel">Cancel</a>
+                </div>
+            </form>
         </div>
     </div>
-
 </body>
 </html>
