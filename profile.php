@@ -200,7 +200,7 @@
 
     <div class="profile-card">
         <div>
-            <h2>User Profile</h2>gi
+            <h2>User Profile</h2>
         </div>
 
 

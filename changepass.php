@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -12,7 +13,7 @@
             padding: 0;
         }
 
-        body {       
+        body {
             font-family: Arial, sans-serif;
             background-color: #eceff1;
         }
@@ -57,7 +58,8 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             width: 400px;
             text-align: center;
-            margin: 80px auto 0; /* Adjusted margin to prevent navbar overlap */
+            margin: 80px auto 0;
+            /* Adjusted margin to prevent navbar overlap */
         }
 
         h1 {
@@ -112,53 +114,54 @@
             background: #1e88e5;
             opacity: 0.8;
         }
-
     </style>
 </head>
+
 <body>
-<div class="navbar">
+    <div class="navbar">
         <div class="nav-links">
             <a href="dashboard.php">Home</a>
-            <a href="#profile">Profile</a>
+            <a href="./profile.php">Profile</a>
             <a href="#contact">Contact</a>
             <a href="./changepass.php">Change password</a>
         </div>
         <div>
             <a href=""><?php
-                @include 'db_connect.php';
+                        @include 'db_connect.php';
 
-                session_start();
-                
+                        session_start();
 
-                if (!isset($_SESSION['id'])) {
-                    // Redirect to login page if not logged in
-                    header("Location: sign-in.php");
-                    exit();
-                }
 
-                $user_id = $_SESSION['id']; // Get logged-in user's ID
+                        if (!isset($_SESSION['id'])) {
+                            // Redirect to login page if not logged in
+                            header("Location: sign-in.php");
+                            exit();
+                        }
 
-                $sql = "SELECT fname, lname FROM `users` WHERE id = ?";
-                $stmt = mysqli_prepare($conn, $sql);
-                mysqli_stmt_bind_param($stmt, "i", $user_id);
-                mysqli_stmt_execute($stmt);
-                $result = mysqli_stmt_get_result($stmt);
+                        $user_id = $_SESSION['id']; // Get logged-in user's ID
 
-                if ($row = mysqli_fetch_assoc($result)) {
-                    $fname = htmlspecialchars($row['fname']);
-                    $lname = htmlspecialchars($row['lname']);
+                        $sql = "SELECT fname, lname FROM `users` WHERE id = ?";
+                        $stmt = mysqli_prepare($conn, $sql);
+                        mysqli_stmt_bind_param($stmt, "i", $user_id);
+                        mysqli_stmt_execute($stmt);
+                        $result = mysqli_stmt_get_result($stmt);
 
-                    echo "Welcome, $fname $lname!";
-                } else {
-                    echo "User not found.";
-                }
+                        if ($row = mysqli_fetch_assoc($result)) {
+                            $fname = htmlspecialchars($row['fname']);
+                            $lname = htmlspecialchars($row['lname']);
 
-                mysqli_stmt_close($stmt);
-                mysqli_close($conn);
-            ?></a>
-            <a href="sign-in.php">Log Out</a></div>
+                            echo "Welcome, $fname $lname!";
+                        } else {
+                            echo "User not found.";
+                        }
+
+                        mysqli_stmt_close($stmt);
+                        mysqli_close($conn);
+                        ?></a>
+            <a href="sign-in.php">Log Out</a>
         </div>
-        <div class="container">
+    </div>
+    <div class="container">
         <h1>Change Password</h1>
         <form action="" method="post">
             <label for="old-password">Old Password</label>
@@ -171,7 +174,8 @@
             <input type="password" id="confirm-password" name="confirm-password" required>
 
             <button type="submit" class="btn">Update Password</button>
-        </form>            
+        </form>
     </div>
 </body>
+
 </html>
