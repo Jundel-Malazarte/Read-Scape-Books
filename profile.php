@@ -161,7 +161,47 @@
 
     </div>
 
+    <?php
+    @include 'db_connect.php';
 
+
+    if (!isset($_SESSION['id'])) {
+        header("Location: sign-in.php");
+        exit();
+    }
+
+    $user_id = $_SESSION['id'];
+
+    $sql = "SELECT fname, lname, profile_image, email FROM `users` WHERE id = ?"; //added email
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($row = mysqli_fetch_assoc($result)) {
+        $fname = htmlspecialchars($row['fname']);
+        $lname = htmlspecialchars($row['lname']);
+        $profile_image = htmlspecialchars($row['profile_image']);
+        $email = htmlspecialchars($row['email']); //added email
+    } else {
+        echo "User not found.";
+    }
+
+    mysqli_stmt_close($stmt);
+    mysqli_close($conn);
+    ?>
+
+    <div class="profile-card">
+        <h2>User Profile</h2>
+        <div class="profile-content">
+            <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
+            <div class="profile-details">
+                <p><strong>First Name:</strong> <?php echo "$fname "; ?></p>
+                <p><strong>Last Name:</strong> <?php echo "$lname"; ?></p>
+                <p><strong>Email:</strong> <?php echo $email; ?></p>
+            </div>
+        </div>
+    </div>
 
 </body>
 

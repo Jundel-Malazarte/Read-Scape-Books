@@ -9,20 +9,20 @@ if (isset($_POST["submit"])) {
     $phone = trim($_POST["phone"]);
     $address = trim($_POST["address"]);
 
-    $target_dir = "uploads/";
-    if (!is_dir($target_dir)) {
-        mkdir($target_dir, 0777, true);
+    // Handle image upload
+    $profile_image = "uploads/default.jpg"; // Default profile picture
+    
+    if (!empty($_FILES["profile_image"]["name"])) {
+        $image_name = basename($_FILES["profile_image"]["name"]);
+        $target_dir = "uploads/";
+        $target_file = $target_dir . uniqid() . "_" . $image_name;
+        
+        // Move file to uploads folder
+        if (move_uploaded_file($_FILES["profile_image"]["tmp_name"], $target_file)) {
+            $profile_image = $target_file;
+        }
     }
 
-    $profile_image = $target_dir . basename($_FILES["profile_image"]["name"]);
-    $imageFileType = strtolower(pathinfo($profile_image, PATHINFO_EXTENSION));
-
-    if (move_uploaded_file($_FILES["profile_image"]["tmp_name"], $profile_image)) {
-        // File successfully uploaded
-    } else {
-        echo "<script>alert('Error uploading image.');</script>";
-        $profile_image = "default.jpg"; // Set default if upload fails
-    }
 
     // Check if email already exists
     $check_email = $conn->prepare("SELECT * FROM users WHERE email = ?");
@@ -37,13 +37,14 @@ if (isset($_POST["submit"])) {
         $hashed_pass = password_hash($pass, PASSWORD_BCRYPT);
 
         // Insert user into the database
-        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, pass, phone, address) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, pass, phone, address, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?)");
         
         if ($stmt === false) {
             die("Error preparing statement: " . $conn->error);
         }
 
-        $stmt->bind_param("ssssss", $fname, $lname, $email, $hashed_pass, $phone, $address);
+        $stmt->bind_param("sssssss", $fname, $lname, $email, $hashed_pass, $phone, $address, $profile_image);
+
 
         if ($stmt->execute()) {
             echo "<script>alert('Registration successful!'); window.location.href='sign-in.php';</script>";
@@ -149,6 +150,20 @@ if (isset($_POST["submit"])) {
     color: #212121;
     text-decoration: none;
 }
+#preview-container {
+    margin-top: 10px; 
+    text-align: center; /* Center the image */
+}
+
+#image_preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: none; /* Initially hidden */
+    border: 2px solid #ccc;
+    padding: 5px;
+}
 
 </style>
     <body>
@@ -157,11 +172,19 @@ if (isset($_POST["submit"])) {
         <div id="container">
             <form action="" id="form-box" method="post">
                 <h1>Users Registration</h1>
-                <label for="profile_image"><strong>Profile Picture</strong></label>
-                    <input type="file" id="profile_image" name="profile_image" accept="upload/*" onchange="previewImage(event)" required><br>
-                    <img id="image_preview" src="./upload/default.jpg" alt="Profile Preview" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; display: none;">
+                
                 <div class="input-text">
+                    <!-- Image Preview (Now Below the Label) -->
+                    <div id="preview-container">
+                        <img id="image_preview" src="default.jpg" alt="Profile Preview">
+                    </div>
                     
+                    <!-- Profile Picture Input -->
+                    <label for="profile_image"><strong></strong></label>
+                    <input type="file" id="profile_image" name="profile_image" accept="image/*" onchange="previewImage(event)" required><br>
+                    
+                    
+
                     <input type="text"  id="fname" name="fname" placeholder="First Name" required><br>
                     <input type="text"  id="lname" name="lname" placeholder="Last Name" required><br>
                     <input type="email" id="email" name="email" placeholder="Email" required><br>
@@ -175,6 +198,25 @@ if (isset($_POST["submit"])) {
                             <a href="./sign-in.php">Have already an account? Sign in</a>
                     </div>   
                 </form>
-        </div>       
+        </div>
+        
+        
+        <script>
+            function previewImage(event) {
+                var input = event.target;
+                var preview = document.getElementById("image_preview");
+                
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.style.display = "block"; // Show the preview image
+                    }
+
+                    reader.readAsDataURL(input.files[0]); // Convert image file to base64
+                }
+            }
+            </script>
     </body>
 </html>
