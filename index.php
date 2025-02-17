@@ -9,6 +9,21 @@ if (isset($_POST["submit"])) {
     $phone = trim($_POST["phone"]);
     $address = trim($_POST["address"]);
 
+    $target_dir = "uploads/";
+    if (!is_dir($target_dir)) {
+        mkdir($target_dir, 0777, true);
+    }
+
+    $profile_image = $target_dir . basename($_FILES["profile_image"]["name"]);
+    $imageFileType = strtolower(pathinfo($profile_image, PATHINFO_EXTENSION));
+
+    if (move_uploaded_file($_FILES["profile_image"]["tmp_name"], $profile_image)) {
+        // File successfully uploaded
+    } else {
+        echo "<script>alert('Error uploading image.');</script>";
+        $profile_image = "default.jpg"; // Set default if upload fails
+    }
+
     // Check if email already exists
     $check_email = $conn->prepare("SELECT * FROM users WHERE email = ?");
     $check_email->bind_param("s", $email);
@@ -137,11 +152,15 @@ if (isset($_POST["submit"])) {
 
 </style>
     <body>
+    
     <!-- Container box -->
         <div id="container">
             <form action="" id="form-box" method="post">
                 <h1>Users Registration</h1>
                 <div class="input-text">
+                    <label for="profile_image"><strong>Profile Picture</strong></label>
+                    <input type="file" id="profile_image" name="profile_image" accept="upload/*" onchange="previewImage(event)" required><br>
+                    <img id="image_preview" src="./upload/default.jpg" alt="Profile Preview" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; display: none;">
                     <input type="text"  id="fname" name="fname" placeholder="First Name" required><br>
                     <input type="text"  id="lname" name="lname" placeholder="Last Name" required><br>
                     <input type="email" id="email" name="email" placeholder="Email" required><br>

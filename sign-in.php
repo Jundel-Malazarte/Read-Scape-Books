@@ -233,7 +233,7 @@
           </div>          
         </div>
           <div class="signup">
-            <a href="index.php">Haven't account yet? Sign in</a>
+            <a href="index.php">Haven't account yet? Sign up</a>
           </div>
       </form>
     </div>
