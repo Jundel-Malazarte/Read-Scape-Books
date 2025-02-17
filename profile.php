@@ -50,7 +50,7 @@
 
         /* Profile Card Styles */
         .profile-card {
-            width: 400px;
+            width: 1000px;
             /* Adjusted width */
             margin: 30px auto;
             /* Centered with more top margin */
@@ -60,32 +60,50 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             /* Subtle shadow effect */
+            text-align: center;
+            /* Center content within the card */
+        }
+
+        .profile-card {
+            width: 1000px;
+            /* Adjusted width */
+            margin: 30px auto;
+            /* Centered with more top margin */
+            padding: 20px;
+            background-color: #fff;
+            /* White background for the card */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            /* Subtle shadow effect */
+            text-align: center;
+            /* Center content within the card */
         }
 
         .profile-card img {
-            width: 120px;
+            width: 180px;
             /* Adjusted size */
-            height: 120px;
+            height: 180px;
             border-radius: 50%;
             object-fit: cover;
             margin-bottom: 15px;
             /* Increased spacing */
-            display: block;
             /* Ensures proper margin */
-            margin-left: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
             /* Remove automatic margin */
         }
 
         .profile-card h2 {
             margin-top: 0;
             margin-bottom: 10px;
-            text-align: left;
+            text-align: center;
             color: #333;
         }
 
         .profile-card p {
             margin: 8px 0;
-            text-align: left;
+            text-align: center;
             color: #555;
         }
 
@@ -94,21 +112,10 @@
             color: #333;
         }
 
-        /* Added container for aligning image and text to the left */
-        .profile-content {
-            display: flex;
-            align-items: center;
-            /* Vertically align image and text */
-        }
-
-        .profile-content img {
-            margin-right: 20px;
-            /* Add spacing between image and text */
-        }
-
+        /* Profile Details Styles */
         .profile-details {
-            text-align: left;
-            /* Align the text to the left */
+            text-align: center;
+            /* Center the text */
         }
     </style>
 </head>
@@ -192,15 +199,18 @@
     ?>
 
     <div class="profile-card">
-        <h2>User Profile</h2>
-        <div class="profile-content">
-            <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
-            <div class="profile-details">
-                <p><strong>First Name:</strong> <?php echo "$fname "; ?></p>
-                <p><strong>Last Name:</strong> <?php echo "$lname"; ?></p>
-                <p><strong>Email:</strong> <?php echo $email; ?></p>
-            </div>
+        <div>
+            <h2>User Profile</h2>gi
         </div>
+
+
+        <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
+        <div class="profile-details">
+            <p><strong>First Name:</strong> <?php echo "$fname "; ?></p>
+            <p><strong>Last Name:</strong> <?php echo "$lname"; ?></p>
+            <p><strong>Email:</strong> <?php echo $email; ?></p>
+        </div>
+
     </div>
 
 </body>
