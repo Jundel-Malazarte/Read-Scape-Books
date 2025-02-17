@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,7 +14,7 @@
             padding: 0;
         }
 
-        body {       
+        body {
             font-family: Arial, sans-serif;
             background-color: #eceff1;
         }
@@ -114,63 +115,126 @@
             background: #1e88e5;
             opacity: 0.8;
         }
-
     </style>
 </head>
+
 <body>
-<div class="navbar">
+    <div class="navbar">
         <div class="nav-links">
             <a href="dashboard.php">Home</a>
-            <a href="#profile">Profile</a>
+            <a href="./profile.php">Profile</a>
             <a href="#contact">Contact</a>
             <a href="changepass.php">Change password</a>
         </div>
         <div>
             <a href=""><?php
-                @include 'db_connect.php';
+                        @include 'db_connect.php';
 
-                session_start();
-                
+                        session_start();
 
-                if (!isset($_SESSION['id'])) {
-                    // Redirect to login page after changing password
-                    header("Location: sign-in.php");
-                    exit();
-                }
+                        if (!isset($_SESSION['id'])) {
+                            // Redirect to login page if not logged in
+                            header("Location: sign-in.php");
+                            exit();
+                        }
 
-                $user_id = $_SESSION['id']; // Get logged-in user's ID
+                        $user_id = $_SESSION['id']; // Get logged-in user's ID
 
-                $sql = "SELECT fname, lname FROM `users` WHERE id = ?";
-                $stmt = mysqli_prepare($conn, $sql);
-                mysqli_stmt_bind_param($stmt, "i", $user_id);
-                mysqli_stmt_execute($stmt);
-                $result = mysqli_stmt_get_result($stmt);
+                        $sql = "SELECT fname, lname FROM `users` WHERE id = ?";
+                        $stmt = mysqli_prepare($conn, $sql);
+                        mysqli_stmt_bind_param($stmt, "i", $user_id);
+                        mysqli_stmt_execute($stmt);
+                        $result = mysqli_stmt_get_result($stmt);
 
-                if ($row = mysqli_fetch_assoc($result)) {
-                    $fname = htmlspecialchars($row['fname']);
-                    $lname = htmlspecialchars($row['lname']);
+                        if ($row = mysqli_fetch_assoc($result)) {
+                            $fname = htmlspecialchars($row['fname']);
+                            $lname = htmlspecialchars($row['lname']);
 
-                    echo "Welcome, $fname $lname!";
-                } else {
-                    echo "User not found.";
-                }
+                            echo "Welcome, $fname $lname!";
+                        } else {
+                            echo "User not found.";
+                        }
 
-                mysqli_stmt_close($stmt);
-                mysqli_close($conn);
-            ?></a>
-            <a href="sign-in.php">Log Out</a></div>
+                        mysqli_stmt_close($stmt);
+                        mysqli_close($conn);
+                        ?></a>
+            <a href="sign-in.php">Log Out</a>
         </div>
-        <div class="container">
+    </div>
+
+    <?php
+    session_start();
+    @include 'db_connect.php';
+
+    if (!isset($_SESSION['id'])) {
+        header("Location: sign-in.php");
+        exit();
+    }
+
+    $id = $_SESSION['id'];
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $oldpwd = $_POST['oldpwd'];
+        $newpwd = $_POST['newpwd'];
+        $conpwd = $_POST['conpwd'];
+
+        // Fetch current hashed password
+        $sql = "SELECT pass FROM users WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if ($row = mysqli_fetch_assoc($result)) {
+            $hashed_pass = $row['pass'];
+
+            // Verify old password
+            if (password_verify($oldpwd, $hashed_pass)) {
+                // Check if new passwords match
+                if ($newpwd === $conpwd) {
+                    // Hash new password
+                    $new_hashed_pass = password_hash($newpwd, PASSWORD_BCRYPT);
+
+                    // Update password in the database
+                    $update_sql = "UPDATE users SET pass = ? WHERE id = ?";
+                    $update_stmt = mysqli_prepare($conn, $update_sql);
+                    mysqli_stmt_bind_param($update_stmt, "si", $new_hashed_pass, $id);
+
+                    if (mysqli_stmt_execute($update_stmt)) {
+                        echo "<script>alert('Password updated successfully!'); window.location.href='profile.php';</script>";
+                        exit();
+                    } else {
+                        echo "<script>alert('Error updating password: " . mysqli_error($conn) . "');</script>";
+                    }
+
+                    mysqli_stmt_close($update_stmt);
+                } else {
+                    echo "<script>alert('New passwords do not match.');</script>";
+                }
+            } else {
+                echo "<script>alert('Your old password is incorrect!');</script>";
+            }
+        } else {
+            echo "<script>alert('User not found.');</script>";
+        }
+
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+    }
+    ?>
+
+
+    <div class="container">
         <h1>Change Password</h1>
         <form action="" method="post">
-            <label for="old-password">Old Password</label>
-            <input type="password" id="old-password" name="old-password" required>
+            <label for="oldpwd">Old Password</label>
+            <input type="password" id="oldpwd" name="oldpwd" required>
 
-            <label for="new-password">New Password</label>
-            <input type="password" id="new-password" name="new-password" required>
+            <label for="newpwd">New Password</label>
+            <input type="password" id="newpwd" name="newpwd" required>
 
-            <label for="confirm-password">Confirm Password</label>
-            <input type="password" id="confirm-password" name="confirm-password" required>
+            <label for="conpwd">Confirm Password</label>
+            <input type="password" id="conpwd" name="conpwd" required>
 
             <button type="submit" class="btn">Update Password</button>
         </form>            

@@ -118,6 +118,7 @@
         <div class="nav-links">
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
+>>>>>>> 5f2345346735a258347ba85606c08d40f04164af
             <a href="#contact">Contact</a>
             <a href="changepass.php">Change password</a>
         </div>
