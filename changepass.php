@@ -55,7 +55,7 @@
         .container {
             background: white;
             padding: 30px;
-            margin-top: 20px;
+            margin-top: 25px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             width: 400px;
