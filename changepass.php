@@ -161,17 +161,80 @@
             <a href="sign-in.php">Log Out</a>
         </div>
     </div>
+
+    <?php
+    session_start();
+    @include 'db_connect.php';
+
+    if (!isset($_SESSION['id'])) {
+        header("Location: sign-in.php");
+        exit();
+    }
+
+    $id = $_SESSION['id'];
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $oldpwd = $_POST['oldpwd'];
+        $newpwd = $_POST['newpwd'];
+        $conpwd = $_POST['conpwd'];
+
+        // Fetch current hashed password
+        $sql = "SELECT pass FROM users WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if ($row = mysqli_fetch_assoc($result)) {
+            $hashed_pass = $row['pass'];
+
+            // Verify old password
+            if (password_verify($oldpwd, $hashed_pass)) {
+                // Check if new passwords match
+                if ($newpwd === $conpwd) {
+                    // Hash new password
+                    $new_hashed_pass = password_hash($newpwd, PASSWORD_BCRYPT);
+
+                    // Update password in the database
+                    $update_sql = "UPDATE users SET pass = ? WHERE id = ?";
+                    $update_stmt = mysqli_prepare($conn, $update_sql);
+                    mysqli_stmt_bind_param($update_stmt, "si", $new_hashed_pass, $id);
+
+                    if (mysqli_stmt_execute($update_stmt)) {
+                        echo "<script>alert('Password updated successfully!'); window.location.href='profile.php';</script>";
+                        exit();
+                    } else {
+                        echo "<script>alert('Error updating password: " . mysqli_error($conn) . "');</script>";
+                    }
+
+                    mysqli_stmt_close($update_stmt);
+                } else {
+                    echo "<script>alert('New passwords do not match.');</script>";
+                }
+            } else {
+                echo "<script>alert('Your old password is incorrect!');</script>";
+            }
+        } else {
+            echo "<script>alert('User not found.');</script>";
+        }
+
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+    }
+    ?>
+
+
     <div class="container">
         <h1>Change Password</h1>
         <form action="" method="post">
-            <label for="old-password">Old Password</label>
-            <input type="password" id="old-password" name="old-password" required>
+            <label for="oldpwd">Old Password</label>
+            <input type="password" id="oldpwd" name="oldpwd" required>
 
-            <label for="new-password">New Password</label>
-            <input type="password" id="new-password" name="new-password" required>
+            <label for="newpwd">New Password</label>
+            <input type="password" id="newpwd" name="newpwd" required>
 
-            <label for="confirm-password">Confirm Password</label>
-            <input type="password" id="confirm-password" name="confirm-password" required>
+            <label for="conpwd">Confirm Password</label>
+            <input type="password" id="conpwd" name="conpwd" required>
 
             <button type="submit" class="btn">Update Password</button>
         </form>
