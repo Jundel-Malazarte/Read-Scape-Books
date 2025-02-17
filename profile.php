@@ -65,21 +65,6 @@
             /* Center content within the card */
         }
 
-        .profile-card {
-            width: 1000px;
-            /* Adjusted width */
-            margin: 30px auto;
-            /* Centered with more top margin */
-            padding: 20px;
-            background-color: #fff;
-            /* White background for the card */
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            /* Subtle shadow effect */
-            text-align: center;
-            /* Center content within the card */
-        }
-
         .profile-card img {
             width: 180px;
             /* Adjusted size */
@@ -118,6 +103,33 @@
             text-align: center;
             /* Center the text */
         }
+
+        /* Action button profile */
+        .action-button {
+            display: flex;
+            text-decoration: none;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .action-button a {
+            display: block;
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .action-button a.edit-profile {
+            background-color: #1e88e5;
+        }
+
+        .action-button a.deactive-account {
+            background-color: #f41304;
+        }
+
     </style>
 </head>
 
@@ -210,10 +222,12 @@
             <p><strong>First Name:</strong> <?php echo "$fname "; ?></p>
             <p><strong>Last Name:</strong> <?php echo "$lname"; ?></p>
             <p><strong>Email:</strong> <?php echo $email; ?></p>
+            <div class="action-button">
+                <a href="edit-profile.php" class="edit-profile">Edit Profile</a>
+                <a href="deactive.php" class="deactive-account">Deactive Account</a>
+            </div>
         </div>
-
     </div>
 
 </body>
-
 </html>
