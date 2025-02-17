@@ -157,10 +157,11 @@ if (isset($_POST["submit"])) {
         <div id="container">
             <form action="" id="form-box" method="post">
                 <h1>Users Registration</h1>
-                <div class="input-text">
-                    <label for="profile_image"><strong>Profile Picture</strong></label>
+                <label for="profile_image"><strong>Profile Picture</strong></label>
                     <input type="file" id="profile_image" name="profile_image" accept="upload/*" onchange="previewImage(event)" required><br>
                     <img id="image_preview" src="./upload/default.jpg" alt="Profile Preview" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; display: none;">
+                <div class="input-text">
+                    
                     <input type="text"  id="fname" name="fname" placeholder="First Name" required><br>
                     <input type="text"  id="lname" name="lname" placeholder="Last Name" required><br>
                     <input type="email" id="email" name="email" placeholder="Email" required><br>
