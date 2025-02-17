@@ -116,7 +116,7 @@
 <body>
     <div class="navbar">
         <div class="nav-links">
-            <a href="dashboard.php">Menu</a>
+            <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
 
             <a href="#contact">Contact</a>
