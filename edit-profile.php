@@ -170,9 +170,6 @@ ob_end_flush(); // End buffering
             background: #1e88e5;
             opacity: 0.8;
         }
-
-        /*
-        */
         
     </style>
 </head>
