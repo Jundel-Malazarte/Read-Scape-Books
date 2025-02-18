@@ -171,6 +171,25 @@ ob_end_flush(); // End buffering
             opacity: 0.8;
         }
         
+
+        .cancel,
+        .cancel a {
+            margin-top: 10px;
+            background-color: #f41304;
+        }
+
+        .cancel:hover {
+            background-color: #f41304;
+            opacity: 0.8;
+        }
+
+        .action-button {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            /* Adds space between buttons */
+            width: 100%;
+        }
     </style>
 </head>
 

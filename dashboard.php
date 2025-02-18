@@ -158,12 +158,10 @@
         </div>
     </div>
     <div class="container">
-        <div class="form">
-            <h1>This is a sample dashboard</h1>
+        <div class="form"> 
+            <h1>Welcome, <?php echo $fname . " " . $lname; ?></h1>
         </div>
     </div>
-
-
-
+    
 </body>
 </html>
