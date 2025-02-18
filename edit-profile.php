@@ -202,8 +202,6 @@ ob_end_flush(); // End buffering
             <a href="changepass.php">Change password</a>
         </div>
         <div>
-
-
             <a href="sign-in.php">Log Out</a>
         </div>
     </div>
@@ -211,8 +209,6 @@ ob_end_flush(); // End buffering
         <div>
             <h2>Update Profile</h2>
         </div>
-
-
         <!-- Profile Image Preview -->
         <img id="profilePreview" src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
 
