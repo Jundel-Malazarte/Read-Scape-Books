@@ -44,6 +44,19 @@
             margin-left: auto;
         }
 
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         .container {
             margin-left: 2rem;
         }
@@ -121,12 +134,11 @@
             <a href="#contact">Contact</a>
             <a href="changepass.php">Change password</a>
         </div>
-        <div>
+        <div class="profile-info">
             <?php
             @include 'db_connect.php';
 
             session_start();
-
 
             if (!isset($_SESSION['id'])) {
                 // Redirect to login page if not logged in
@@ -136,7 +148,7 @@
 
             $user_id = $_SESSION['id']; // Get logged-in user's ID
 
-            $sql = "SELECT fname, lname FROM `users` WHERE id = ?";
+            $sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, "i", $user_id);
             mysqli_stmt_execute($stmt);
@@ -145,8 +157,11 @@
             if ($row = mysqli_fetch_assoc($result)) {
                 $fname = htmlspecialchars($row['fname']);
                 $lname = htmlspecialchars($row['lname']);
+                $profile_image = htmlspecialchars($row['profile_image']);
+                $profile_image = $profile_image ? $profile_image : 'uploads/default.jpg';
 
-                echo "<a href='#' >Welcome, $fname $lname!</a>"; //added anchor tag
+                echo "<img src='$profile_image' alt='Profile Image'>";
+                echo "<a href='profile.php'>$fname $lname</a>";
             } else {
                 echo "User not found.";
             }
@@ -158,12 +173,10 @@
         </div>
     </div>
     <div class="container">
-        <div class="form">
-            <h1>This is a sample dashboard</h1>
+        <div class="form"> 
+            <h1>Welcome, <?php echo $fname . " " . $lname; ?></h1>
         </div>
     </div>
-
-
 
 </body>
 
