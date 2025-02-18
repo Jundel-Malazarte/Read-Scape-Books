@@ -173,7 +173,7 @@
         </div>
     </div>
     <div class="container">
-        <div class="form"> 
+        <div class="form">
             <h1>Welcome, <?php echo $fname . " " . $lname; ?></h1>
         </div>
     </div>
