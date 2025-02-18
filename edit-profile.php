@@ -1,5 +1,37 @@
+<?php
+ob_start(); // Start output buffering
+session_start();
+@include 'db_connect.php';
+
+if (!isset($_SESSION['id'])) {
+    header("Location: sign-in.php");
+    exit(); // Stop further execution
+}
+
+$user_id = $_SESSION['id'];
+
+$sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+if ($row = mysqli_fetch_assoc($result)) {
+    $fname = htmlspecialchars($row['fname']);
+    $lname = htmlspecialchars($row['lname']);
+    $profile_image = htmlspecialchars($row['profile_image']);
+} else {
+    echo "User not found.";
+}
+
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
+ob_end_flush(); // End buffering
+?>
+
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,7 +51,7 @@
             justify-content: space-between;
             align-items: center;
             background-color: #333;
-            padding: 10px 20px;
+            padding: 10px 5px;
         }
 
         .navbar a {
@@ -35,7 +67,7 @@
 
         .nav-links {
             display: flex;
-            gap: 15px;
+            gap: 10px;
         }
 
         .logout {
@@ -49,7 +81,7 @@
         /* Profile Card Styles */
         .profile-card {
             width: 400px;
-            margin: 30px auto;
+            margin: 10px auto;
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
@@ -62,7 +94,7 @@
             height: 180px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             margin-left: auto;
             margin-right: auto;
             display: block;
@@ -93,7 +125,7 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 10px;
             align-items: center;
         }
 
@@ -105,7 +137,8 @@
             color: #444;
         }
 
-        input[type="text"], input[type="file"] {
+        input[type="text"],
+        input[type="file"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -114,13 +147,14 @@
             transition: 0.3s;
         }
 
-        input[type="text"]:focus, input[type="file"]:focus {
+        input[type="text"]:focus,
+        input[type="file"]:focus {
             border-color: #1e88e5;
             outline: none;
         }
 
-        .btn-update {
-            width: 100%;
+        .btn {
+            width: 45%;
             padding: 10px;
             border: none;
             border-radius: 6px;
@@ -136,9 +170,13 @@
             background: #1e88e5;
             opacity: 0.8;
         }
+
+        /*
+        */
         
     </style>
 </head>
+
 <body>
     <div class="navbar">
         <div class="nav-links">
@@ -148,37 +186,8 @@
             <a href="changepass.php">Change password</a>
         </div>
         <div>
-            <?php
-            @include 'db_connect.php';
 
-            session_start();
-            
-            if (!isset($_SESSION['id'])) {
-                // Redirect to login page if not logged in
-                header("Location: profile.php");
-                exit();
-            }
 
-            $user_id = $_SESSION['id']; // Get logged-in user's ID
-
-            $sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
-            $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, "i", $user_id);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-
-            if ($row = mysqli_fetch_assoc($result)) {
-                $fname = htmlspecialchars($row['fname']);
-                $lname = htmlspecialchars($row['lname']);
-                $profile_image = htmlspecialchars($row['profile_image']);
-                echo "<a href='#' >Welcome, $fname $lname!</a>"; //added anchor tag
-            } else {
-                echo "User not found.";
-            }
-
-            mysqli_stmt_close($stmt);
-            mysqli_close($conn);
-            ?>
             <a href="sign-in.php">Log Out</a>
         </div>
     </div>
@@ -186,21 +195,49 @@
         <div>
             <h2>Update Profile</h2>
         </div>
-        <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
+
+
+        <!-- Profile Image Preview -->
+        <img id="profilePreview" src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
+
         <div class="profile-details">
             <form action="update-profile.php" method="post" enctype="multipart/form-data">
+                <!-- Profile Image Upload -->
                 <label for="profile_image"><strong>Profile Image:</strong></label>
-                <input type="file" id="profile_image" name="profile_image">
+                <input type="file" id="profile_image" name="profile_image" accept="uploads/*" onchange="previewImage(event)">
+                <br>
+
+                <!-- First Name Field -->
                 <label for="fname"><strong>First Name:</strong></label>
                 <input type="text" id="fname" name="fname" value="<?php echo $fname; ?>" required>
+                <br>
+
+                <!-- Last Name Field -->
                 <label for="lname"><strong>Last Name:</strong></label>
                 <input type="text" id="lname" name="lname" value="<?php echo $lname; ?>" required>
+                <br>
+
+                <!-- Action Buttons -->
                 <div class="action-button">
-                    <button type="submit" class="btn-update">Update</button>
-                    <button type="reset" class="btn-cancel"><a href="profile.php">Cancel</button>
+                    <button type="submit" class="btn">Update</button>
+                    <a href="profile.php" class="btn cancel">Cancel</a>
                 </div>
             </form>
         </div>
+
+        <!-- JavaScript for Image Preview -->
+        <script>
+            function previewImage(event) {
+                const reader = new FileReader();
+                reader.onload = function() {
+                    const profilePreview = document.getElementById('profilePreview');
+                    profilePreview.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        </script>
+
     </div>
 </body>
+
 </html>
