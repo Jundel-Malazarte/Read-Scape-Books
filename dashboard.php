@@ -130,7 +130,7 @@
 
             if (!isset($_SESSION['id'])) {
                 // Redirect to login page if not logged in
-                header("Location: sign-in.php");
+                header("Location: sign-in.php", true, 302);
                 exit();
             }
 
@@ -154,7 +154,7 @@
             mysqli_stmt_close($stmt);
             mysqli_close($conn);
             ?>
-            <a href="sign-in.php">Log Out</a>
+            <a href="logout.php">Log Out</a>
         </div>
     </div>
     <div class="container">
@@ -166,4 +166,5 @@
 
 
 </body>
+
 </html>
