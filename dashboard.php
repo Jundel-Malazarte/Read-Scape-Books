@@ -1,3 +1,8 @@
+<?php
+            @include 'db_connect.php';
+
+            session_start();
+?>
 <!DOCTYPE html>
 <html>
 
@@ -14,7 +19,6 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            /* Light background for better contrast */
         }
 
         .navbar {
@@ -62,32 +66,23 @@
             margin-left: 2rem;
         }
 
-        /* Profile Card Styles */
         .profile-card {
             width: 400px;
-            /* Adjusted width */
             margin: 30px auto;
-            /* Centered with more top margin */
             padding: 20px;
             background-color: #fff;
-            /* White background for the card */
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            /* Subtle shadow effect */
         }
 
         .profile-card img {
             width: 120px;
-            /* Adjusted size */
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
             margin-bottom: 15px;
-            /* Increased spacing */
             display: block;
-            /* Ensures proper margin */
             margin-left: 0;
-            /* Remove automatic margin */
         }
 
         .profile-card h2 {
@@ -108,21 +103,65 @@
             color: #333;
         }
 
-        /* Added container for aligning image and text to the left */
         .profile-content {
             display: flex;
             align-items: center;
-            /* Vertically align image and text */
         }
 
         .profile-content img {
             margin-right: 20px;
-            /* Add spacing between image and text */
         }
 
         .profile-details {
             text-align: left;
-            /* Align the text to the left */
+        }
+
+        .book-card {
+            width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .book-card img {
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .book-card h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-align: left;
+            color: #333;
+        }
+
+        .book-card p {
+            margin: 8px 0;
+            text-align: left;
+            color: #555;
+        }
+
+        .book-card strong {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .book-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .book-content img {
+            margin-right: 20px;
+        }
+
+        .book-details {
+            text-align: left;
         }
     </style>
 </head>
@@ -136,18 +175,14 @@
             <a href="changepass.php">Change password</a>
         </div>
         <div class="profile-info">
-            <?php
-            @include 'db_connect.php';
-
-            session_start();
-
+            
+            <?php 
             if (!isset($_SESSION['id'])) {
-                // Redirect to login page if not logged in
                 header("Location: sign-in.php", true, 302);
                 exit();
             }
 
-            $user_id = $_SESSION['id']; // Get logged-in user's ID
+            $user_id = $_SESSION['id'];
 
             $sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
             $stmt = mysqli_prepare($conn, $sql);
@@ -176,6 +211,20 @@
     <div class="container">
         <div class="form"> 
             <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2>
+        </div>
+        <div class="book-card">
+            <div class="book-content">
+                <img src="path/to/book_image.jpg" alt="Book Image">
+                <div class="book-details">
+                    <h3>Book Title</h3>
+                    <p><strong>ISBN:</strong> 1234567890</p>
+                    <p><strong>Copyright:</strong> 2025</p>
+                    <p><strong>Edition:</strong> 1st</p>
+                    <p><strong>Price:</strong> $20.00</p>
+                    <p><strong>Quantity:</strong> 10</p>
+                    <p><strong>Total:</strong> $200.00</p>
+                </div>
+            </div>
         </div>
     </div>
 
