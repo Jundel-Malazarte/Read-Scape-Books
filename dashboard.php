@@ -174,7 +174,7 @@
     </div>
     <div class="container">
         <div class="form">
-            <h1>Welcome, <?php echo $fname . " " . $lname; ?></h1>
+            <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2>
         </div>
     </div>
 
