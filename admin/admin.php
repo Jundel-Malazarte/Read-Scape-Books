@@ -46,6 +46,7 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -174,17 +175,17 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             color: #212121;
             text-decoration: none;
         }
-
     </style>
 </head>
+
 <body>
     <!-- Container Box -->
     <div id="container">
         <form id="form-box" action="" method="post" autocomplete="off">
-            <h1>Admin Login</h1>
+            <h1>Admin L ogin</h1>
             <div class="input-text">
-                <input type="text" id="email" name="email" placeholder="Email" value="<?php echo $email; ?>" required/><br />
-                <input type="password" id="pass" name="pass" placeholder="Password" value="<?php echo $pass; ?>" required/><br />
+                <input type="text" id="email" name="email" placeholder="Email" value="<?php echo $email; ?>" required /><br />
+                <input type="password" id="pass" name="pass" placeholder="Password" value="<?php echo $pass; ?>" required /><br />
                 <!-- Remember Me and Forgot Password -->
                 <div class="options">
                     <div class="remember-me">
@@ -205,4 +206,5 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
         </form>
     </div>
 </body>
+
 </html>
