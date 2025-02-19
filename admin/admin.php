@@ -1,5 +1,5 @@
 <?php
-@include 'db_connect.php';
+@include '../db_connect.php';
 session_start();
 
 if (isset($_POST['submit'])) {
@@ -29,7 +29,7 @@ if (isset($_POST['submit'])) {
                 setcookie('pass', '', time() - 3600, "/");
             }
 
-            header("Location: dashboard.php");
+            header("Location: admin_dashboard.php");
             exit();
         } else {
             echo "<script>alert('Incorrect email or password!');</script>";
@@ -182,7 +182,7 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
     <!-- Container Box -->
     <div id="container">
         <form id="form-box" action="" method="post" autocomplete="off">
-            <h1>Admin L ogin</h1>
+            <h1>Admin Login</h1>
             <div class="input-text">
                 <input type="text" id="email" name="email" placeholder="Email" value="<?php echo $email; ?>" required /><br />
                 <input type="password" id="pass" name="pass" placeholder="Password" value="<?php echo $pass; ?>" required /><br />
