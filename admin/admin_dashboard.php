@@ -116,7 +116,7 @@ mysqli_close($conn);
         .card {
             width: 300px;
             background: #fff;
-            padding: 20px;
+            padding: 40px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             display: flex;
@@ -132,8 +132,8 @@ mysqli_close($conn);
         }
 
         .card img {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
         }
 
         .card-content {
@@ -143,7 +143,7 @@ mysqli_close($conn);
 
         .card p {
             margin: 5px 0;
-            font-size: 16px;
+            font-size: 20px;
             color: #333;
         }
 
@@ -196,7 +196,7 @@ mysqli_close($conn);
         <div class="dashboard-container">
             <a href="total_books.php">
                 <div class="card">
-                    <img src="../images/user_icon.png" alt="User Icon">
+                    <img src="../images/book_icon.png" alt="User Icon">
                     <div class="card-content">
                         <p><strong>Total Books</strong></p>
                         <h2><?php echo $total_books; ?></h2>

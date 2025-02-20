@@ -107,6 +107,7 @@ $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, addre
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             margin-top: 20px;
+            text-align: left;
         }
 
         table {
@@ -114,12 +115,15 @@ $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, addre
             border-collapse: collapse;
             margin-top: 20px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            /* Rounded corners */
+            overflow: hidden;
+            /* Ensures border-radius applies to table */
         }
 
         th,
         td {
-            border: 1px solid #ddd;
-            padding: 10px;
+            padding: 12px;
             text-align: center;
         }
 
@@ -127,31 +131,43 @@ $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, addre
             background-color: #87CEEB;
             /* Baby blue */
             color: white;
+            font-weight: bold;
         }
 
         tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-            /* Light gray for odd rows */
+            background-color: #f2f2f2;
+            /* Light grey for striped rows */
         }
 
         tbody tr:nth-child(even) {
             background-color: #ffffff;
-            /* White for even rows */
         }
 
+
+
         .delete-btn {
+            display: inline-block;
             background-color: red;
-            /* Red background for delete button */
+            /* Red background */
             color: white;
             /* White text */
-            border: none;
-            /* No border */
-            padding: 5px 10px;
-            /* Padding around text */
-            cursor: pointer;
-            /* Pointer cursor on hover */
+            padding: 10px 20px;
+            /* Padding for the button */
             border-radius: 5px;
             /* Rounded corners */
+            text-decoration: none;
+            /* Remove underline from link */
+            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+            /* Box shadow effect */
+            transition: background-color 0.3s ease;
+            /* Smooth transition for hover effect */
+            margin-top: 10px;
+            /* Space between elements */
+        }
+
+        .delete-btn:hover {
+            background-color: darkred;
+            /* Darker red on hover */
         }
     </style>
 </head>
