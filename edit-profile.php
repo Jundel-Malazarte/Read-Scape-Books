@@ -171,7 +171,7 @@ ob_end_flush(); // End buffering
             background: #1e88e5;
             opacity: 0.8;
         }
-        
+
 
         .cancel,
         .cancel a {
@@ -201,6 +201,7 @@ ob_end_flush(); // End buffering
             <a href="profile.php">Profile</a>
             <a href="#contact">Contact</a>
             <a href="changepass.php">Change password</a>
+
         </div>
         <div>
             <a href="sign-in.php">Log Out</a>

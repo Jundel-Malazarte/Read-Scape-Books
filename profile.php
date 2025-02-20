@@ -130,7 +130,6 @@
         .action-button a.deactive-account {
             background-color: #f41304;
         }
-
     </style>
 </head>
 
@@ -230,4 +229,5 @@
     </div>
 
 </body>
+
 </html>

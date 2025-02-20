@@ -184,7 +184,7 @@ if (isset($_POST["submit"])) {
 
                 <!-- Profile Picture Input -->
                 <label for="profile_image"><strong></strong></label>
-                <input type="file" id="profile_image" name="profile_image" accept="image/*" onchange="previewImage(event)" required><br>
+                <input type="file" id="profile_image" name="profile_image" accept="image/*" onchange="previewImage(event)"><br>
 
                 <input type="text" id="fname" name="fname" placeholder="First Name" required><br>
                 <input type="text" id="lname" name="lname" placeholder="Last Name" required><br>

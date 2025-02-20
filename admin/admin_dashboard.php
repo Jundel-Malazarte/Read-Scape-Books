@@ -170,7 +170,7 @@ mysqli_close($conn);
 <body>
     <div class="navbar">
         <div class="nav-links">
-            <a href="dashboard.php">Home</a>
+            <a href="../admin/admin_dashboard.php">Home</a>
             <!-- <a href="profile.php">Profile</a>
             <a href="#contact">Contact</a>
             <a href="changepass.php">Change password</a> -->
