@@ -1,7 +1,7 @@
 <?php
-            @include 'db_connect.php';
+@include 'db_connect.php';
 
-            session_start();
+session_start();
 ?>
 <!DOCTYPE html>
 <html>
@@ -174,8 +174,8 @@
             <a href="changepass.php">Change password</a>
         </div>
         <div class="profile-info">
-            
-            <?php 
+
+            <?php
             if (!isset($_SESSION['id'])) {
                 header("Location: sign-in.php", true, 302);
                 exit();
@@ -223,6 +223,15 @@
                     <p><strong>Quantity:</strong> 10</p>
                     <p><strong>Total:</strong> $200.00</p>
                 </div>
+            </div>
+        </div>
+
+        <div class="book-card">
+            <img src="./images/book1.png" alt="Harry Potter">
+            <h4>Product Name</h4>
+            <div>
+                <span>$299</span>
+                <button>+</button>
             </div>
         </div>
     </div>

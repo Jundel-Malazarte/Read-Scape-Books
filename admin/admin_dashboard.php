@@ -42,6 +42,9 @@ mysqli_stmt_close($stmt);
 $total_users_query = mysqli_query($conn, "SELECT COUNT(*) FROM users");
 $total_users = mysqli_fetch_row($total_users_query)[0];
 
+$total_books_query = mysqli_query($conn, "SELECT COUNT(*) FROM books");
+$total_books = mysqli_fetch_row($total_books_query)[0];
+
 mysqli_close($conn);
 ?>
 
@@ -175,7 +178,7 @@ mysqli_close($conn);
         <div class="profile-info">
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
-            <a href="../admingit/logout.php">Log Out</a>
+            <a href="../admin/logout.php">Log Out</a>
         </div>
     </div>
     <div class="dashboard-wrapper">
@@ -191,16 +194,18 @@ mysqli_close($conn);
             </a>
         </div>
         <div class="dashboard-container">
-            <a href="total_users.php">
+            <a href="total_books.php">
                 <div class="card">
                     <img src="../images/user_icon.png" alt="User Icon">
                     <div class="card-content">
                         <p><strong>Total Books</strong></p>
-                        <h2><?php echo $total_users; ?></h2>
+                        <h2><?php echo $total_books; ?></h2>
                     </div>
                 </div>
             </a>
         </div>
+
+
     </div>
 
 </body>
