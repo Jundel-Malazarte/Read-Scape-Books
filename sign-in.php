@@ -175,6 +175,14 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             text-decoration: none;
         }
 
+        /* switch to admin */
+        .admin a {
+            padding: 10px;
+            margin-top: 5px;
+            color: #3498db;
+            text-decoration: none;        
+        }
+
     </style>
 </head>
 <body>
@@ -201,6 +209,9 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             </div>
             <div class="signup">
                 <a href="index.php">Haven't account yet? Sign up</a>
+            </div>
+            <div class="admin">
+                <a href="./admin/admin.php">Switch to admin</a>
             </div>
         </form>
     </div>

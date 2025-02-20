@@ -201,7 +201,7 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
                 </div>
             </div>
             <div class="signup">
-                <a href="index.php">Haven't account yet? Sign up</a>
+                <a href="../sign-in.php">Switch to User</a>
             </div>
         </form>
     </div>
