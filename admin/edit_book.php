@@ -120,10 +120,39 @@ mysqli_close($conn);
         button:hover {
             background-color: #218838;
         }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 10px 20px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+        }
+
+        .navbar a:hover {
+            background-color: #555;
+            border-radius: 5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="navbar">
+        <div class="nav-links">
+            <a href="total_books.php">Back to Books</a>
+        </div>
+    </div>
     <div class="container">
         <h1>Edit Book</h1>
         <form action="" method="post" enctype="multipart/form-data">
