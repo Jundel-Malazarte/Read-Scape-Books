@@ -18,11 +18,34 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $user = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
-mysqli_close($conn);
 
 $fname = htmlspecialchars($user['fname']);
 $lname = htmlspecialchars($user['lname']);
 $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jpg";
+
+// Handle search input
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+$query = "SELECT isbn, title, book_image, author, copyright, qty, price, total FROM books";
+if (!empty($search)) {
+    $query .= " WHERE title LIKE ? OR author LIKE ?";
+}
+
+$stmt = mysqli_prepare($conn, $query);
+
+if (!empty($search)) {
+    $search_param = "%$search%";
+    mysqli_stmt_bind_param($stmt, "ss", $search_param, $search_param);
+}
+
+mysqli_stmt_execute($stmt);
+$books_query = mysqli_stmt_get_result($stmt);
+
+// Fetch total books count
+$total_books_query = mysqli_query($conn, "SELECT COUNT(*) FROM books");
+$total_books = mysqli_fetch_row($total_books_query)[0];
+
+mysqli_close($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -150,12 +173,29 @@ $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jp
     <!-- <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2> -->
 
     <div class="search-box">
-        <input type="text" id="search-input" placeholder="Search for books...">
-        <button type="search">Search</button>
+        <form method="GET" action="dashboard.php">
+            <input type="text" name="search" id="search-input" placeholder="Search for books..." value="<?php echo htmlspecialchars($search); ?>">
+            <button type="submit">Search</button>
+        </form>
     </div>
 
     <div class="book-list" id="book-list">
-        <!-- Books will be loaded here dynamically -->
+        <?php if (mysqli_num_rows($books_query) > 0) : ?>
+            <?php while ($book = mysqli_fetch_assoc($books_query)) : ?>
+                <div class="book-card">
+                    <img src="<?php echo htmlspecialchars($book['book_image']); ?>" alt="Book Image">
+                    <h3><?php echo htmlspecialchars($book['title']); ?></h3>
+                    <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p>
+                    <p><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
+                    <p><strong>Copyright:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
+                    <p><strong>Quantity:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
+                    <p><strong>Price:</strong> $<?php echo htmlspecialchars($book['price']); ?></p>
+                    <p><strong>Total:</strong> $<?php echo htmlspecialchars($book['total']); ?></p>
+                </div>
+            <?php endwhile; ?>
+        <?php else : ?>
+            <p>No books found</p>
+        <?php endif; ?>
     </div>
 
     <script>
