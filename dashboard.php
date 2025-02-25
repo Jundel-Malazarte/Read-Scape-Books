@@ -31,6 +31,8 @@ if (!empty($search)) {
     $query .= " WHERE title LIKE ? OR author LIKE ?";
 }
 
+
+
 $stmt = mysqli_prepare($conn, $query);
 
 if (!empty($search)) {
@@ -157,16 +159,22 @@ mysqli_close($conn);
 
         .add-btn {
             background-color: #28a745;
+            /* Green */
             color: white;
             padding: 8px 12px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            width: 100%;
+            transition: background 0.3s;
         }
 
         .add-btn:hover {
             background-color: #218838;
         }
+
 
         .header-text {
             text-align: left;
@@ -205,41 +213,53 @@ mysqli_close($conn);
         <?php if (mysqli_num_rows($books_query) > 0) : ?>
             <?php while ($book = mysqli_fetch_assoc($books_query)) : ?>
                 <div class="book-card">
-                    <img src="<?php echo htmlspecialchars($book['book_image']); ?>" alt="Book Image">
+                    <img src="<?php echo 'images/' . htmlspecialchars($book['book_image']); ?>" alt="Book Image" onerror="this.onerror=null; this.src='uploads/default.jpg';">
                     <h3><?php echo htmlspecialchars($book['title']); ?></h3>
                     <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p>
                     <p><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
                     <p><strong>Copyright:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
                     <p><strong>Stocks:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
-                    <p><strong>Price:</strong> $<?php echo htmlspecialchars($book['price']); ?></p>
-                    <p><strong>Total:</strong> $<?php echo htmlspecialchars($book['total']); ?></p>
+                    <p><strong>Price:</strong> ₱<?php echo htmlspecialchars($book['price']); ?></p>
+                    <p><strong>Total:</strong> ₱<?php echo htmlspecialchars($book['total']); ?></p>
+
+                    <button class="add-btn" onclick="addToCart('<?php echo htmlspecialchars($book['isbn']); ?>')">Add</button>
                 </div>
+
             <?php endwhile; ?>
         <?php else : ?>
             <p>No books found</p>
         <?php endif; ?>
     </div>
 
-    <script>
+    <!-- <script>
         function fetchBooks(query = '') {
             let xhr = new XMLHttpRequest();
             xhr.open("GET", "fetch_books.php?q=" + query, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("book-list").innerHTML = ''; // Clear before inserting new books
+                    document.getElementById("book-list").innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+    </script> -->
+
+    <script>
+        document.getElementById("search-input").addEventListener("keyup", function() {
+            let query = this.value.trim();
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "fetch_books.php?q=" + encodeURIComponent(query), true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     document.getElementById("book-list").innerHTML = xhr.responseText;
                 }
             };
             xhr.send();
-        }
-
-        document.getElementById('search-input').addEventListener('input', function() {
-            fetchBooks(this.value);
         });
-
-        // Fetch books on page load and update every 5 seconds
-        fetchBooks();
-        setInterval(fetchBooks, 5000);
     </script>
 
+
 </body>
+
 </html>
