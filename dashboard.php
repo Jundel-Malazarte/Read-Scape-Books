@@ -134,33 +134,11 @@ $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jp
             <a href="logout.php">Log Out</a>
         </div>
     </div>
-    <div class="container">
-        <div class="form">
-            <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2>
-        </div>
-        <div class="book-card">
-            <div class="book-content">
-                <img src="path/to/book_image.jpg" alt="Book Image">
-                <div class="book-details">
-                    <h3>Book Title</h3>
-                    <p><strong>ISBN:</strong> 1234567890</p>
-                    <p><strong>Copyright:</strong> 2025</p>
-                    <p><strong>Edition:</strong> 1st</p>
-                    <p><strong>Price:</strong> $20.00</p>
-                    <p><strong>Quantity:</strong> 10</p>
-                    <p><strong>Total:</strong> $200.00</p>
-                </div>
-            </div>
-        </div>
+    <!-- 
+    <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2> -->
 
-        <div class="book-card">
-            <img src="./images/book1.png" alt="Harry Potter">
-            <h4>Product Name</h4>
-            <div>
-                <span>$299</span>
-                <button>+</button>
-            </div>
-        </div>
+    <div class="book-list" id="book-list">
+        <!-- Books will be loaded here dynamically -->
     </div>
 
     <script>
@@ -181,5 +159,4 @@ $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jp
     </script>
 
 </body>
-
 </html>
