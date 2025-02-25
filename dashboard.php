@@ -71,6 +71,19 @@ $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jp
             object-fit: cover;
         }
 
+        .search-box {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-box input {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
         .book-list {
             display: flex;
             flex-wrap: wrap;
@@ -134,17 +147,21 @@ $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jp
             <a href="logout.php">Log Out</a>
         </div>
     </div>
-    <!-- 
-    <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2> -->
+    <!-- <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2> -->
+
+    <div class="search-box">
+        <input type="text" id="search-input" placeholder="Search for books...">
+        <button type="search">Search</button>
+    </div>
 
     <div class="book-list" id="book-list">
         <!-- Books will be loaded here dynamically -->
     </div>
 
     <script>
-        function fetchBooks() {
+        function fetchBooks(query = '') {
             let xhr = new XMLHttpRequest();
-            xhr.open("GET", "fetch_books.php", true);
+            xhr.open("GET", "fetch_books.php?q=" + query, true);
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     document.getElementById("book-list").innerHTML = xhr.responseText;
@@ -152,6 +169,10 @@ $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jp
             };
             xhr.send();
         }
+
+        document.getElementById('search-input').addEventListener('input', function() {
+            fetchBooks(this.value);
+        });
 
         // Fetch books on page load and update every 5 seconds
         fetchBooks();
