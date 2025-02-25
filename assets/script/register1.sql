@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 20, 2025 at 09:13 AM
+-- Generation Time: Feb 25, 2025 at 03:43 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,8 +43,8 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`isbn`, `title`, `book_image`, `author`, `copyright`, `qty`, `price`, `total`) VALUES
-(1, 'Harry Potter', '1740022494_book1.png', 'JK Rowling', 2000, 100, 899, 89900),
-(2, 'The Hacienda', '../images/1740032179_book2.jpg', 'Isabel Cañas', 2002, 10, 299, 2990);
+(2, 'The Hacienda', '../images/1740032179_book2.jpg', 'Isabel Cañas', 2002, 10, 299, 2990),
+(5, 'El filibusterismo', '1740450422_book4.jpg', 'José Rizal', 1891, 60, 249, 14940);
 
 -- --------------------------------------------------------
 
@@ -77,7 +77,7 @@ INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `pass`, `phone`, `address`
 (7, 'jenjie', 'igot', 'igot23@gmail.com', '$2y$10$sIN.QxVxHEGBZQijoTbzxeEScqC8StI7CwIKySUzMuwbkYqofvZGW', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-17 01:43:41', 'uploads/default-profile.png'),
 (8, 'manny ', 'Pacquiao', 'turyak2@gmail.com', '$2y$10$7WPCDV3nd8O5xO/QD/cG3.wqSCmANgviwfGMPDyq9RvG1mNZvyAS6', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-17 01:50:09', 'uploads/67b3e9e3bd7e1_man.jpg'),
 (9, 'test', 'test', 'test6@gmail.com', '$2y$10$HcK17YDB1gDJU5wb/4uNhehbPNc./su9uVnBTjqI1SWlFHH2dMYBy', '09428013424', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', '2025-02-18 03:28:08', 'uploads/67b3fe4889550_man.jpg'),
-(10, 'mario', 'hapon', 'mario@gmail.com', '$2y$10$Pc8sW216gFIwI7vDNN2G6OWcbXzrlUTDm9aP3sjAGwThZ72pAG/Za', '09812371239', '123 Main St, City, 1234', '2025-02-20 07:35:16', 'uploads/67b6db69e587d_book_icon.png');
+(10, 'mario', 'friolo', 'mario@gmail.com', '$2y$10$Pc8sW216gFIwI7vDNN2G6OWcbXzrlUTDm9aP3sjAGwThZ72pAG/Za', '09812371239', '123 Main St, City, 1234', '2025-02-20 07:35:16', 'uploads/67b6db69e587d_book_icon.png');
 
 --
 -- Indexes for dumped tables
@@ -104,7 +104,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `books`
 --
 ALTER TABLE `books`
-  MODIFY `isbn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `isbn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
