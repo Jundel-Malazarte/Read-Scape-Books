@@ -104,7 +104,21 @@ mysqli_close($conn);
             width: 300px;
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+
+        .search-box button {
+            padding: 10px;
+            border: none;
+            background-color: #333;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+
+        .search-box button:hover {
+            background-color: #555;
         }
 
         .book-list {
@@ -153,6 +167,12 @@ mysqli_close($conn);
         .add-btn:hover {
             background-color: #218838;
         }
+
+        .header-text {
+            text-align: left;
+            margin-top: 20px;
+            margin-left: 20px;
+        }
     </style>
 </head>
 
@@ -178,7 +198,9 @@ mysqli_close($conn);
             <button type="submit">Search</button>
         </form>
     </div>
-
+    <div class="header-text">
+        <h2>Picked for you</h2>
+    </div>
     <div class="book-list" id="book-list">
         <?php if (mysqli_num_rows($books_query) > 0) : ?>
             <?php while ($book = mysqli_fetch_assoc($books_query)) : ?>
@@ -188,7 +210,7 @@ mysqli_close($conn);
                     <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p>
                     <p><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
                     <p><strong>Copyright:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
-                    <p><strong>Quantity:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
+                    <p><strong>Stocks:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
                     <p><strong>Price:</strong> $<?php echo htmlspecialchars($book['price']); ?></p>
                     <p><strong>Total:</strong> $<?php echo htmlspecialchars($book['total']); ?></p>
                 </div>
