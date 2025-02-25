@@ -96,32 +96,53 @@ mysqli_close($conn);
             object-fit: cover;
         }
 
+        /* Container for search and header */
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 90%;
+            margin: 20px auto;
+        }
+
+        /* Adjusted search input */
         .search-box {
             display: flex;
-            justify-content: center;
-            margin: 20px 0;
+            align-items: center;
         }
 
         .search-box input {
-            width: 300px;
-            padding: 10px;
+            width: 350px;
+            /* Slightly wider */
+            padding: 12px;
+            font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px 0 0 5px;
             outline: none;
         }
 
+        /* Bigger search button */
         .search-box button {
-            padding: 10px;
-            border: none;
+            padding: 12px 18px;
+            font-size: 16px;
             background-color: #333;
             color: white;
+            border: none;
             border-radius: 0 5px 5px 0;
             cursor: pointer;
+            transition: background 0.3s;
         }
 
         .search-box button:hover {
             background-color: #555;
         }
+
+        /* Adjusted header */
+        .header-text h2 {
+            font-size: 22px;
+            margin: 0;
+        }
+
 
         .book-list {
             display: flex;
@@ -218,15 +239,18 @@ mysqli_close($conn);
     </div>
     <!-- <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2> -->
 
-    <div class="search-box">
-        <form method="GET" action="dashboard.php">
-            <input type="text" name="search" id="search-input" placeholder="Search for books..." value="<?php echo htmlspecialchars($search); ?>">
-            <button type="submit">Search</button>
-        </form>
+    <div class="search-header">
+        <div class="header-text">
+            <h2>Picked for you</h2>
+        </div>
+        <div class="search-box">
+            <form method="GET" action="dashboard.php">
+                <input type="text" name="search" id="search-input" placeholder="Search for books..." value="<?php echo htmlspecialchars($search); ?>">
+                <button type="submit">Search</button>
+            </form>
+        </div>
     </div>
-    <div class="header-text">
-        <h2>Picked for you</h2>
-    </div>
+
     <div class="book-list" id="book-list">
         <?php if (mysqli_num_rows($books_query) > 0) : ?>
             <?php while ($book = mysqli_fetch_assoc($books_query)) : ?>
