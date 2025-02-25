@@ -207,7 +207,7 @@ $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, addre
                         <td>{$row['phone']}</td>
                         <td>{$row['address']}</td>
                         <td>{$row['created_at']}</td>
-                        <td><a href='../admin/delete.php?id={$row['id']}' class='delete-btn' onclick=\"return confirm('Are you sure you want to delete this user?');\">Delete</a></td>
+                        <td><a href='../admin/delete_user.php?id={$row['id']}' class='delete-btn' onclick=\"return confirm('Are you sure you want to delete this user?');\">Delete</a></td>
                       </tr>";
                 }
                 ?>
