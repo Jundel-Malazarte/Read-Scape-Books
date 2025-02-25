@@ -9,6 +9,8 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
+
+
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $isbn = mysqli_real_escape_string($conn, $_POST['isbn']);
@@ -17,24 +19,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $copyright = mysqli_real_escape_string($conn, $_POST['copyright']);
     $qty = (int)$_POST['qty'];
     $price = (float)$_POST['price'];
-    $total = $qty * $price; // Calculate total
+    $total = $qty * $price;
 
     // Handle book image upload
-    $book_image = "";
+    $book_image = "default.jpg"; // Default image in case of failure
     if (!empty($_FILES['book_image']['name'])) {
         $image_name = time() . "_" . basename($_FILES["book_image"]["name"]);
         $target_dir = "../images/";
         $target_file = $target_dir . $image_name;
 
+        // Ensure directory exists
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+
         if (move_uploaded_file($_FILES["book_image"]["tmp_name"], $target_file)) {
             $book_image = $image_name;
+        } else {
+            die("File upload failed: " . $_FILES['book_image']['error']);
         }
     }
 
-    // Insert book details into database
+    // Insert book into database
     $sql = "INSERT INTO books (isbn, title, book_image, author, copyright, qty, price, total) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "sssssiid", $isbn, $title, $book_image, $author, $copyright, $qty, $price, $total);
 
