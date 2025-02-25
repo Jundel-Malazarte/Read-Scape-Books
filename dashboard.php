@@ -126,54 +126,72 @@ mysqli_close($conn);
         .book-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 30px;
             justify-content: center;
             margin-top: 20px;
+            max-width: 90%;
+            /* Make the book list span a larger width */
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .book-card {
-            width: 200px;
+            width: 250px;
+            /* Increased width */
             background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            /* Increased padding */
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
             text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .book-card:hover {
+            transform: scale(1.05);
+            /* Slight zoom effect for better UX */
         }
 
         .book-card img {
             width: 100%;
-            height: 200px;
+            height: 250px;
+            /* Increased height */
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 10px;
         }
 
         .book-card h3 {
-            font-size: 16px;
+            font-size: 18px;
+            /* Larger title */
             margin: 10px 0;
         }
 
         .book-card p {
-            font-size: 14px;
-            color: #555;
+            font-size: 15px;
+            /* Increased text size */
+            color: #444;
         }
 
         .add-btn {
             background-color: #28a745;
-            /* Green */
             color: white;
-            padding: 8px 12px;
+            padding: 10px 14px;
+            /* Larger button */
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
+            font-size: 16px;
+            /* Increased font size */
+            margin-top: 12px;
             width: 100%;
-            transition: background 0.3s;
+            transition: background 0.3s, transform 0.2s;
         }
 
         .add-btn:hover {
             background-color: #218838;
+            transform: scale(1.05);
         }
+
 
 
         .header-text {
