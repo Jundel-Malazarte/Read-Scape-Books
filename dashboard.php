@@ -271,9 +271,9 @@ mysqli_close($conn);
         <!-- Logo here! -->
         <div id="Sidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="#">Home</a>
-            <a href="#">Profile</a>
-            <a href="#">Change password</a>
+            <a href="dashboard.php">Home</a>
+            <a href="profile.php">Profile</a>
+            <a href="changepass.php">Change password</a>
         </div>
         <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;</span>
             <script>
