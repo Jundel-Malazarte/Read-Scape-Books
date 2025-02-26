@@ -185,7 +185,7 @@ mysqli_close($conn);
 
         .book-card img {
             width: 100%;
-            height: 250px;
+            height: 275px;
             /* Increased height */
             object-fit: cover;
             border-radius: 10px;
