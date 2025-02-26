@@ -64,6 +64,8 @@ mysqli_close($conn);
             margin: 0;
         }
 
+
+
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -82,6 +84,14 @@ mysqli_close($conn);
             background-color: #555;
             border-radius: 5px;
         }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            /* Adjust spacing as needed */
+        }
+
 
         .profile-info {
             display: flex;
@@ -193,7 +203,7 @@ mysqli_close($conn);
             color: #444;
         }
 
-        .add-btn {
+        .buy-now-btn {
             background-color: #28a745;
             color: white;
             padding: 10px 14px;
@@ -208,59 +218,139 @@ mysqli_close($conn);
             transition: background 0.3s, transform 0.2s;
         }
 
-        .add-btn:hover {
+        .buy-now-btn:hover {
             background-color: #218838;
             transform: scale(1.05);
         }
+
         .header-text {
             text-align: left;
             margin-top: 20px;
             margin-left: 20px;
         }
 
-        .readscape {
-            border-radius: 50px;
-            margin-right: 100px;
+        span {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
+        .readscape {
+            width: 40px;
+            /* Match this size with the font-size of the menu icon */
+            height: 40px;
+            /* Keep height and width equal */
+            border-radius: 50%;
+        }
+
 
         /** Slider nav */
         .sidenav {
-        height: 100%;
-        width: 0;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        left: 0;
-        background-color: #212121;
-        overflow-x: hidden;
-        transition: 0.5s;
-        padding-top: 60px;
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #212121;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
         }
 
         .sidenav a {
-        padding: 8px 8px 8px 32px;
-        text-decoration: none;
-        font-size: 25px;
-        color: white;
-        display: block;
-        transition: 0.3s;
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            display: block;
+            transition: 0.3s;
         }
 
         .sidenav a:hover {
-        color: #f1f1f1;
+            color: #f1f1f1;
         }
 
         .sidenav .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
         }
 
         @media screen and (max-height: 450px) {
-        .sidenav {padding-top: 15px;}
-        .sidenav a {font-size: 18px;}
+            .sidenav {
+                padding-top: 15px;
+            }
+
+            .sidenav a {
+                font-size: 18px;
+            }
+        }
+
+        .add-cart-btn {
+            background-color: #dc3545;
+            /* Red color */
+            color: white;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 12px;
+            width: 100%;
+            transition: background 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            /* Space between icon and text */
+        }
+
+        .add-cart-btn:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .add-cart-btn,
+        .buy-now-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px 14px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .add-cart-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .add-cart-btn:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+
+        .buy-now-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .buy-now-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -274,23 +364,21 @@ mysqli_close($conn);
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="changepass.php">Change password</a>
-        </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;</span>
-            <script>
-                    function openNav() {
-                    document.getElementById("Sidenav").style.width = "240px";
-                    }
 
-                    function closeNav() {
-                    document.getElementById("Sidenav").style.width = "0";
-                    }
-            </script>
-        <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px" style="margin-left: 20px;">
-        <div class="nav-links">
-            <a href="dashboard.php">Home</a>
-            <a href="profile.php">Profile</a>
-            <a href="changepass.php">Change Password</a>
         </div>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776; <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+
+        <script>
+            function openNav() {
+                document.getElementById("Sidenav").style.width = "240px";
+            }
+
+            function closeNav() {
+                document.getElementById("Sidenav").style.width = "0";
+            }
+        </script>
+
+
         <div class="profile-info">
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
@@ -317,14 +405,21 @@ mysqli_close($conn);
                 <div class="book-card">
                     <img src="<?php echo 'images/' . htmlspecialchars($book['book_image']); ?>" alt="Book Image" onerror="this.onerror=null; this.src='uploads/default.jpg';">
                     <h3><?php echo htmlspecialchars($book['title']); ?></h3>
-                    <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p>
+                    <!-- <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p> -->
                     <p><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
                     <p><strong>Copyright:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
                     <p><strong>Stocks:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
                     <p><strong>Price:</strong> ₱<?php echo htmlspecialchars($book['price']); ?></p>
-                    <p><strong>Total:</strong> ₱<?php echo htmlspecialchars($book['total']); ?></p>
+                    <!-- <p><strong>Total:</strong> ₱<?php echo htmlspecialchars($book['total']); ?></p> -->
+                    <div class="button-group">
+                        <button class="add-cart-btn" onclick="addToCart('<?php echo htmlspecialchars($book['isbn']); ?>')">
+                            🛒 Add to Cart
+                        </button>
 
-                    <button class="add-btn" onclick="addToCart('<?php echo htmlspecialchars($book['isbn']); ?>')">Add</button>
+                        <button class="buy-now-btn" onclick="buyNow('<?php echo htmlspecialchars($book['isbn']); ?>')">
+                            ⚡ Buy Now
+                        </button>
+                    </div>
                 </div>
 
             <?php endwhile; ?>
@@ -359,6 +454,11 @@ mysqli_close($conn);
             };
             xhr.send();
         });
+
+        function buyNow(isbn) {
+            alert("Redirecting to checkout for book ISBN: " + isbn);
+            window.location.href = "checkout.php?isbn=" + isbn;
+        }
     </script>
 
 
