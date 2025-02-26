@@ -89,6 +89,11 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             justify-content: center;
         }
 
+        #logo {
+            padding: 5px;
+            border-radius: 50%;
+        }
+
         .input-text {
             width: 100%;
             margin-bottom: 15px;
@@ -189,7 +194,8 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
     <!-- Container Box -->
     <div id="container">
         <form id="form-box" action="" method="post" autocomplete="off">
-            <h1>Login Form</h1>
+        <strong><h1>Login Form</h1></strong>
+            <img src="./images/Readscape.png" alt="readscape" id="logo" width="200px" height="200px">            
             <div class="input-text">
                 <input type="text" id="email" name="email" placeholder="Email" value="<?php echo $email; ?>" required/><br />
                 <input type="password" id="pass" name="pass" placeholder="Password" value="<?php echo $pass; ?>" required/><br />

@@ -212,13 +212,55 @@ mysqli_close($conn);
             background-color: #218838;
             transform: scale(1.05);
         }
-
-
-
         .header-text {
             text-align: left;
             margin-top: 20px;
             margin-left: 20px;
+        }
+
+        .readscape {
+            border-radius: 50px;
+            margin-right: 100px;
+        }
+
+        /** Slider nav */
+        .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #212121;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+        }
+
+        .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: white;
+        display: block;
+        transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+        color: #f1f1f1;
+        }
+
+        .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
         }
     </style>
 </head>
@@ -226,6 +268,24 @@ mysqli_close($conn);
 <body>
 
     <div class="navbar">
+        <!-- Logo here! -->
+        <div id="Sidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="#">Home</a>
+            <a href="#">Profile</a>
+            <a href="#">Change password</a>
+        </div>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;</span>
+            <script>
+                    function openNav() {
+                    document.getElementById("Sidenav").style.width = "240px";
+                    }
+
+                    function closeNav() {
+                    document.getElementById("Sidenav").style.width = "0";
+                    }
+            </script>
+        <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px" style="margin-left: 20px;">
         <div class="nav-links">
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
