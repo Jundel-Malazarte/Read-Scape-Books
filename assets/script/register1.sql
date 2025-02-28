@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 25, 2025 at 03:43 AM
+-- Generation Time: Feb 28, 2025 at 12:03 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,7 +44,30 @@ CREATE TABLE `books` (
 
 INSERT INTO `books` (`isbn`, `title`, `book_image`, `author`, `copyright`, `qty`, `price`, `total`) VALUES
 (2, 'The Hacienda', '../images/1740032179_book2.jpg', 'Isabel Cañas', 2002, 10, 299, 2990),
-(5, 'El filibusterismo', '1740450422_book4.jpg', 'José Rizal', 1891, 60, 249, 14940);
+(5, 'El filibusterismo', '../images/1740450422_book4.jpg', 'José Rizal', 1891, 17, 249, 4233),
+(6, 'Legend of Mariang Makiling', '1740701783_book6.jpg', 'Nick Joaquin', 1997, 10, 280, 2800),
+(7, 'Alamat ng Sampalok', '1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 12, 280, 3360),
+(8, 'Alamat ng Bahaghari', '1740703364_book8.png', 'Rene O. Villanueva', 2003, 10, 250, 2500);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart`
+--
+
+CREATE TABLE `cart` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `isbn` int(11) NOT NULL,
+  `quantity` int(11) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`id`, `user_id`, `isbn`, `quantity`) VALUES
+(43, 11, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -69,7 +92,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `pass`, `phone`, `address`, `created_at`, `profile_image`) VALUES
-(1, 'ryan', 'gabutin', 'test1@gmail.com', '$2y$10$xmuPruKT5pJpkV4fWzchPOIqM2.al37xXhH5SyXn.LJ/v5Pobkx5S', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-13 06:10:10', NULL),
+(1, 'ryan', 'gabutin', 'test1@gmail.com', 'ryan1234@', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-13 06:10:10', NULL),
 (2, 'Anna Marie', 'Calvario', 'annamarie9@gmail.com', '$2y$10$fRIzvJrHn7bqkMGUjr2r5.Y3qer2QGodhioYirj.vKWdX/eDBV6Gi', '09292626010', 'Lorega San Miguel', '2025-02-13 06:12:29', NULL),
 (3, 'Jundel', 'Malazarte', 'test3@gmail.com', '$2y$10$9lNvkCLNyYkjm/gSj5I3xOHeFaqc6fDZjl51jGl4MT/55SYl5gnTK', '09292626010', 'Sambag 1 Cebu City', '2025-02-13 06:39:24', NULL),
 (5, 'Jundel', 'Malazarte', 'test4@gmail.com', '$2y$10$Ejqk34qMnAqhPmv/OljKK.gFu9GucgpBqSPG/YYhQ.V3lp8urq9SK', '981237123', 'Sambag 1 Cebu City', '2025-02-13 07:05:00', NULL),
@@ -77,7 +100,8 @@ INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `pass`, `phone`, `address`
 (7, 'jenjie', 'igot', 'igot23@gmail.com', '$2y$10$sIN.QxVxHEGBZQijoTbzxeEScqC8StI7CwIKySUzMuwbkYqofvZGW', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-17 01:43:41', 'uploads/default-profile.png'),
 (8, 'manny ', 'Pacquiao', 'turyak2@gmail.com', '$2y$10$7WPCDV3nd8O5xO/QD/cG3.wqSCmANgviwfGMPDyq9RvG1mNZvyAS6', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-17 01:50:09', 'uploads/67b3e9e3bd7e1_man.jpg'),
 (9, 'test', 'test', 'test6@gmail.com', '$2y$10$HcK17YDB1gDJU5wb/4uNhehbPNc./su9uVnBTjqI1SWlFHH2dMYBy', '09428013424', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', '2025-02-18 03:28:08', 'uploads/67b3fe4889550_man.jpg'),
-(10, 'mario', 'friolo', 'mario@gmail.com', '$2y$10$Pc8sW216gFIwI7vDNN2G6OWcbXzrlUTDm9aP3sjAGwThZ72pAG/Za', '09812371239', '123 Main St, City, 1234', '2025-02-20 07:35:16', 'uploads/67b6db69e587d_book_icon.png');
+(10, 'mario', 'friolo', 'mario@gmail.com', '$2y$10$Pc8sW216gFIwI7vDNN2G6OWcbXzrlUTDm9aP3sjAGwThZ72pAG/Za', '09812371239', '123 Main St, City, 1234', '2025-02-20 07:35:16', 'uploads/67b6db69e587d_book_icon.png'),
+(11, 'mario', 'hapon', 'mario1@gmail.com', '$2y$10$eNG.E5IG81V8VCbLEO4V2.BjgTIp2Z2X/JeEmvFXoB6wUik/Xj2HK', '09812371231', '312 Hipolito St. Sitio Sandayong, Cebu, Cebu 6000', '2025-02-28 04:03:49', 'uploads/67c148493dbe3_Man-PNG-Free-Download.png');
 
 --
 -- Indexes for dumped tables
@@ -88,6 +112,14 @@ INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `pass`, `phone`, `address`
 --
 ALTER TABLE `books`
   ADD PRIMARY KEY (`isbn`);
+
+--
+-- Indexes for table `cart`
+--
+ALTER TABLE `cart`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_id` (`user_id`,`isbn`),
+  ADD KEY `isbn` (`isbn`);
 
 --
 -- Indexes for table `users`
@@ -104,13 +136,30 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `books`
 --
 ALTER TABLE `books`
-  MODIFY `isbn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `isbn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `cart`
+--
+ALTER TABLE `cart`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `cart`
+--
+ALTER TABLE `cart`
+  ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`isbn`) REFERENCES `books` (`isbn`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
