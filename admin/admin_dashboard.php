@@ -56,7 +56,7 @@ mysqli_close($conn);
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="./images/icon.png">
+    <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
             margin: 0;

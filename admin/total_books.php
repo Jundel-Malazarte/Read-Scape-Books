@@ -68,6 +68,7 @@ $total_books = mysqli_fetch_row($total_books_query)[0];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Total Books</title>
+    <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
             font-family: Arial, sans-serif;

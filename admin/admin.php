@@ -53,7 +53,7 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
     <title>Admin Login</title>
     <link rel="stylesheet" href="" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="icon" href="./images/icon.png">
+    <link rel="icon" href="../images/Readscape.png">
     <style>
         body {
             margin: 0;

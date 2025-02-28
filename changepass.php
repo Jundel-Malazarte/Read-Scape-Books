@@ -1,3 +1,33 @@
+<?php
+ob_start(); // Start output buffering
+session_start();
+@include 'db_connect.php';
+
+if (!isset($_SESSION['id'])) {
+    header("Location: sign-in.php");
+    exit(); // Stop further execution
+}
+
+$user_id = $_SESSION['id'];
+
+$sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+if ($row = mysqli_fetch_assoc($result)) {
+    $fname = htmlspecialchars($row['fname']);
+    $lname = htmlspecialchars($row['lname']);
+    $profile_image = htmlspecialchars($row['profile_image']);
+} else {
+    echo "User not found.";
+}
+
+mysqli_stmt_close($stmt);
+mysqli_close($conn);
+ob_end_flush(); // End buffering
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +37,7 @@
     <title>Change Password</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="icon" href="./images/icon.png">
+    <link rel="icon" href="./images/Readscape.png">
     <style>
         * {
             box-sizing: border-box;
@@ -25,12 +55,7 @@
             justify-content: space-between;
             align-items: center;
             background-color: #333;
-            padding: 15px 20px;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1000;
+            padding: 10px 20px;
         }
 
         .navbar a {
@@ -47,6 +72,19 @@
         .nav-links {
             display: flex;
             gap: 15px;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .logout {
@@ -116,114 +154,99 @@
             background: #1e88e5;
             opacity: 0.8;
         }
+
+        /*Side nav*/
+        span {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .readscape {
+            width: 40px;
+            /* Match this size with the font-size of the menu icon */
+            height: 40px;
+            /* Keep height and width equal */
+            border-radius: 50%;
+        }
+
+        /** Slider nav */
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #212121;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: white;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidenav {
+                padding-top: 15px;
+            }
+
+            .sidenav a {
+                font-size: 18px;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="navbar">
-        <div class="nav-links">
-            <a href="dashboard.php">Home</a>
-            <a href="./profile.php">Profile</a>
-            <a href="#contact">Contact</a>
-            <a href="changepass.php">Change password</a>
+        <div style="display: flex; align-items: center;">
+            <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;</span>
+            <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px" style="margin-left: 10px;">
         </div>
-        <div>
-            <a href=""><?php
-                        @include 'db_connect.php';
-
-                        session_start();
-
-                        if (!isset($_SESSION['id'])) {
-                            // Redirect to login page if not logged in
-                            header("Location: sign-in.php");
-                            exit();
-                        }
-
-                        $user_id = $_SESSION['id']; // Get logged-in user's ID
-
-                        $sql = "SELECT fname, lname FROM `users` WHERE id = ?";
-                        $stmt = mysqli_prepare($conn, $sql);
-                        mysqli_stmt_bind_param($stmt, "i", $user_id);
-                        mysqli_stmt_execute($stmt);
-                        $result = mysqli_stmt_get_result($stmt);
-
-                        if ($row = mysqli_fetch_assoc($result)) {
-                            $fname = htmlspecialchars($row['fname']);
-                            $lname = htmlspecialchars($row['lname']);
-
-                            echo "Welcome, $fname $lname!";
-                        } else {
-                            echo "User not found.";
-                        }
-
-                        mysqli_stmt_close($stmt);
-                        mysqli_close($conn);
-                        ?></a>
-            <a href="sign-in.php">Log Out</a>
+        <div class="profile-info">
+            <img src="<?php echo $profile_image; ?>" alt="Profile Image">
+            <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
+            <a href="logout.php">Log Out</a>
         </div>
     </div>
 
-    <?php
-    session_start();
-    @include 'db_connect.php';
+    <div id="Sidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="dashboard.php">Home</a>
+        <a href="profile.php">Profile</a>
+        <a href="changepass.php">Change password</a>
+    </div>
 
-    if (!isset($_SESSION['id'])) {
-        header("Location: sign-in.php");
-        exit();
-    }
-
-    $id = $_SESSION['id'];
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $oldpwd = $_POST['oldpwd'];
-        $newpwd = $_POST['newpwd'];
-        $conpwd = $_POST['conpwd'];
-
-        // Fetch current hashed password
-        $sql = "SELECT pass FROM users WHERE id = ?";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "i", $id);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-
-        if ($row = mysqli_fetch_assoc($result)) {
-            $hashed_pass = $row['pass'];
-
-            // Verify old password
-            if (password_verify($oldpwd, $hashed_pass)) {
-                // Check if new passwords match
-                if ($newpwd === $conpwd) {
-                    // Hash new password
-                    $new_hashed_pass = password_hash($newpwd, PASSWORD_BCRYPT);
-
-                    // Update password in the database
-                    $update_sql = "UPDATE users SET pass = ? WHERE id = ?";
-                    $update_stmt = mysqli_prepare($conn, $update_sql);
-                    mysqli_stmt_bind_param($update_stmt, "si", $new_hashed_pass, $id);
-
-                    if (mysqli_stmt_execute($update_stmt)) {
-                        echo "<script>alert('Password updated successfully!'); window.location.href='profile.php';</script>";
-                        exit();
-                    } else {
-                        echo "<script>alert('Error updating password: " . mysqli_error($conn) . "');</script>";
-                    }
-
-                    mysqli_stmt_close($update_stmt);
-                } else {
-                    echo "<script>alert('New passwords do not match.');</script>";
-                }
-            } else {
-                echo "<script>alert('Your old password is incorrect!');</script>";
-            }
-        } else {
-            echo "<script>alert('User not found.');</script>";
+    <script>
+        function openNav() {
+            document.getElementById("Sidenav").style.width = "240px";
         }
 
-        mysqli_stmt_close($stmt);
-        mysqli_close($conn);
-    }
-    ?>
-
+        function closeNav() {
+            document.getElementById("Sidenav").style.width = "0";
+        }
+    </script>
 
     <div class="container">
         <h1>Change Password</h1>
@@ -238,47 +261,48 @@
             <input type="password" id="conpwd" name="conpwd" required>
 
             <button type="submit" class="btn">Update Password</button>
-        </form>            
+        </form>
         <?php
-            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                @include 'db_connect.php';
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            @include 'db_connect.php';
 
-                $old_password = $_POST['old-password'];
-                $new_password = $_POST['new-password'];
-                $confirm_password = $_POST['confirm-password'];
+            $old_password = $_POST['old-password'];
+            $new_password = $_POST['new-password'];
+            $confirm_password = $_POST['confirm-password'];
 
-                if ($new_password !== $confirm_password) {
-                    echo "<p style='color: red;'>New passwords do not match.</p>";
-                } else {
-                    $sql = "SELECT pass FROM `users` WHERE id = ?";
-                    $stmt = mysqli_prepare($conn, $sql);
-                    mysqli_stmt_bind_param($stmt, "i", $user_id);
-                    mysqli_stmt_execute($stmt);
-                    $result = mysqli_stmt_get_result($stmt);
+            if ($new_password !== $confirm_password) {
+                echo "<p style='color: red;'>New passwords do not match.</p>";
+            } else {
+                $sql = "SELECT pass FROM `users` WHERE id = ?";
+                $stmt = mysqli_prepare($conn, $sql);
+                mysqli_stmt_bind_param($stmt, "i", $user_id);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
 
-                    if ($row = mysqli_fetch_assoc($result)) {
-                        if (password_verify($old_password, $row['pass'])) {
-                            $new_password_hashed = password_hash($new_password, PASSWORD_DEFAULT);
-                            $sql = "UPDATE `users` SET pass = ? WHERE id = ?";
-                            $stmt = mysqli_prepare($conn, $sql);
-                            mysqli_stmt_bind_param($stmt, "si", $new_password_hashed, $user_id);
-                            if (mysqli_stmt_execute($stmt)) {
-                                echo "<script>alert('Password Updated Successfully!'); window.location.href='changepass.php';</script>";
-                            } else {
-                                echo "<p style='color: red;'>Error updating password.</p>";
-                            }
+                if ($row = mysqli_fetch_assoc($result)) {
+                    if (password_verify($old_password, $row['pass'])) {
+                        $new_password_hashed = password_hash($new_password, PASSWORD_DEFAULT);
+                        $sql = "UPDATE `users` SET pass = ? WHERE id = ?";
+                        $stmt = mysqli_prepare($conn, $sql);
+                        mysqli_stmt_bind_param($stmt, "si", $new_password_hashed, $user_id);
+                        if (mysqli_stmt_execute($stmt)) {
+                            echo "<script>alert('Password Updated Successfully!'); window.location.href='changepass.php';</script>";
                         } else {
-                            echo "<p style='color: red;'>Old password is incorrect.</p>";
+                            echo "<p style='color: red;'>Error updating password.</p>";
                         }
                     } else {
-                        echo "<p style='color: red;'>User not found.</p>";
+                        echo "<p style='color: red;'>Old password is incorrect.</p>";
                     }
-
-                    mysqli_stmt_close($stmt);
-                    mysqli_close($conn);
+                } else {
+                    echo "<p style='color: red;'>User not found.</p>";
                 }
+
+                mysqli_stmt_close($stmt);
+                mysqli_close($conn);
             }
+        }
         ?>
     </div>
 </body>
+
 </html>
