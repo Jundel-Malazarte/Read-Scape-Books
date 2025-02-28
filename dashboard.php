@@ -64,8 +64,6 @@ mysqli_close($conn);
             margin: 0;
         }
 
-
-
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -368,7 +366,6 @@ mysqli_close($conn);
 </head>
 
 <body>
-
     <div class="navbar">
         <!-- Logo here! -->
         <div id="Sidenav" class="sidenav">
@@ -428,7 +425,7 @@ mysqli_close($conn);
                         </button>
 
                         <button class="buy-now-btn" onclick="buyNow('<?php echo htmlspecialchars($book['isbn']); ?>')">
-                            ⚡ Buy Now
+                        <a href="checkout.php">⚡ Buy Now</a>
                         </button>
                     </div>
                 </div>
@@ -438,21 +435,6 @@ mysqli_close($conn);
             <p>No books found</p>
         <?php endif; ?>
     </div>
-
-    <!-- <script>
-        function fetchBooks(query = '') {
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", "fetch_books.php?q=" + query, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("book-list").innerHTML = ''; // Clear before inserting new books
-                    document.getElementById("book-list").innerHTML = xhr.responseText;
-                }
-            };
-            xhr.send();
-        }
-    </script> -->
-
     <script>
         document.getElementById("search-input").addEventListener("keyup", function() {
             let query = this.value.trim();
