@@ -99,7 +99,8 @@ ob_end_flush(); // End buffering
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             width: 400px;
             text-align: center;
-            margin: 90px auto 0; /* Adjusted margin to prevent navbar overlap */
+            margin: 90px auto 0;
+            /* Adjusted margin to prevent navbar overlap */
         }
 
         h1 {
@@ -224,7 +225,12 @@ ob_end_flush(); // End buffering
             <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;</span>
             <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px" style="margin-left: 10px;">
         </div>
+
         <div class="profile-info">
+            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
+                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
+            </a>
+            <br>
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
             <a href="logout.php">Log Out</a>
@@ -304,5 +310,19 @@ ob_end_flush(); // End buffering
         ?>
     </div>
 </body>
+<script>
+    function updateCartCounter() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "cart_counter.php", true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                document.getElementById("cart-counter").innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
+    document.addEventListener("DOMContentLoaded", updateCartCounter);
+</script>
 
 </html>

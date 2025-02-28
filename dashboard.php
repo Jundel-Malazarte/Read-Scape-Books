@@ -341,6 +341,16 @@ mysqli_close($conn);
             border-radius: 8px;
             cursor: pointer;
             transition: background 0.3s, transform 0.2s;
+            background-color: #28a745;
+            color: white;
+            /* Ensure text remains white */
+
+        }
+
+        .buy-now-btn a {
+            color: white;
+            text-decoration: none;
+            display: block;
         }
 
         .add-cart-btn {
@@ -430,7 +440,7 @@ mysqli_close($conn);
                         </button>
 
                         <button class="buy-now-btn" onclick="buyNow('<?php echo htmlspecialchars($book['isbn']); ?>')">
-                        <a href="checkout.php">⚡ Buy Now</a>
+                            <a href="checkout.php">⚡ Buy Now</a>
                         </button>
                     </div>
                 </div>

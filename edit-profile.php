@@ -291,7 +291,10 @@ ob_end_flush(); // End buffering
             }
         </script>
         <div class="profile-info">
-
+            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
+                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
+            </a>
+            <br>
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
             <a href="logout.php">Log Out</a>
         </div>
@@ -338,7 +341,21 @@ ob_end_flush(); // End buffering
                     profilePreview.src = reader.result;
                 };
                 reader.readAsDataURL(event.target.files[0]);
+
             }
+
+            function updateCartCounter() {
+                let xhr = new XMLHttpRequest();
+                xhr.open("GET", "cart_counter.php", true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        document.getElementById("cart-counter").innerText = xhr.responseText;
+                    }
+                };
+                xhr.send();
+            }
+
+            document.addEventListener("DOMContentLoaded", updateCartCounter);
         </script>
 
     </div>

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 @include 'db_connect.php';
 
@@ -22,23 +22,24 @@ if ($row = mysqli_fetch_assoc($result)) {
     $fname = htmlspecialchars($row['fname']);
     $lname = htmlspecialchars($row['lname']);
     $profile_image = htmlspecialchars($row['profile_image']);
-    }
+}
 
 mysqli_stmt_close($stmt);
 mysqli_close($conn);
 
 ?>
 <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Profile</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <link rel="icon" href="./images/Readscape.png">
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Profile</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
             margin: 0;
@@ -172,6 +173,7 @@ mysqli_close($conn);
         .action-button a.deactive-account {
             background-color: #f41304;
         }
+
         span {
             font-size: 24px;
             display: flex;
@@ -232,12 +234,11 @@ mysqli_close($conn);
                 font-size: 18px;
             }
         }
-
     </style>
 </head>
 
 <body>
-<div class="navbar">
+    <div class="navbar">
         <!-- Logo here! -->
         <div id="Sidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -257,7 +258,11 @@ mysqli_close($conn);
                 document.getElementById("Sidenav").style.width = "0";
             }
         </script>
-         <div class="profile-info">
+        <div class="profile-info">
+            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
+                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
+            </a>
+            <br>
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
             <a href="logout.php">Log Out</a>
@@ -312,5 +317,19 @@ mysqli_close($conn);
     </div>
 
 </body>
+<script>
+    function updateCartCounter() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "cart_counter.php", true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                document.getElementById("cart-counter").innerText = xhr.responseText;
+            }
+        };
+        xhr.send();
+    }
+
+    document.addEventListener("DOMContentLoaded", updateCartCounter);
+</script>
 
 </html>
