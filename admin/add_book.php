@@ -46,6 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = mysqli_prepare($conn, $sql);
     mysqli_stmt_bind_param($stmt, "sssssiid", $isbn, $title, $book_image, $author, $copyright, $qty, $price, $total);
 
+
     if (mysqli_stmt_execute($stmt)) {
         echo "<script>alert('Book added successfully!'); window.location.href='total_books.php';</script>";
     } else {

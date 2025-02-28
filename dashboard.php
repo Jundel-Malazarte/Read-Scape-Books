@@ -166,6 +166,18 @@ mysqli_close($conn);
             margin-right: auto;
         }
 
+        .book-list::-webkit-scrollbar {
+            height: 8px;
+            /* Make scrollbar thinner */
+        }
+
+        .book-list::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border-radius: 10px;
+        }
+
+
+
         .book-card {
             width: 250px;
             /* Increased width */
@@ -407,7 +419,7 @@ mysqli_close($conn);
                     <h3><?php echo htmlspecialchars($book['title']); ?></h3>
                     <!-- <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p> -->
                     <p><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
-                    <p><strong>Copyright:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
+                    <p><strong>Year Published:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
                     <p><strong>Stocks:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
                     <p><strong>Price:</strong> ₱<?php echo htmlspecialchars($book['price']); ?></p>
                     <!-- <p><strong>Total:</strong> ₱<?php echo htmlspecialchars($book['total']); ?></p> -->
@@ -459,6 +471,15 @@ mysqli_close($conn);
             alert("Redirecting to checkout for book ISBN: " + isbn);
             window.location.href = "checkout.php?isbn=" + isbn;
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const bookList = document.querySelector(".book-list");
+
+            bookList.addEventListener("wheel", function(event) {
+                event.preventDefault();
+                bookList.scrollLeft += event.deltaY; // Convert vertical scroll to horizontal
+            });
+        });
     </script>
 
 

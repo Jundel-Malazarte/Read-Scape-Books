@@ -115,7 +115,7 @@ $total_books = mysqli_fetch_row($total_books_query)[0];
         }
 
         .container {
-            width: 90%;
+            width: 80%;
             margin: auto;
             background: white;
             padding: 20px;
@@ -286,6 +286,7 @@ $total_books = mysqli_fetch_row($total_books_query)[0];
         <table>
             <thead>
                 <tr>
+                    <th>ISBN</th>
                     <th>Image</th>
                     <th>Title</th>
                     <th>Author</th>
@@ -299,6 +300,7 @@ $total_books = mysqli_fetch_row($total_books_query)[0];
             <tbody>
                 <?php while ($row = mysqli_fetch_assoc($books_query)): ?>
                     <tr>
+                        <td><?php echo htmlspecialchars($row['isbn']); ?></td>
                         <td><img src="../images/<?php echo $row['book_image'] ?: 'default_book.png'; ?>" class="book-img"></td>
                         <td><?php echo htmlspecialchars($row['title']); ?></td>
                         <td><?php echo htmlspecialchars($row['author']); ?></td>
