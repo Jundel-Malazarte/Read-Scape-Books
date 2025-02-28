@@ -53,6 +53,7 @@ $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, addre
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Total Users</title>
+    <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
             font-family: Arial, sans-serif;
