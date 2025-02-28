@@ -1,12 +1,14 @@
 <?php
-@include 'db_connect.php';
 session_start();
-
-// Redirect to login if not logged in
 if (!isset($_SESSION['id'])) {
     header("Location: sign-in.php");
     exit();
 }
+
+$cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
+
+// Fetch logged-in user details
+@include 'db_connect.php';
 
 $user_id = $_SESSION['id'];
 
@@ -48,15 +50,16 @@ $total_books_query = mysqli_query($conn, "SELECT COUNT(*) FROM books");
 $total_books = mysqli_fetch_row($total_books_query)[0];
 
 mysqli_close($conn);
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <link rel="icon" href="./images/icon.png">
+    <title>Shopping Cart</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -364,11 +367,87 @@ mysqli_close($conn);
             background-color: #218838;
             transform: scale(1.05);
         }
+
+        .cart-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .cart-item div {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .cart-item h3 {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .cart-item p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .cart-total {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .checkout-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .checkout-btn:hover {
+            background-color: #218838;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: red;
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            color: darkred;
+        }
     </style>
 </head>
 
 <body>
-
     <div class="navbar">
         <!-- Logo here! -->
         <div id="Sidenav" class="sidenav">
@@ -401,122 +480,57 @@ mysqli_close($conn);
             <a href="logout.php">Log Out</a>
         </div>
     </div>
-    <!-- <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2> -->
 
-    <div class="search-header">
-        <div class="header-text">
-            <h2>Picked for you</h2>
-        </div>
-        <div class="search-box">
-            <form method="GET" action="dashboard.php">
-                <input type="text" name="search" id="search-input" placeholder="Search for books..." value="<?php echo htmlspecialchars($search); ?>">
-                <button type="submit">Search</button>
-            </form>
-        </div>
-    </div>
 
-    <div class="book-list" id="book-list">
-        <?php if (mysqli_num_rows($books_query) > 0) : ?>
-            <?php while ($book = mysqli_fetch_assoc($books_query)) : ?>
-                <div class="book-card">
-                    <img src="<?php echo 'images/' . htmlspecialchars($book['book_image']); ?>" alt="Book Image" onerror="this.onerror=null; this.src='uploads/default.jpg';">
-                    <h3><?php echo htmlspecialchars($book['title']); ?></h3>
-                    <!-- <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p> -->
-                    <p><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
-                    <p><strong>Year Published:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
-                    <p><strong>Stocks:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
-                    <p><strong>Price:</strong> ₱<?php echo htmlspecialchars($book['price']); ?></p>
-                    <!-- <p><strong>Total:</strong> ₱<?php echo htmlspecialchars($book['total']); ?></p> -->
-                    <div class="button-group">
-                        <button class="add-cart-btn" onclick="addToCart('<?php echo htmlspecialchars($book['isbn']); ?>')">
-                            🛒 Add to Cart
-                        </button>
+    <div class="cart-container">
+        <h2>Your Cart</h2>
 
-                        <button class="buy-now-btn" onclick="buyNow('<?php echo htmlspecialchars($book['isbn']); ?>')">
-                            ⚡ Buy Now
-                        </button>
+        <?php if (count($cart) > 0) : ?>
+            <?php foreach ($cart as $book) : ?>
+                <div class="cart-item">
+                    <img src="<?php echo 'images/' . htmlspecialchars($book['book_image']); ?>" alt="Book">
+                    <div>
+                        <h3><?php echo htmlspecialchars($book['title']); ?></h3>
+                        <p>Author: <?php echo htmlspecialchars($book['author']); ?></p>
+                        <p>Price: ₱<?php echo htmlspecialchars($book['price']); ?></p>
+                        <p>Quantity: <?php echo $book['quantity']; ?></p>
                     </div>
-                </div>
+                    <button class="remove-btn" onclick="removeFromCart('<?php echo $item['isbn']; ?>')">❌</button>
 
-            <?php endwhile; ?>
+                </div>
+            <?php endforeach; ?>
+
+            <div class="cart-total">
+                Total: ₱<?php echo array_reduce($cart, fn($sum, $item) => $sum + ($item['price'] * $item['quantity']), 0); ?>
+            </div>
+
+            <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+
         <?php else : ?>
-            <p>No books found</p>
+            <p>Your cart is empty.</p>
         <?php endif; ?>
     </div>
 
-    <!-- <script>
-        function fetchBooks(query = '') {
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", "fetch_books.php?q=" + query, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("book-list").innerHTML = ''; // Clear before inserting new books
-                    document.getElementById("book-list").innerHTML = xhr.responseText;
-                }
-            };
-            xhr.send();
-        }
-    </script> -->
-
     <script>
-        document.getElementById("search-input").addEventListener("keyup", function() {
-            let query = this.value.trim();
+        function removeFromCart(isbn) {
             let xhr = new XMLHttpRequest();
-            xhr.open("GET", "fetch_books.php?q=" + encodeURIComponent(query), true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("book-list").innerHTML = xhr.responseText;
-                }
-            };
-            xhr.send();
-        });
-
-        function buyNow(isbn) {
-            alert("Redirecting to checkout for book ISBN: " + isbn);
-            window.location.href = "checkout.php?isbn=" + isbn;
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const bookList = document.querySelector(".book-list");
-
-            bookList.addEventListener("wheel", function(event) {
-                event.preventDefault();
-                bookList.scrollLeft += event.deltaY; // Convert vertical scroll to horizontal
-            });
-        });
-
-
-        function addToCart(isbn) {
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "add_to_cart.php", true);
+            xhr.open("POST", "remove_from_cart.php", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    let response = JSON.parse(xhr.responseText);
-                    alert(response.message);
-                    updateCartCounter(); // Update the cart counter after adding
+                    location.reload(); // Reload page to update cart
                 }
             };
 
             xhr.send("isbn=" + encodeURIComponent(isbn));
         }
 
-        function updateCartCounter() {
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", "cart_counter.php", true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("cart-counter").innerText = xhr.responseText;
-                }
-            };
-            xhr.send();
+        function checkout() {
+            alert("Proceeding to checkout...");
+            window.location.href = "checkout.php";
         }
-
-        // Call updateCartCounter() when page loads to show correct count
-        document.addEventListener("DOMContentLoaded", updateCartCounter);
     </script>
-
 
 </body>
 

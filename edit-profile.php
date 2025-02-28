@@ -266,12 +266,11 @@ ob_end_flush(); // End buffering
                 font-size: 18px;
             }
         }
-
     </style>
 </head>
 
 <body>
-<div class="navbar">
+    <div class="navbar">
         <!-- Logo here! -->
         <div id="Sidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
@@ -291,7 +290,8 @@ ob_end_flush(); // End buffering
                 document.getElementById("Sidenav").style.width = "0";
             }
         </script>
-         <div class="profile-info">
+        <div class="profile-info">
+
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
             <a href="logout.php">Log Out</a>
         </div>
