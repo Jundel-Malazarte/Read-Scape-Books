@@ -378,7 +378,6 @@ mysqli_close($conn);
             }
         </script>
 
-
         <div class="profile-info">
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
