@@ -40,202 +40,213 @@ mysqli_close($conn);
     <link rel="stylesheet" href="">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="icon" href="./images/Readscape.png">
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            /* Light background for better contrast */
-        }
+    <html>
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
-        }
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Profile</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="icon" href="./images/Readscape.png">
+        <style>
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                /* Light background for better contrast */
+            }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
-        }
+            .navbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background-color: #333;
+                padding: 10px 20px;
+            }
 
-        .navbar a:hover {
-            background-color: #555;
-            border-radius: 5px;
-        }
+            .navbar a {
+                color: white;
+                text-decoration: none;
+                padding: 10px 15px;
+            }
 
-        .nav-links {
-            display: flex;
-            gap: 15px;
-        }
+            .navbar a:hover {
+                background-color: #555;
+                border-radius: 5px;
+            }
 
-        .profile-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+            .nav-links {
+                display: flex;
+                gap: 15px;
+            }
 
-        .profile-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
+            .profile-info {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
 
-        .logout {
-            margin-left: auto;
-        }
+            .profile-info img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
 
-        .container {
-            margin-left: 2rem;
-        }
+            .logout {
+                margin-left: auto;
+            }
 
-        /* Profile Card Styles */
-        .profile-card {
-            width: 1000px;
-            /* Adjusted width */
-            margin: 30px auto;
-            /* Centered with more top margin */
-            padding: 20px;
-            background-color: #fff;
-            /* White background for the card */
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            /* Subtle shadow effect */
-            text-align: center;
-            /* Center content within the card */
-        }
+            .container {
+                margin-left: 2rem;
+            }
 
-        .profile-card img {
-            width: 180px;
-            /* Adjusted size */
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 15px;
-            /* Increased spacing */
-            /* Ensures proper margin */
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-            /* Remove automatic margin */
-        }
+            /* Profile Card Styles */
+            .profile-card {
+                width: 1000px;
+                /* Adjusted width */
+                margin: 30px auto;
+                /* Centered with more top margin */
+                padding: 20px;
+                background-color: #fff;
+                /* White background for the card */
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                /* Subtle shadow effect */
+                text-align: center;
+                /* Center content within the card */
+            }
 
-        .profile-card h2 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            text-align: center;
-            color: #333;
-        }
+            .profile-card img {
+                width: 180px;
+                /* Adjusted size */
+                height: 180px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-bottom: 15px;
+                /* Increased spacing */
+                /* Ensures proper margin */
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+                /* Remove automatic margin */
+            }
 
-        .profile-card p {
-            margin: 8px 0;
-            text-align: center;
-            color: #555;
-        }
+            .profile-card h2 {
+                margin-top: 0;
+                margin-bottom: 10px;
+                text-align: center;
+                color: #333;
+            }
 
-        .profile-card strong {
-            font-weight: bold;
-            color: #333;
-        }
+            .profile-card p {
+                margin: 8px 0;
+                text-align: center;
+                color: #555;
+            }
 
-        /* Profile Details Styles */
-        .profile-details {
-            text-align: center;
-            /* Center the text */
-        }
+            .profile-card strong {
+                font-weight: bold;
+                color: #333;
+            }
 
-        /* Action button profile */
-        .action-button {
-            display: flex;
-            text-decoration: none;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 10px;
-        }
+            /* Profile Details Styles */
+            .profile-details {
+                text-align: center;
+                /* Center the text */
+            }
 
-        .action-button a {
-            display: block;
-            padding: 10px 20px;
-            text-decoration: none;
-            color: white;
-            border-radius: 5px;
-            border: none;
-        }
+            /* Action button profile */
+            .action-button {
+                display: flex;
+                text-decoration: none;
+                justify-content: center;
+                margin-top: 20px;
+                gap: 10px;
+            }
 
-        .action-button a.edit-profile {
-            background-color: #1e88e5;
-        }
+            .action-button a {
+                display: block;
+                padding: 10px 20px;
+                text-decoration: none;
+                color: white;
+                border-radius: 5px;
+                border: none;
+            }
 
-        .action-button a.deactive-account {
-            background-color: #f41304;
-        }
+            .action-button a.edit-profile {
+                background-color: #1e88e5;
+            }
 
-        span {
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+            .action-button a.deactive-account {
+                background-color: #f41304;
+            }
 
-        .readscape {
-            width: 40px;
-            /* Match this size with the font-size of the menu icon */
-            height: 40px;
-            /* Keep height and width equal */
-            border-radius: 50%;
-        }
+            span {
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .readscape {
+                width: 40px;
+                /* Match this size with the font-size of the menu icon */
+                height: 40px;
+                /* Keep height and width equal */
+                border-radius: 50%;
+            }
 
 
-        /** Slider nav */
-        .sidenav {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #212121;
-            overflow-x: hidden;
-            transition: 0.5s;
-            padding-top: 60px;
-        }
-
-        .sidenav a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 25px;
-            color: white;
-            display: block;
-            transition: 0.3s;
-        }
-
-        .sidenav a:hover {
-            color: #f1f1f1;
-        }
-
-        .sidenav .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-
-        @media screen and (max-height: 450px) {
+            /** Slider nav */
             .sidenav {
-                padding-top: 15px;
+                height: 100%;
+                width: 0;
+                position: fixed;
+                z-index: 1;
+                top: 0;
+                left: 0;
+                background-color: #212121;
+                overflow-x: hidden;
+                transition: 0.5s;
+                padding-top: 60px;
             }
 
             .sidenav a {
-                font-size: 18px;
+                padding: 8px 8px 8px 32px;
+                text-decoration: none;
+                font-size: 25px;
+                color: white;
+                display: block;
+                transition: 0.3s;
             }
-        }
-    </style>
-</head>
+
+            .sidenav a:hover {
+                color: #f1f1f1;
+            }
+
+            .sidenav .closebtn {
+                position: absolute;
+                top: 0;
+                right: 25px;
+                font-size: 36px;
+                margin-left: 50px;
+            }
+
+            @media screen and (max-height: 450px) {
+                .sidenav {
+                    padding-top: 15px;
+                }
+
+                .sidenav a {
+                    font-size: 18px;
+                }
+            }
+        </style>
+    </head>
 
 <body>
     <div class="navbar">
@@ -245,7 +256,7 @@ mysqli_close($conn);
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="changepass.php">Change password</a>
-
+            <a href="cart.php">Cart</a>
         </div>
         <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776; <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
 
