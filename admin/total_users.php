@@ -43,7 +43,21 @@ $total_users_query = mysqli_query($conn, "SELECT COUNT(*) FROM users");
 $total_users = mysqli_fetch_row($total_users_query)[0];
 
 // Fetch all users' details (excluding password)
-$users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, address, created_at FROM users");
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+if (!empty($search)) {
+    $sql = "SELECT id, fname, lname, email, phone, address, created_at 
+            FROM users 
+            WHERE CONCAT(fname, ' ', lname) LIKE ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    $searchTerm = "%" . $search . "%";
+    mysqli_stmt_bind_param($stmt, "s", $searchTerm);
+    mysqli_stmt_execute($stmt);
+    $users_query = mysqli_stmt_get_result($stmt);
+} else {
+    $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, address, created_at FROM users");
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -170,6 +184,49 @@ $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, addre
             background-color: darkred;
             /* Darker red on hover */
         }
+
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-bar button {
+            padding: 8px 15px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .search-bar .reset-btn {
+            padding: 8px 15px;
+            background-color: #d9534f;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .search-bar button:hover {
+            background-color: #4cae4c;
+        }
+
+        .search-bar .reset-btn:hover {
+            background-color: #c9302c;
+        }
     </style>
 </head>
 
@@ -186,7 +243,17 @@ $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, addre
     </div>
 
     <div class="container">
-        <h1>Total Users: <?php echo $total_users; ?></h1>
+        <div class="search-container">
+            <h1>Total Users: <?php echo $total_users; ?></h1>
+
+            <div class="search-bar">
+                <form method="GET">
+                    <input type="text" name="search" placeholder="Search by Full Name" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                    <button type="submit">Search</button>
+                    <a href="total_users.php" class="reset-btn">Reset</a>
+                </form>
+            </div>
+        </div>
 
         <table>
             <thead>
