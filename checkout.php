@@ -553,7 +553,7 @@ mysqli_stmt_close($stmt);
             document.getElementById('preview-state').textContent = state;
             document.getElementById('preview-zipcode').textContent = zipcode;
 
-            // Hide form and show preview
+            // Hide form and show previewasdasdasd
             document.getElementById('shipping-form').style.display = 'none';
             document.getElementById('address-preview').style.display = 'block';
         }
