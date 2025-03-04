@@ -59,7 +59,7 @@ mysqli_close($conn);
             justify-content: space-between;
             align-items: center;
             background-color: #333;
-            padding: 10px;
+            padding: 10px 20px;
         }
 
         .navbar a {
@@ -226,7 +226,7 @@ mysqli_close($conn);
             <a href="logout.php">Log Out</a>
         </div>
         <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776; 
-            <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+            <img src="./images/Readscape.png" alt="logo" class="readscape" width="40px" height="40px"></span>
         <script>
             function openNav() {
                 document.getElementById("Sidenav").style.width = "240px";
