@@ -29,29 +29,32 @@ if (isset($_POST["submit"])) {
     $check_email->execute();
     $check_email->store_result();
 
+    // If email already exists, show an alert
     if ($check_email->num_rows > 0) {
         echo "<script>alert('Email already exists! Please use a different email.');</script>";
     } else {
         // Hash the password before storing it
         $hashed_pass = password_hash($pass, PASSWORD_BCRYPT);
-
+    
         // Insert user into the database
         $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, pass, phone, address, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?)");
-
+    
         if ($stmt === false) {
             die("Error preparing statement: " . $conn->error);
         }
-
+    
         $stmt->bind_param("sssssss", $fname, $lname, $email, $hashed_pass, $phone, $address, $profile_image);
-
+    
         if ($stmt->execute()) {
             echo "<script>alert('Registration successful!'); window.location.href='sign-in.php';</script>";
         } else {
             die("Error executing query: " . $stmt->error);
         }
+    
+        $stmt->close(); // Only close if it was initialized
     }
+    
     $check_email->close();
-    $stmt->close();
     $conn->close();
 }
 ?>
@@ -255,10 +258,10 @@ if (isset($_POST["submit"])) {
                 return false;
             }
 
-            // Validate address (must contain letters, numbers, and a zip code)
-            var addressPattern = /^[A-Za-z0-9\s,.-]+\s\d{4}$/;
+            // Validate address (must contain letters and numbers)
+            var addressPattern = /^[A-Za-z0-9\s,.-]+$/;
             if (!addressPattern.test(address)) {
-                alert("Please enter a valid address with a zip code (e.g., 123 Main St, City, 1234).");
+                alert("Please enter a valid address (e.g., 123 Main St, City).");
                 return false;
             }
 
