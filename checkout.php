@@ -72,7 +72,7 @@ mysqli_stmt_close($stmt);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Readscape</title>
-    <link rel="icon" href="images/Readscape .png" type="image/png">
+    <link rel="icon" href="images/Readscape.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <style>
@@ -121,7 +121,6 @@ mysqli_stmt_close($stmt);
             object-fit: cover;
         }
 
-        /** Slider nav */
         .sidenav {
             height: 100%;
             width: 0;
@@ -337,7 +336,6 @@ mysqli_stmt_close($stmt);
         .checkout-btn {
             margin-top: 20px;
             background-color: #000;
-            /* Updated to black to match cart.php */
             color: white;
             padding: 15px;
             border: none;
@@ -350,8 +348,14 @@ mysqli_stmt_close($stmt);
 
         .checkout-btn:hover {
             background-color: #333;
-            /* Updated hover color to match cart.php */
             transform: scale(1.05);
+        }
+
+        .empty-cart-message {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
         }
 
         @media (max-width: 768px) {
@@ -438,10 +442,8 @@ mysqli_stmt_close($stmt);
             </form>
 
             <h2 style="margin-top: 30px;">Order Summary</h2>
-            <?php if (empty($cart_items)): ?>
-                <p>Your cart is empty.</p>
-            <?php else: ?>
-                <div class="order-summary">
+            <div class="order-summary" id="order-summary">
+                <?php if (!empty($cart_items)): ?>
                     <table class="cart-table">
                         <thead>
                             <tr>
@@ -469,8 +471,8 @@ mysqli_stmt_close($stmt);
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                </div>
-            <?php endif; ?>
+                <?php endif; ?>
+            </div>
         </div>
 
         <div class="right-column">
@@ -509,6 +511,56 @@ mysqli_stmt_close($stmt);
         function closeNav() {
             document.getElementById("Sidenav").style.width = "0";
         }
+
+        function previewAddress() {
+            // Get form values
+            const email = document.getElementById('email').value;
+            const firstName = document.getElementById('first_name').value;
+            const lastName = document.getElementById('last_name').value;
+            const mobile = document.getElementById('mobile').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zipcode = document.getElementById('zipcode').value;
+
+            // Validate that all fields are filled
+            if (!email || !firstName || !lastName || !mobile || !address || !city || !state || !zipcode) {
+                alert("Please fill in all shipping information fields.");
+                return;
+            }
+
+            // Populate preview
+            document.getElementById('preview-email').textContent = email;
+            document.getElementById('preview-name').textContent = firstName + " " + lastName;
+            document.getElementById('preview-mobile').textContent = mobile;
+            document.getElementById('preview-address').textContent = address;
+            document.getElementById('preview-city').textContent = city;
+            document.getElementById('preview-state').textContent = state;
+            document.getElementById('preview-zipcode').textContent = zipcode;
+
+            // Hide form and show preview
+            document.getElementById('shipping-form').style.display = 'none';
+            document.getElementById('address-preview').style.display = 'block';
+        }
+
+        function editAddress() {
+            // Hide preview and show form
+            document.getElementById('address-preview').style.display = 'none';
+            document.getElementById('shipping-form').style.display = 'block';
+        }
+
+        // Check if cart is empty and display message using JavaScript
+        window.onload = function() {
+            const orderSummary = document.getElementById('order-summary');
+            const cartItemsExist = orderSummary.querySelector('table') !== null;
+
+            if (!cartItemsExist) {
+                const emptyMessage = document.createElement('p');
+                emptyMessage.className = 'empty-cart-message';
+                emptyMessage.textContent = 'No items in the cart.';
+                orderSummary.appendChild(emptyMessage);
+            }
+        };
     </script>
 </body>
 

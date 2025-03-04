@@ -11,10 +11,34 @@ $user_id = $_SESSION['id'];
 
 // Ensure all form fields are provided
 $required_fields = ['email', 'first_name', 'last_name', 'mobile', 'address', 'city', 'state', 'zipcode', 'payment_method'];
+$missing_fields = [];
 foreach ($required_fields as $field) {
     if (empty($_POST[$field])) {
-        die("Error: All fields are required.");
+        $missing_fields[] = $field;
     }
+}
+
+if (!empty($missing_fields)) {
+    // Output HTML with JavaScript to show error and redirect
+?>
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <title>Checkout Error</title>
+        <script>
+            window.onload = function() {
+                alert("Error: All fields are required. Missing: <?php echo implode(', ', $missing_fields); ?>");
+                window.location.href = "checkout.php";
+            };
+        </script>
+    </head>
+
+    <body></body>
+
+    </html>
+<?php
+    exit();
 }
 
 // Store shipping information
@@ -44,14 +68,66 @@ $stmt->execute();
 $result = $stmt->get_result();
 $cart_items = $result->fetch_all(MYSQLI_ASSOC);
 
+// Check for empty cart
 if (empty($cart_items)) {
-    die("Error: No items in cart.");
+?>
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <title>Checkout Error</title>
+        <style>
+            .empty-cart-message {
+                font-family: Arial, sans-serif;
+                font-size: 16px;
+                color: #666;
+                text-align: center;
+                margin-top: 50px;
+            }
+        </style>
+        <script>
+            window.onload = function() {
+                const container = document.createElement('div');
+                container.className = 'empty-cart-message';
+                container.textContent = 'No items in the cart.';
+                document.body.appendChild(container);
+                setTimeout(function() {
+                    window.location.href = "cart.php";
+                }, 2000); // Redirect after 2 seconds
+            };
+        </script>
+    </head>
+
+    <body></body>
+
+    </html>
+    <?php
+    exit();
 }
 
 // Validate stock levels
 foreach ($cart_items as $item) {
     if ($item['quantity'] > $item['stock']) {
-        die("Error: Not enough stock for '{$item['title']}'. Available stock: {$item['stock']}");
+        $error_message = "Error: Not enough stock for '" . htmlspecialchars($item['title']) . "'. Available stock: " . $item['stock'];
+    ?>
+        <!DOCTYPE html>
+        <html>
+
+        <head>
+            <title>Checkout Error</title>
+            <script>
+                window.onload = function() {
+                    alert("<?php echo $error_message; ?>");
+                    window.location.href = "cart.php";
+                };
+            </script>
+        </head>
+
+        <body></body>
+
+        </html>
+    <?php
+        exit();
     }
 }
 
@@ -102,7 +178,25 @@ try {
     exit();
 } catch (Exception $e) {
     $conn->rollback();
-    die("Error processing order: " . $e->getMessage());
+    ?>
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <title>Checkout Error</title>
+        <script>
+            window.onload = function() {
+                alert("Error processing order: <?php echo $e->getMessage(); ?>");
+                window.location.href = "cart.php";
+            };
+        </script>
+    </head>
+
+    <body></body>
+
+    </html>
+<?php
+    exit();
 }
 ?>
 

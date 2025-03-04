@@ -94,159 +94,6 @@ $total_price = 0;
             object-fit: cover;
         }
 
-        /* Container for search and header */
-        .search-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 90%;
-            margin: 20px auto;
-        }
-
-        /* Adjusted search input */
-        .search-box {
-            display: flex;
-            align-items: center;
-        }
-
-        .search-box input {
-            width: 350px;
-            /* Slightly wider */
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px 0 0 5px;
-            outline: none;
-        }
-
-        /* Bigger search button */
-        .search-box button {
-            padding: 12px 18px;
-            font-size: 16px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .search-box button:hover {
-            background-color: #555;
-        }
-
-        /* Adjusted header */
-        .header-text h2 {
-            font-size: 22px;
-            margin: 0;
-        }
-
-
-        .book-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            margin-top: 20px;
-            max-width: 90%;
-            /* Make the book list span a larger width */
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .book-list::-webkit-scrollbar {
-            height: 8px;
-            /* Make scrollbar thinner */
-        }
-
-        .book-list::-webkit-scrollbar-thumb {
-            background-color: #555;
-            border-radius: 10px;
-        }
-
-
-
-        .book-card {
-            width: 250px;
-            /* Increased width */
-            background: white;
-            padding: 20px;
-            /* Increased padding */
-            border-radius: 12px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .book-card:hover {
-            transform: scale(1.05);
-            /* Slight zoom effect for better UX */
-        }
-
-        .book-card img {
-            width: 100%;
-            max-width: 100%;
-            height: 275px;
-            /* Increased height */
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .book-card h3 {
-            font-size: 18px;
-            /* Larger title */
-            margin: 10px 0;
-        }
-
-        .book-card p {
-            font-size: 15px;
-            /* Increased text size */
-            color: #444;
-        }
-
-        .buy-now-btn {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 14px;
-            /* Larger button */
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            /* Increased font size */
-            margin-top: 12px;
-            width: 100%;
-            transition: background 0.3s, transform 0.2s;
-        }
-
-        .buy-now-btn:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-        }
-
-        .header-text {
-            text-align: left;
-            margin-top: 20px;
-            margin-left: 20px;
-        }
-
-        span {
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .readscape {
-            width: 40px;
-            /* Match this size with the font-size of the menu icon */
-            height: 40px;
-            /* Keep height and width equal */
-            border-radius: 50%;
-        }
-
-
-        /** Slider nav */
         .sidenav {
             height: 100%;
             width: 0;
@@ -415,7 +262,6 @@ $total_price = 0;
             background: #f8f9fa;
             border-radius: 10px;
             padding: 20px 30px;
-            /* Increased padding for better spacing */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
@@ -436,9 +282,7 @@ $total_price = 0;
             font-size: 14px;
             color: #666;
             margin: 10px 10px;
-            /* Added left and right margins */
             line-height: 1.5;
-            /* Increased line spacing */
         }
 
         .summary-details .total {
@@ -446,14 +290,11 @@ $total_price = 0;
             font-weight: 700;
             color: #000;
             margin: 10px 10px;
-            /* Added left and right margins */
             line-height: 1.5;
-            /* Increased line spacing */
         }
 
         .shipping-options {
             margin: 10px 10px;
-            /* Added left and right margins */
         }
 
         .shipping-options select {
@@ -467,7 +308,6 @@ $total_price = 0;
 
         .payment-methods {
             margin: 10px 10px;
-            /* Added left and right margins */
         }
 
         .payment-methods select {
@@ -482,9 +322,6 @@ $total_price = 0;
         .checkout-btn {
             display: block;
             max-width: 100%;
-            background-color: #007bff;
-            /* Blue background for Checkout button */
-            width: 100%;
             background-color: #000;
             color: white;
             padding: 15px;
@@ -495,10 +332,21 @@ $total_price = 0;
             text-decoration: none;
             transition: background 0.3s;
             margin-top: 20px;
+            cursor: pointer;
         }
 
         .checkout-btn:hover {
             background-color: #333;
+        }
+
+        .checkout-btn:disabled {
+            background-color: #cccccc;
+            color: #666666;
+            cursor: not-allowed;
+        }
+
+        .checkout-btn:disabled:hover {
+            background-color: #cccccc;
         }
 
         @media (max-width: 768px) {
@@ -556,7 +404,7 @@ $total_price = 0;
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="cart-items">
                         <?php while ($cart_item = mysqli_fetch_assoc($result)): ?>
                             <tr id="cart-item-<?php echo $cart_item['isbn']; ?>">
                                 <td>
@@ -564,7 +412,6 @@ $total_price = 0;
                                         <img src="images/<?php echo htmlspecialchars($cart_item['book_image']); ?>" alt="Book">
                                         <div>
                                             <h3><?php echo htmlspecialchars($cart_item['title']); ?></h3>
-                                            <!-- <p>Blue</p> Placeholder description as per image -->
                                         </div>
                                     </div>
                                 </td>
@@ -598,16 +445,9 @@ $total_price = 0;
                                 <option value="express">Express Delivery - ₱200.00</option>
                             </select>
                         </div>
-                        <!-- <div class="payment-methods">
-                            <span>Payment Method</span>
-                            <select id="payment-method" name="payment_method">
-                                <option value="credit_card">Credit Card</option>
-                                <option value="cash_on_delivery">Cash on Delivery</option>
-                            </select>
-                        </div> -->
                         <p class="total"><span>Total Price</span><span id="total-price">₱<?php echo number_format($total_price + 100, 2, '.', ','); ?></span></p>
                     </div>
-                    <a href="checkout.php" class="checkout-btn">Checkout</a>
+                    <a href="checkout.php" class="checkout-btn" id="checkout-btn" <?php if ($cart_count == 0) echo 'disabled'; ?>>Checkout</a>
                 </div>
             </div>
         </div>
@@ -659,6 +499,9 @@ $total_price = 0;
                         quantitySpan.innerText = response.new_quantity;
                         document.getElementById("subtotal-price").innerText = "₱" + response.new_subtotal;
                         document.getElementById("total-price").innerText = "₱" + response.new_total_price;
+
+                        // Update cart count and button state after quantity change
+                        updateCartState();
                     } else {
                         alert(response.message);
                     }
@@ -666,6 +509,35 @@ $total_price = 0;
             };
             xhr.send("isbn=" + isbn + "&new_quantity=" + newQuantity);
         }
+
+        // Function to update cart state (cart count and checkout button)
+        function updateCartState() {
+            const cartItems = document.querySelectorAll("#cart-items tr");
+            const cartCount = cartItems.length;
+            const checkoutBtn = document.getElementById("checkout-btn");
+
+            if (cartCount === 0) {
+                checkoutBtn.setAttribute("disabled", "disabled");
+                checkoutBtn.setAttribute("title", "Add items to your cart to proceed to checkout");
+            } else {
+                checkoutBtn.removeAttribute("disabled");
+                checkoutBtn.removeAttribute("title");
+            }
+        }
+
+        // Initial cart state check
+        window.onload = function() {
+            updateCartState();
+
+            // Add event listener to the checkout button to prevent default behavior if disabled
+            const checkoutBtn = document.getElementById("checkout-btn");
+            checkoutBtn.addEventListener("click", function(event) {
+                if (checkoutBtn.hasAttribute("disabled")) {
+                    event.preventDefault();
+                    alert("Your cart is empty. Please add items to proceed to checkout.");
+                }
+            });
+        };
     </script>
 </body>
 
