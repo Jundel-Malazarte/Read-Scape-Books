@@ -59,7 +59,7 @@ mysqli_close($conn);
             justify-content: space-between;
             align-items: center;
             background-color: #333;
-            padding: 10px 20px;
+            padding: 10px;
         }
 
         .navbar a {

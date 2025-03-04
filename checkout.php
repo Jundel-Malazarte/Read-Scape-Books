@@ -72,7 +72,7 @@ mysqli_stmt_close($stmt);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Readscape</title>
-    <link rel="icon" href="images/Readscape .png" type="image/png">
+    <link rel="icon" href="images/Readscape.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <style>
@@ -93,8 +93,12 @@ mysqli_stmt_close($stmt);
 
         .navbar img {
             border-radius: 50%;
-            margin-right: 15px;
-            align-self: flex-start;
+        }
+
+        .readscape-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .navbar a {
@@ -108,6 +112,8 @@ mysqli_stmt_close($stmt);
             border-radius: 5px;
         }
 
+        /** Profile info */
+        
         .profile-info {
             display: flex;
             align-items: center;
@@ -120,6 +126,7 @@ mysqli_stmt_close($stmt);
             border-radius: 50%;
             object-fit: cover;
         }
+
 
         /** Slider nav */
         .sidenav {
@@ -164,6 +171,13 @@ mysqli_stmt_close($stmt);
             .sidenav a {
                 font-size: 18px;
             }
+        }
+
+        span {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .checkout-container {
@@ -314,12 +328,13 @@ mysqli_stmt_close($stmt);
             <a href="order.php">My Orders</a>
             <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰</span>
-        <img src="images/Readscape.png" alt="logo" width="40px" height="40px" style="border-radius:50%; align-self: start-left;">
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰ 
+            <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
         <div class="profile-info">
-            <a href="cart.php" style="position: relative;">
-                🛒 Cart <span style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
+            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
+                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
             </a>
+            <br>
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
             <a href="logout.php">Log Out</a>
