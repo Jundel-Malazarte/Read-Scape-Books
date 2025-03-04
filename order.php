@@ -79,6 +79,10 @@ mysqli_close($conn);
             gap: 15px;
         }
 
+        .readscape {
+            border-radius: 50%;
+        }
+
         .profile-info {
             display: flex;
             align-items: center;
@@ -221,7 +225,8 @@ mysqli_close($conn);
             <a href="order.php">My Orders</a>
             <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776; <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776; 
+            <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
         <script>
             function openNav() {
                 document.getElementById("Sidenav").style.width = "240px";
