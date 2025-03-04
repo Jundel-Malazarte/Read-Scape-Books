@@ -1,5 +1,5 @@
 <?php
-@include 'db_connect.php';
+include 'db_connect.php';
 session_start();
 
 if (!isset($_SESSION['id'])) {
@@ -56,6 +56,8 @@ $total_price = 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="./images/Readscape.png" type="image/png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -202,6 +204,7 @@ $total_price = 0;
 
         .book-card img {
             width: 100%;
+            max-width: 100%;
             height: 275px;
             /* Increased height */
             object-fit: cover;
@@ -515,7 +518,7 @@ $total_price = 0;
 
         .checkout-btn {
             display: block;
-            width: 100%;
+            max-width: 100%;
             background-color: #007bff;
             /* Blue background for Checkout button */
             color: white;
@@ -619,8 +622,12 @@ $total_price = 0;
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="changepass.php">Change password</a>
+            <a href="cart.php">Cart</a>
+            <a href="order.php">My Orders</a>
+            <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰ <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰ 
+            <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
         <div class="profile-info">
             <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
                 🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
