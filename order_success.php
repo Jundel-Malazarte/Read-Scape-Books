@@ -10,7 +10,7 @@ if (!isset($_SESSION['id']) || !isset($_GET['order_id'])) {
 
 $order_id = intval($_GET['order_id']);
 $user_id = $_SESSION['id'];
-$fixed_shipping_fee = 50.00; // Set shipping fee
+$fixed_shipping_fee = 100.00; // Set shipping fee
 
 // Fetch order details
 $stmt = $conn->prepare(

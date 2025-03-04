@@ -52,7 +52,7 @@ if ($result && mysqli_num_rows($result) > 0) {
 mysqli_stmt_close($stmt);
 
 // Fixed shipping cost (as per code, though image suggests $5.17)
-$shipping_cost = 50.00; // Adjust to $5.17 if intended to match image
+$shipping_cost = 100.00; // Adjust to $5.17 if intended to match image
 $grand_total = $total_price + $shipping_cost;
 
 // Fetch cart count for navbar
@@ -176,31 +176,84 @@ mysqli_stmt_close($stmt);
             margin-top: 30px;
         }
 
-        .cart-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .cart-item img {
+        .cart-table th,
+        .cart-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-table th {
+            font-size: 14px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .cart-table td {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .cart-table .item-details {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-table .item-details img {
             width: 80px;
-            height: 100px;
-            margin-right: 15px;
+            height: 80px;
             object-fit: cover;
             border-radius: 5px;
         }
 
-        .cart-details h3 {
-            font-size: 18px;
-            margin: 0 0 5px;
+        .cart-table .item-details h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
         }
 
-        .cart-details p {
-            font-size: 14px;
+        .cart-table .item-details p {
+            font-size: 12px;
             color: #666;
+            margin: 0;
+        }
+
+        .address-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .address-preview p {
+            font-size: 14px;
+            color: #333;
             margin: 5px 0;
+        }
+
+        .edit-address-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .edit-address-btn:hover {
+            background-color: #0056b3;
         }
 
         .price-summary {
@@ -217,8 +270,17 @@ mysqli_stmt_close($stmt);
             margin-top: 10px;
         }
 
-        .payment-section {
-            margin-top: 30px;
+        .payment-methods {
+            margin: 20px 0;
+        }
+
+        .payment-methods select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-top: 5px;
         }
 
         label {
@@ -246,18 +308,21 @@ mysqli_stmt_close($stmt);
 
         .checkout-btn {
             margin-top: 20px;
-            background-color: #007bff;
+            background-color: #000;
+            /* Updated to black to match cart.php */
             color: white;
             padding: 15px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
-            transition: background 0.3s, transform 0.2s;
+            transition: background 0.3s;
+            width: 100%;
         }
 
         .checkout-btn:hover {
-            background-color: #0056b3;
+            background-color: #333;
+            /* Updated hover color to match cart.php */
             transform: scale(1.05);
         }
 
@@ -299,7 +364,7 @@ mysqli_stmt_close($stmt);
         <div class="left-column">
             <h2>Shipping Information</h2>
             <form id="checkout-form" action="process_checkout.php" method="post">
-                <div class="shipping-form">
+                <div class="shipping-form" id="shipping-form">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="you@example.com" required>
 
@@ -323,6 +388,20 @@ mysqli_stmt_close($stmt);
 
                     <label for="zipcode">Zipcode</label>
                     <input type="text" id="zipcode" name="zipcode" required>
+
+                    <button type="button" class="edit-address-btn" onclick="previewAddress()">Save Address</button>
+                </div>
+
+                <div class="address-preview" id="address-preview" style="display: none;">
+                    <h3>Shipping Address</h3>
+                    <p><strong>Email:</strong> <span id="preview-email"></span></p>
+                    <p><strong>Name:</strong> <span id="preview-name"></span></p>
+                    <p><strong>Mobile Number:</strong> <span id="preview-mobile"></span></p>
+                    <p><strong>Address:</strong> <span id="preview-address"></span></p>
+                    <p><strong>City:</strong> <span id="preview-city"></span></p>
+                    <p><strong>State:</strong> <span id="preview-state"></span></p>
+                    <p><strong>Zipcode:</strong> <span id="preview-zipcode"></span></p>
+                    <button type="button" class="edit-address-btn" onclick="editAddress()">Edit Address</button>
                 </div>
             </form>
 
@@ -331,49 +410,65 @@ mysqli_stmt_close($stmt);
                 <p>Your cart is empty.</p>
             <?php else: ?>
                 <div class="order-summary">
-                    <?php foreach ($cart_items as $item): ?>
-                        <div class="cart-item">
-                            <img src="images/<?php echo htmlspecialchars($item['book_image']); ?>" alt="Book">
-                            <div class="cart-details">
-                                <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                                <p>Author: <?php echo htmlspecialchars($item['author'] ?? 'Unknown'); ?></p>
-                                <p>Price: ₱<?php echo number_format($item['price'], 2); ?></p>
-                                <p>Quantity: <?php echo htmlspecialchars($item['quantity']); ?></p>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                    <table class="cart-table">
+                        <thead>
+                            <tr>
+                                <th>Items</th>
+                                <th>Author Name</th>
+                                <th>Quantity</th>
+                                <th>Price Each</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($cart_items as $item): ?>
+                                <tr>
+                                    <td>
+                                        <div class="item-details">
+                                            <img src="images/<?php echo htmlspecialchars($item['book_image']); ?>" alt="Book">
+                                            <div>
+                                                <h3><?php echo htmlspecialchars($item['title']); ?></h3>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($item['author'] ?? 'Unknown'); ?></td>
+                                    <td><?php echo htmlspecialchars($item['quantity']); ?></td>
+                                    <td>₱<?php echo number_format($item['price'], 2); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             <?php endif; ?>
         </div>
 
         <div class="right-column">
             <div class="price-summary">
-                <h3>Price Details</h3>
+                <h3>Summary</h3>
                 <?php if (empty($cart_items)): ?>
                     <p>No items in the cart.</p>
                 <?php else: ?>
                     <div class="total-price">
-                        Subtotal: ₱<?php echo number_format($total_price, 2); ?><br>
+                        Items: <?php echo $cart_count; ?><br>
                         Shipping: ₱<?php echo number_format($shipping_cost, 2); ?><br>
                         <hr style="margin: 15px 0;">
-                        Total: ₱<?php echo number_format($grand_total, 2); ?>
+                        Total Price: ₱<?php echo number_format($grand_total, 2); ?>
                     </div>
                 <?php endif; ?>
             </div>
 
-            <div class="payment-section">
+            <div class="payment-methods">
                 <label for="payment_method">Payment Method</label>
-                <select id="payment_method" name="payment_method" form="checkout-form" style="width: 100%; margin-top: 10px;">
+                <select id="payment_method" name="payment_method" form="checkout-form">
                     <option value="cash_on_delivery">Cash on Delivery</option>
                     <option value="credit_card">Credit Card</option>
-                    <option value="paypal">PayPal</option>
                 </select>
-                <button type="submit" form="checkout-form" class="checkout-btn">Place Order</button>
             </div>
+
+            <button type="submit" form="checkout-form" class="checkout-btn">Place Order</button>
         </div>
     </div>
 
-    <!-- JavaScript for Navbar -->
+    <!-- JavaScript for Navbar and Address Preview -->
     <script>
         function openNav() {
             document.getElementById("Sidenav").style.width = "240px";
@@ -381,6 +476,43 @@ mysqli_stmt_close($stmt);
 
         function closeNav() {
             document.getElementById("Sidenav").style.width = "0";
+        }
+
+        function previewAddress() {
+            // Get form values
+            const email = document.getElementById('email').value;
+            const firstName = document.getElementById('first_name').value;
+            const lastName = document.getElementById('last_name').value;
+            const mobile = document.getElementById('mobile').value;
+            const address = document.getElementById('address').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zipcode = document.getElementById('zipcode').value;
+
+            // Validate that all fields are filled
+            if (!email || !firstName || !lastName || !mobile || !address || !city || !state || !zipcode) {
+                alert("Please fill in all shipping information fields.");
+                return;
+            }
+
+            // Populate preview
+            document.getElementById('preview-email').textContent = email;
+            document.getElementById('preview-name').textContent = firstName + " " + lastName;
+            document.getElementById('preview-mobile').textContent = mobile;
+            document.getElementById('preview-address').textContent = address;
+            document.getElementById('preview-city').textContent = city;
+            document.getElementById('preview-state').textContent = state;
+            document.getElementById('preview-zipcode').textContent = zipcode;
+
+            // Hide form and show preview
+            document.getElementById('shipping-form').style.display = 'none';
+            document.getElementById('address-preview').style.display = 'block';
+        }
+
+        function editAddress() {
+            // Hide preview and show form
+            document.getElementById('address-preview').style.display = 'none';
+            document.getElementById('shipping-form').style.display = 'block';
         }
     </script>
 </body>
