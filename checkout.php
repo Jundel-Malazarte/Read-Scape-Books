@@ -77,6 +77,7 @@ mysqli_stmt_close($stmt);
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
+            padding: 0;
         }
 
         .navbar {
@@ -154,6 +155,7 @@ mysqli_stmt_close($stmt);
         }
 
         .left-column {
+            padding: 5px;
             flex: 2;
         }
 
@@ -170,6 +172,12 @@ mysqli_stmt_close($stmt);
             font-weight: 700;
             color: #1a2b49;
             margin-bottom: 20px;
+        }
+
+        .shipping-form {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .order-summary {
