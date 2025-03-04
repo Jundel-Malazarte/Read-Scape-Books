@@ -1,5 +1,5 @@
 <?php
-@include 'db_connect.php';
+include 'db_connect.php';
 session_start();
 
 if (!isset($_SESSION['id'])) {
@@ -53,6 +53,8 @@ $total_price = 0;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shopping Cart</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="./images/Readscape.png" type="image/png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -92,6 +94,159 @@ $total_price = 0;
             object-fit: cover;
         }
 
+        /* Container for search and header */
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 90%;
+            margin: 20px auto;
+        }
+
+        /* Adjusted search input */
+        .search-box {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box input {
+            width: 350px;
+            /* Slightly wider */
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+
+        /* Bigger search button */
+        .search-box button {
+            padding: 12px 18px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .search-box button:hover {
+            background-color: #555;
+        }
+
+        /* Adjusted header */
+        .header-text h2 {
+            font-size: 22px;
+            margin: 0;
+        }
+
+
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 20px;
+            max-width: 90%;
+            /* Make the book list span a larger width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .book-list::-webkit-scrollbar {
+            height: 8px;
+            /* Make scrollbar thinner */
+        }
+
+        .book-list::-webkit-scrollbar-thumb {
+            background-color: #555;
+            border-radius: 10px;
+        }
+
+
+
+        .book-card {
+            width: 250px;
+            /* Increased width */
+            background: white;
+            padding: 20px;
+            /* Increased padding */
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .book-card:hover {
+            transform: scale(1.05);
+            /* Slight zoom effect for better UX */
+        }
+
+        .book-card img {
+            width: 100%;
+            max-width: 100%;
+            height: 275px;
+            /* Increased height */
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .book-card h3 {
+            font-size: 18px;
+            /* Larger title */
+            margin: 10px 0;
+        }
+
+        .book-card p {
+            font-size: 15px;
+            /* Increased text size */
+            color: #444;
+        }
+
+        .buy-now-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 14px;
+            /* Larger button */
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            /* Increased font size */
+            margin-top: 12px;
+            width: 100%;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .buy-now-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .header-text {
+            text-align: left;
+            margin-top: 20px;
+            margin-left: 20px;
+        }
+
+        span {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .readscape {
+            width: 40px;
+            /* Match this size with the font-size of the menu icon */
+            height: 40px;
+            /* Keep height and width equal */
+            border-radius: 50%;
+        }
+
+
+        /** Slider nav */
         .sidenav {
             height: 100%;
             width: 0;
@@ -326,6 +481,9 @@ $total_price = 0;
 
         .checkout-btn {
             display: block;
+            max-width: 100%;
+            background-color: #007bff;
+            /* Blue background for Checkout button */
             width: 100%;
             background-color: #000;
             color: white;
@@ -368,6 +526,9 @@ $total_price = 0;
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="changepass.php">Change password</a>
+            <a href="cart.php">Cart</a>
+            <a href="order.php">My Orders</a>
+            <a href="logout.php">Log Out</a>
         </div>
         <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰ <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
         <div class="profile-info">

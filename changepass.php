@@ -244,6 +244,8 @@ ob_end_flush(); // End buffering
         <a href="profile.php">Profile</a>
         <a href="changepass.php">Change password</a>
         <a href="cart.php">Cart</a>
+        <a href="order.php">My Orders</a>
+        <a href="logout.php">Log Out</a>
     </div>
 
     <script>

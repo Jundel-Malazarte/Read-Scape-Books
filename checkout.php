@@ -72,11 +72,15 @@ mysqli_stmt_close($stmt);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Readscape</title>
+    <link rel="icon" href="images/Readscape .png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
+            padding: 0;
         }
 
         .navbar {
@@ -85,6 +89,12 @@ mysqli_stmt_close($stmt);
             align-items: center;
             background-color: #333;
             padding: 10px 20px;
+        }
+
+        .navbar img {
+            border-radius: 50%;
+            margin-right: 15px;
+            align-self: flex-start;
         }
 
         .navbar a {
@@ -111,6 +121,7 @@ mysqli_stmt_close($stmt);
             object-fit: cover;
         }
 
+        /** Slider nav */
         .sidenav {
             height: 100%;
             width: 0;
@@ -145,6 +156,16 @@ mysqli_stmt_close($stmt);
             margin-left: 50px;
         }
 
+        @media screen and (max-height: 450px) {
+            .sidenav {
+                padding-top: 15px;
+            }
+
+            .sidenav a {
+                font-size: 18px;
+            }
+        }
+
         .checkout-container {
             max-width: 1200px;
             margin: 30px auto;
@@ -154,6 +175,7 @@ mysqli_stmt_close($stmt);
         }
 
         .left-column {
+            padding: 5px;
             flex: 2;
         }
 
@@ -170,6 +192,12 @@ mysqli_stmt_close($stmt);
             font-weight: 700;
             color: #1a2b49;
             margin-bottom: 20px;
+        }
+
+        .shipping-form {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .order-summary {
@@ -347,8 +375,12 @@ mysqli_stmt_close($stmt);
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="changepass.php">Change password</a>
+            <a href="cart.php">Cart</a>
+            <a href="order.php">My Orders</a>
+            <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰ <img src="./images/Readscape.png" alt="logo" width="40px" height="40px" style="border-radius:50%;"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰</span>
+        <img src="images/Readscape.png" alt="logo" width="40px" height="40px" style="border-radius:50%; align-self: start-left;">
         <div class="profile-info">
             <a href="cart.php" style="position: relative;">
                 🛒 Cart <span style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
@@ -364,7 +396,7 @@ mysqli_stmt_close($stmt);
         <div class="left-column">
             <h2>Shipping Information</h2>
             <form id="checkout-form" action="process_checkout.php" method="post">
-                <div class="shipping-form" id="shipping-form">
+                <div class="shipping-form">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="you@example.com" required>
 
@@ -476,43 +508,6 @@ mysqli_stmt_close($stmt);
 
         function closeNav() {
             document.getElementById("Sidenav").style.width = "0";
-        }
-
-        function previewAddress() {
-            // Get form values
-            const email = document.getElementById('email').value;
-            const firstName = document.getElementById('first_name').value;
-            const lastName = document.getElementById('last_name').value;
-            const mobile = document.getElementById('mobile').value;
-            const address = document.getElementById('address').value;
-            const city = document.getElementById('city').value;
-            const state = document.getElementById('state').value;
-            const zipcode = document.getElementById('zipcode').value;
-
-            // Validate that all fields are filled
-            if (!email || !firstName || !lastName || !mobile || !address || !city || !state || !zipcode) {
-                alert("Please fill in all shipping information fields.");
-                return;
-            }
-
-            // Populate preview
-            document.getElementById('preview-email').textContent = email;
-            document.getElementById('preview-name').textContent = firstName + " " + lastName;
-            document.getElementById('preview-mobile').textContent = mobile;
-            document.getElementById('preview-address').textContent = address;
-            document.getElementById('preview-city').textContent = city;
-            document.getElementById('preview-state').textContent = state;
-            document.getElementById('preview-zipcode').textContent = zipcode;
-
-            // Hide form and show preview
-            document.getElementById('shipping-form').style.display = 'none';
-            document.getElementById('address-preview').style.display = 'block';
-        }
-
-        function editAddress() {
-            // Hide preview and show form
-            document.getElementById('address-preview').style.display = 'none';
-            document.getElementById('shipping-form').style.display = 'block';
         }
     </script>
 </body>
