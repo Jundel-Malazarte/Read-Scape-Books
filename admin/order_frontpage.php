@@ -37,18 +37,6 @@ if ($row = mysqli_fetch_assoc($result)) {
 }
 
 mysqli_stmt_close($stmt);
-
-// Fetch total users count
-$total_users_query = mysqli_query($conn, "SELECT COUNT(*) FROM users");
-$total_users = mysqli_fetch_row($total_users_query)[0];
-
-$total_books_query = mysqli_query($conn, "SELECT COUNT(*) FROM books");
-$total_books = mysqli_fetch_row($total_books_query)[0];
-
-// Fetch total ordered users count
-$total_ordered_users_query = mysqli_query($conn, "SELECT COUNT(*) FROM orders");
-$total_ordered_users = mysqli_fetch_row($total_ordered_users_query)[0];
-
 mysqli_close($conn);
 ?>
 
@@ -58,7 +46,7 @@ mysqli_close($conn);
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dashboard</title>
+    <title>Order Frontpage</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="./images/Readscape.png">
     <style>
@@ -105,16 +93,22 @@ mysqli_close($conn);
             object-fit: cover;
         }
 
+        .dashboard-wrapper {
+            width: 80%;
+            margin: 50px auto;
+            display: flex;
+            justify-content: flex-start;
+            gap: 20px;
+        }
+
         .dashboard-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 50px;
         }
 
         .dashboard-container a {
             text-decoration: none;
-            /* Removed underline */
         }
 
         .card {
@@ -156,18 +150,6 @@ mysqli_close($conn);
             font-size: 24px;
             color: #444;
         }
-
-        .dashboard-wrapper {
-            width: 80%;
-            /* Set width to 75% of the body */
-            margin: 50px auto;
-            /* Center it horizontally */
-            display: flex;
-            justify-content: flex-start;
-            /* Align items to the left */
-            gap: 20px;
-            /* Space between cards */
-        }
     </style>
 </head>
 
@@ -175,9 +157,6 @@ mysqli_close($conn);
     <div class="navbar">
         <div class="nav-links">
             <a href="../admin/admin_dashboard.php">Home</a>
-            <!-- <a href="profile.php">Profile</a>
-            <a href="#contact">Contact</a>
-            <a href="changepass.php">Change password</a> -->
         </div>
         <div class="profile-info">
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
@@ -187,40 +166,26 @@ mysqli_close($conn);
     </div>
     <div class="dashboard-wrapper">
         <div class="dashboard-container">
-            <a href="total_users.php">
-                <div class="card">
-                    <img src="../images/user_icon.png" alt="User Icon">
-                    <div class="card-content">
-                        <p><strong>Total Users</strong></p>
-                        <h2><?php echo $total_users; ?></h2>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="dashboard-container">
-            <a href="total_books.php">
+            <a href="total_ordered_books.php">
                 <div class="card">
                     <img src="../images/book_icon.png" alt="Book Icon">
                     <div class="card-content">
-                        <p><strong>Total Books</strong></p>
-                        <h2><?php echo $total_books; ?></h2>
+                        <p><strong>BOOKS</strong></p>
                     </div>
                 </div>
             </a>
         </div>
         <div class="dashboard-container">
-            <a href="order_frontpage.php">
+            <a href="total_ordered_users.php">
                 <div class="card">
-                    <img src="../images/order_icon.png" alt="Order Icon">
+                    <img src="../images/user_icon.png" alt="User Icon">
                     <div class="card-content">
-                        <p><strong>Total Orders</strong></p>
-                        <h2><?php echo $total_ordered_users; ?></h2>
+                        <p><strong>USERS</strong></p>
                     </div>
                 </div>
             </a>
         </div>
     </div>
-
 </body>
 
 </html>
