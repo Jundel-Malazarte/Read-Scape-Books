@@ -2,7 +2,7 @@
 @include 'db_connect.php';
 session_start();
 
-// Redirect to login if not logged in
+// Redirect to sign-in if user is not logged in
 if (!isset($_SESSION['id'])) {
     header("Location: sign-in.php");
     exit();
@@ -10,63 +10,75 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
-// Fetch user details
+// Fetch user details with error handling
 $sql = "SELECT fname, lname, profile_image FROM users WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
-$user = mysqli_fetch_assoc($result);
+
+if ($result && mysqli_num_rows($result) > 0) {
+    $user = mysqli_fetch_assoc($result);
+    $fname = htmlspecialchars($user['fname']);
+    $lname = htmlspecialchars($user['lname']);
+    $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jpg";
+} else {
+    echo "Error: User not found.";
+    exit();
+}
 mysqli_stmt_close($stmt);
 
-$fname = htmlspecialchars($user['fname']);
-$lname = htmlspecialchars($user['lname']);
-$profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jpg";
+// Fetch cart items with error handling
+$sql = "SELECT books.isbn, books.title, books.book_image, books.price, books.author, cart.quantity, 
+        (books.price * cart.quantity) AS total 
+    FROM cart 
+    JOIN books ON cart.isbn = books.isbn 
+    WHERE cart.user_id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
-
-
-/* Checkout */
-if (isset($_POST['submit'])) {
-
-    $email = $_POST['email'];
-    $fname = $_POST['fname'];
-    $lname = $_POST['lname'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
-    $city = $_POST['city'];
-    $state = $_POST['state'];
-    $zipcode = $_POST['zipcode'];
-    $payment_method = $_POST['payment_method'];
-
-    $sql = "INSERT INTO checkout (email, fname, lname, phone, address, city, state, zipcode, payment_method) VALUES ('$email', '$fname', '$lname', '$phone', '$address', '$city', '$state', '$zipcode', '$payment_method')";
-
-    if (mysqli_query($conn, $sql)) {
-        echo "New record created successfully";
-    } else {
-        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+$total_price = 0;
+$cart_items = [];
+if ($result && mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        $cart_items[] = $row;
+        $total_price += $row['total'];
     }
-
-    mysqli_close($conn);
+} else {
+    $cart_items = []; // Ensure empty array if no items
 }
+mysqli_stmt_close($stmt);
+
+// Fixed shipping cost (as per code, though image suggests $5.17)
+$shipping_cost = 50.00; // Adjust to $5.17 if intended to match image
+$grand_total = $total_price + $shipping_cost;
+
+// Fetch cart count for navbar
+$sql = "SELECT COUNT(*) FROM cart WHERE user_id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$cart_count_result = mysqli_stmt_get_result($stmt);
+$cart_count = mysqli_fetch_row($cart_count_result)[0];
+mysqli_stmt_close($stmt);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>Checkout</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="icon" href="./images/Readscape.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Readscape</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
         }
-        /* Navbar */
+
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -86,14 +98,6 @@ if (isset($_POST['submit'])) {
             border-radius: 5px;
         }
 
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            /* Adjust spacing as needed */
-        }
-
-
         .profile-info {
             display: flex;
             align-items: center;
@@ -107,83 +111,6 @@ if (isset($_POST['submit'])) {
             object-fit: cover;
         }
 
-        .container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        label {
-            font-weight: bold;
-            color: #555;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="submit"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        input[type="submit"] {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #218838;
-        }
-
-        .payment-method {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .payment-method label {
-            margin-right: 10px;
-        }
-
-        span {
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .readscape {
-            width: 40px;
-            /* Match this size with the font-size of the menu icon */
-            height: 40px;
-            /* Keep height and width equal */
-            border-radius: 50%;
-        }
-
-
-        /** Slider nav */
         .sidenav {
             height: 100%;
             width: 0;
@@ -218,85 +145,244 @@ if (isset($_POST['submit'])) {
             margin-left: 50px;
         }
 
-        @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
+        .checkout-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .left-column {
+            flex: 2;
+        }
+
+        .right-column {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            height: fit-content;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a2b49;
+            margin-bottom: 20px;
+        }
+
+        .order-summary {
+            margin-top: 30px;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 100px;
+            margin-right: 15px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .cart-details h3 {
+            font-size: 18px;
+            margin: 0 0 5px;
+        }
+
+        .cart-details p {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .price-summary {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .total-price {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .payment-section {
+            margin-top: 30px;
+        }
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .checkout-btn {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .checkout-btn:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                flex-direction: column;
             }
 
-            .sidenav a {
-                font-size: 18px;
+            .left-column,
+            .right-column {
+                width: 100%;
             }
         }
-        
     </style>
 </head>
 
 <body>
-<div class="navbar">
-        <!-- Logo here! -->
+    <!-- Navbar -->
+    <div class="navbar">
         <div id="Sidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="changepass.php">Change password</a>
-
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776; <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
-
-        <script>
-            function openNav() {
-                document.getElementById("Sidenav").style.width = "240px";
-            }
-
-            function closeNav() {
-                document.getElementById("Sidenav").style.width = "0";
-            }
-        </script>
-
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰ <img src="./images/Readscape.png" alt="logo" width="40px" height="40px" style="border-radius:50%;"></span>
         <div class="profile-info">
+            <a href="cart.php" style="position: relative;">
+                🛒 Cart <span style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
+            </a>
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
             <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
             <a href="logout.php">Log Out</a>
         </div>
     </div>
-    <div class="container">
-        <h1>Checkout</h1>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" required>
 
-            <label for="fname">First Name</label>
-            <input type="text" name="fname" id="fname" required>
+    <!-- Checkout Content -->
+    <div class="checkout-container">
+        <div class="left-column">
+            <h2>Shipping Information</h2>
+            <form id="checkout-form" action="process_checkout.php" method="post">
+                <div class="shipping-form">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
 
-            <label for="lname">Last Name</label>
-            <input type="text" name="lname" id="lname" required>
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" value="<?php echo $fname; ?>" required>
 
-            <label for="phone">Mobile Number</label>
-            <input type="tel" name="phone" id="phone" required>
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" value="<?php echo $lname; ?>" required>
 
-            <label for="address">Address</label>
-            <input type="text" name="address" id="address" required>
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel" id="mobile" name="mobile" required>
 
-            <label for="city">City</label>
-            <input type="text" name="city" id="city" required>
+                    <label for="address">Address</label>
+                    <textarea id="address" name="address" required></textarea>
 
-            <label for="state">State</label>
-            <input type="text" name="state" id="state" required>
+                    <label for="city">City</label>
+                    <input type="text" id="city" name="city" required>
 
-            <label for="zipcode">Zipcode</label>
-            <input type="text" name="zipcode" id="zipcode" required>
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state" required>
 
-            <div class="payment-method">
-                <label for="payment_method">Payment Method</label>
-                <select name="payment_method" id="payment_method" required>
-                    <option value="Cash on Delivery">Cash on Delivery</option>
-                    <option value="Gcash">Gcash</option>
-                </select>
+                    <label for="zipcode">Zipcode</label>
+                    <input type="text" id="zipcode" name="zipcode" required>
+                </div>
+            </form>
+
+            <h2 style="margin-top: 30px;">Order Summary</h2>
+            <?php if (empty($cart_items)): ?>
+                <p>Your cart is empty.</p>
+            <?php else: ?>
+                <div class="order-summary">
+                    <?php foreach ($cart_items as $item): ?>
+                        <div class="cart-item">
+                            <img src="images/<?php echo htmlspecialchars($item['book_image']); ?>" alt="Book">
+                            <div class="cart-details">
+                                <h3><?php echo htmlspecialchars($item['title']); ?></h3>
+                                <p>Author: <?php echo htmlspecialchars($item['author'] ?? 'Unknown'); ?></p>
+                                <p>Price: ₱<?php echo number_format($item['price'], 2); ?></p>
+                                <p>Quantity: <?php echo htmlspecialchars($item['quantity']); ?></p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="right-column">
+            <div class="price-summary">
+                <h3>Price Details</h3>
+                <?php if (empty($cart_items)): ?>
+                    <p>No items in the cart.</p>
+                <?php else: ?>
+                    <div class="total-price">
+                        Subtotal: ₱<?php echo number_format($total_price, 2); ?><br>
+                        Shipping: ₱<?php echo number_format($shipping_cost, 2); ?><br>
+                        <hr style="margin: 15px 0;">
+                        Total: ₱<?php echo number_format($grand_total, 2); ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
-            <input type="submit" name="submit" value="Checkout">
-        </form>
+            <div class="payment-section">
+                <label for="payment_method">Payment Method</label>
+                <select id="payment_method" name="payment_method" form="checkout-form" style="width: 100%; margin-top: 10px;">
+                    <option value="cash_on_delivery">Cash on Delivery</option>
+                    <option value="credit_card">Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                </select>
+                <button type="submit" form="checkout-form" class="checkout-btn">Place Order</button>
+            </div>
+        </div>
     </div>
+
+    <!-- JavaScript for Navbar -->
+    <script>
+        function openNav() {
+            document.getElementById("Sidenav").style.width = "240px";
+        }
+
+        function closeNav() {
+            document.getElementById("Sidenav").style.width = "0";
+        }
+    </script>
 </body>
 
 </html>

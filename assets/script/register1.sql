@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 02, 2025 at 02:34 PM
+-- Generation Time: Mar 04, 2025 at 02:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,10 +43,10 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`isbn`, `title`, `book_image`, `author`, `copyright`, `qty`, `price`, `total`) VALUES
-(2, 'The Hacienda', '../images/1740032179_book2.jpg', 'Isabel Cañas', 2002, 10, 299, 2990),
-(5, 'El filibusterismo', '../images/1740450422_book4.jpg', 'José Rizal', 1891, 17, 249, 4233),
-(6, 'Legend of Mariang Makiling', '1740701783_book6.jpg', 'Nick Joaquin', 1997, 10, 280, 2800),
-(7, 'Alamat ng Sampalok', '1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 12, 280, 3360),
+(2, 'The Hacienda', '../images/1740032179_book2.jpg', 'Isabel Cañas', 2002, 9, 299, 2990),
+(5, 'El filibusterismo', '../images/1740450422_book4.jpg', 'José Rizal', 1891, 0, 249, 4233),
+(6, 'Legend of Mariang Makiling', '1740701783_book6.jpg', 'Nick Joaquin', 1997, 9, 280, 2800),
+(7, 'Alamat ng Sampalok', '1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 11, 280, 3360),
 (8, 'Alamat ng Bahaghari', '1740703364_book8.png', 'Rene O. Villanueva', 2003, 10, 250, 2500);
 
 -- --------------------------------------------------------
@@ -67,8 +67,7 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `user_id`, `isbn`, `quantity`) VALUES
-(58, 11, 7, 17),
-(59, 11, 8, 10);
+(68, 11, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -85,6 +84,42 @@ CREATE TABLE `orders` (
   `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `status` enum('pending','processing','shipped','delivered') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`id`, `user_id`, `total`, `shipping_address`, `payment_method`, `order_date`, `status`) VALUES
+(1, 11, 3785.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 01:36:21', 'pending'),
+(2, 11, 330.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 02:02:15', 'pending'),
+(3, 11, 349.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 02:14:32', 'pending'),
+(4, 11, 548.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 03:19:00', 'pending'),
+(5, 11, 330.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'credit_card', '2025-03-03 03:19:48', 'pending');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order_items`
+--
+
+CREATE TABLE `order_items` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `book_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `price` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_items`
+--
+
+INSERT INTO `order_items` (`id`, `order_id`, `book_id`, `quantity`, `price`) VALUES
+(1, 1, 5, 15, 249.00),
+(2, 2, 6, 1, 280.00),
+(3, 3, 2, 1, 299.00),
+(4, 4, 5, 2, 249.00),
+(5, 5, 7, 1, 280.00);
 
 -- --------------------------------------------------------
 
@@ -146,6 +181,14 @@ ALTER TABLE `orders`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indexes for table `order_items`
+--
+ALTER TABLE `order_items`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `book_id` (`book_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -166,13 +209,19 @@ ALTER TABLE `books`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=69;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `order_items`
+--
+ALTER TABLE `order_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -196,6 +245,13 @@ ALTER TABLE `cart`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `order_items`
+--
+ALTER TABLE `order_items`
+  ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+  ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`book_id`) REFERENCES `books` (`isbn`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
