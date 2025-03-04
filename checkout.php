@@ -72,6 +72,9 @@ mysqli_stmt_close($stmt);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Readscape</title>
+    <link rel="icon" href="images/Readscape .png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -86,6 +89,12 @@ mysqli_stmt_close($stmt);
             align-items: center;
             background-color: #333;
             padding: 10px 20px;
+        }
+
+        .navbar img {
+            border-radius: 50%;
+            margin-right: 15px;
+            align-self: flex-start;
         }
 
         .navbar a {
@@ -112,6 +121,7 @@ mysqli_stmt_close($stmt);
             object-fit: cover;
         }
 
+        /** Slider nav */
         .sidenav {
             height: 100%;
             width: 0;
@@ -144,6 +154,16 @@ mysqli_stmt_close($stmt);
             right: 25px;
             font-size: 36px;
             margin-left: 50px;
+        }
+
+        @media screen and (max-height: 450px) {
+            .sidenav {
+                padding-top: 15px;
+            }
+
+            .sidenav a {
+                font-size: 18px;
+            }
         }
 
         .checkout-container {
@@ -290,8 +310,12 @@ mysqli_stmt_close($stmt);
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="changepass.php">Change password</a>
+            <a href="cart.php">Cart</a>
+            <a href="order.php">My Orders</a>
+            <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰ <img src="./images/Readscape.png" alt="logo" width="40px" height="40px" style="border-radius:50%;"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰</span>
+        <img src="images/Readscape.png" alt="logo" width="40px" height="40px" style="border-radius:50%; align-self: start-left;">
         <div class="profile-info">
             <a href="cart.php" style="position: relative;">
                 🛒 Cart <span style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
@@ -306,7 +330,7 @@ mysqli_stmt_close($stmt);
     <div class="checkout-container">
         <div class="left-column">
             <h2>Shipping Information</h2>
-            <form id="checkout-form" action="process_checkout.php" method="post">
+            <form id="checkout-form" action="process_checkout.php" method="post" onsubmit="return validateCheckout()">
                 <div class="shipping-form">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="you@example.com" required>
@@ -389,6 +413,14 @@ mysqli_stmt_close($stmt);
 
         function closeNav() {
             document.getElementById("Sidenav").style.width = "0";
+        }
+
+        function validateCheckout() {
+            <?php if (empty($cart_items)): ?>
+                alert("Your cart is empty. Cannot proceed to checkout.");
+                return false;
+            <?php endif; ?>
+            return true;
         }
     </script>
 </body>
