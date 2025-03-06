@@ -5,8 +5,8 @@
 
 ## Implementing
 
-- Login
-- Register
+- Users Login
+- Users Sign Up
 - Dashboard
 - Cart System
 - My Orders
