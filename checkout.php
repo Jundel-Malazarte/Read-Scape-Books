@@ -408,8 +408,8 @@ mysqli_stmt_close($stmt);
             </a>
             <br>
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
-            <a href="logout.php">Log Out</a>
+            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
+            <a href="logout.php"><strong>Log Out</strong></a>
         </div>
     </div>
 

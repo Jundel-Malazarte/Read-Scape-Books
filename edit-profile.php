@@ -301,8 +301,8 @@ ob_end_flush(); // End buffering
                 🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
             </a>
             <br>
-            <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
-            <a href="logout.php">Log Out</a>
+            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
+            <a href="logout.php"><strong>Log Out</strong></a>
         </div>
     </div>
 
