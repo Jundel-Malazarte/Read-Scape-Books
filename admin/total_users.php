@@ -42,22 +42,46 @@ mysqli_stmt_close($stmt);
 $total_users_query = mysqli_query($conn, "SELECT COUNT(*) FROM users");
 $total_users = mysqli_fetch_row($total_users_query)[0];
 
-// Fetch all users' details (excluding password)
+// Search functionality
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
+// Pagination
+$items_per_page = 10;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, $_GET['page']) : 1;
+$start = ($page - 1) * $items_per_page;
+
+// Fetch all users' details (excluding password)
+$sql = "SELECT id, fname, lname, email, phone, address, created_at FROM users";
+$conditions = [];
+$params = [];
+$types = '';
+
 if (!empty($search)) {
-    $sql = "SELECT id, fname, lname, email, phone, address, created_at 
-            FROM users 
-            WHERE CONCAT(fname, ' ', lname) LIKE ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    $searchTerm = "%" . $search . "%";
-    mysqli_stmt_bind_param($stmt, "s", $searchTerm);
-    mysqli_stmt_execute($stmt);
-    $users_query = mysqli_stmt_get_result($stmt);
-} else {
-    $users_query = mysqli_query($conn, "SELECT id, fname, lname, email, phone, address, created_at FROM users");
+    $conditions[] = "CONCAT(fname, ' ', lname) LIKE ?";
+    $params[] = "%$search%";
+    $types .= 's';
 }
 
+if (!empty($conditions)) {
+    $sql .= " WHERE " . implode(' AND ', $conditions);
+}
+
+$sql .= " ORDER BY id DESC";
+$stmt = mysqli_prepare($conn, $sql);
+if (!empty($params)) {
+    mysqli_stmt_bind_param($stmt, $types, ...$params);
+}
+mysqli_stmt_execute($stmt);
+$users_query = mysqli_stmt_get_result($stmt);
+
+$users = [];
+while ($row = mysqli_fetch_assoc($users_query)) {
+    $users[] = $row;
+}
+
+// Apply pagination
+$total_pages = ceil(count($users) / $items_per_page);
+$paginated_users = array_slice($users, $start, $items_per_page);
 ?>
 
 <!DOCTYPE html>
@@ -67,6 +91,7 @@ if (!empty($search)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Total Users</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
@@ -76,6 +101,7 @@ if (!empty($search)) {
             margin: 0;
             padding: 0;
         }
+
 
         .navbar {
             display: flex;
@@ -125,66 +151,6 @@ if (!empty($search)) {
             text-align: left;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            /* Rounded corners */
-            overflow: hidden;
-            /* Ensures border-radius applies to table */
-        }
-
-        th,
-        td {
-            padding: 12px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #87CEEB;
-            /* Baby blue */
-            color: white;
-            font-weight: bold;
-        }
-
-        tbody tr:nth-child(odd) {
-            background-color: #f2f2f2;
-            /* Light grey for striped rows */
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #ffffff;
-        }
-
-
-
-        .delete-btn {
-            display: inline-block;
-            background-color: red;
-            /* Red background */
-            color: white;
-            /* White text */
-            padding: 10px 20px;
-            /* Padding for the button */
-            border-radius: 5px;
-            /* Rounded corners */
-            text-decoration: none;
-            /* Remove underline from link */
-            box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
-            /* Box shadow effect */
-            transition: background-color 0.3s ease;
-            /* Smooth transition for hover effect */
-            margin-top: 10px;
-            /* Space between elements */
-        }
-
-        .delete-btn:hover {
-            background-color: darkred;
-            /* Darker red on hover */
-        }
-
         .search-container {
             display: flex;
             justify-content: space-between;
@@ -201,11 +167,12 @@ if (!empty($search)) {
             padding: 8px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            width: 200px;
         }
 
         .search-bar button {
             padding: 8px 15px;
-            background-color: #5cb85c;
+            background-color: #007bff;
             color: white;
             border: none;
             cursor: pointer;
@@ -221,11 +188,84 @@ if (!empty($search)) {
         }
 
         .search-bar button:hover {
-            background-color: #4cae4c;
+            background-color: #0056b3;
         }
 
         .search-bar .reset-btn:hover {
             background-color: #c9302c;
+        }
+
+        .user-section {
+            width: 100%;
+        }
+
+        .user-section h3 {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .user-section table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            /* Adds vertical spacing between rows */
+            margin-top: 10px;
+        }
+
+        .user-section th {
+            background-color: #e9ecef;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 2px solid #dee2e6;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .user-section td {
+            padding: 12px;
+            text-align: center;
+            background-color: #fff;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .delete-btn {
+            display: inline-block;
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 12px;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 5px;
+        }
+
+        .pagination button {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .pagination button.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .pagination button:hover {
+            background-color: #e9ecef;
         }
     </style>
 </head>
@@ -245,7 +285,6 @@ if (!empty($search)) {
     <div class="container">
         <div class="search-container">
             <h1>Total Users: <?php echo $total_users; ?></h1>
-
             <div class="search-bar">
                 <form method="GET">
                     <input type="text" name="search" placeholder="Search by Full Name" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
@@ -255,34 +294,45 @@ if (!empty($search)) {
             </div>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Address</th>
-                    <th>Registration Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                while ($row = mysqli_fetch_assoc($users_query)) {
-                    echo "<tr>
-                        <td>{$row['fname']} {$row['lname']}</td>
-                        <td>{$row['email']}</td>
-                        <td>{$row['phone']}</td>
-                        <td>{$row['address']}</td>
-                        <td>{$row['created_at']}</td>
-                        <td><a href='../admin/delete_user.php?id={$row['id']}' class='delete-btn' onclick=\"return confirm('Are you sure you want to delete this user?');\">Delete</a></td>
-                      </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+        <div class="user-section">
+            <?php if (empty($paginated_users)): ?>
+                <p>No users found.</p>
+            <?php else: ?>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Registration Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($paginated_users as $user): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($user['fname'] . ' ' . $user['lname']); ?></td>
+                                <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                <td><?php echo htmlspecialchars($user['phone']); ?></td>
+                                <td><?php echo htmlspecialchars($user['address']); ?></td>
+                                <td><?php echo date('d/m/Y', strtotime($user['created_at'])); ?></td>
+                                <td><a href="../admin/delete_user.php?id=<?php echo $user['id']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this user?');">Delete</a></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+                <div class="pagination">
+                    <button onclick="window.location.href='?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>'" <?php echo $page <= 1 ? 'disabled' : ''; ?>>Previous</button>
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <button class="<?php echo $i === $page ? 'active' : ''; ?>" onclick="window.location.href='?page=<?php echo $i; ?>&search=<?php echo $search; ?>'"><?php echo $i; ?></button>
+                    <?php endfor; ?>
+                    <button onclick="window.location.href='?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>'" <?php echo $page >= $total_pages ? 'disabled' : ''; ?>>Next</button>
+                </div>
+                <p>Showing <?php echo $start + 1; ?> to <?php echo min($start + $items_per_page, $total_users); ?> of <?php echo $total_users; ?> entries</p>
+            <?php endif; ?>
+        </div>
     </div>
-
 </body>
 
 </html>

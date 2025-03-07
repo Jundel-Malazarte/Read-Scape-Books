@@ -1,44 +1,44 @@
-<?php
-@include '../db_connect.php';
+<!-- <?php
+        @include '../db_connect.php';
 
-session_start();
+        session_start();
 
-// Ensure session user is set
-if (!isset($_SESSION['id'])) {
-    header("Location: ../admin/admin.php", true, 302);
-    exit();
-}
+        // Ensure session user is set
+        if (!isset($_SESSION['id'])) {
+            header("Location: ../admin/admin.php", true, 302);
+            exit();
+        }
 
-$user_id = $_SESSION['id'];
+        $user_id = $_SESSION['id'];
 
-// Fetch user details
-$sql = "SELECT fname, lname, email, phone, address FROM `users` WHERE id = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+        // Fetch user details
+        $sql = "SELECT fname, lname, email, phone, address FROM `users` WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
-if ($row = mysqli_fetch_assoc($result)) {
-    $fname = htmlspecialchars($row['fname']);
-    $lname = htmlspecialchars($row['lname']);
-    $email = htmlspecialchars($row['email']);
-    $phone = htmlspecialchars($row['phone']);
-    $address = htmlspecialchars($row['address']);
-} else {
-    $fname = "User";
-    $lname = "Not Found";
-    $email = "Not Found";
-    $phone = "Not Found";
-    $address = "Not Found";
-}
+        if ($row = mysqli_fetch_assoc($result)) {
+            $fname = htmlspecialchars($row['fname']);
+            $lname = htmlspecialchars($row['lname']);
+            $email = htmlspecialchars($row['email']);
+            $phone = htmlspecialchars($row['phone']);
+            $address = htmlspecialchars($row['address']);
+        } else {
+            $fname = "User";
+            $lname = "Not Found";
+            $email = "Not Found";
+            $phone = "Not Found";
+            $address = "Not Found";
+        }
 
-mysqli_stmt_close($stmt);
+        mysqli_stmt_close($stmt);
 
-// Fetch all orders
-$orders_query = mysqli_query($conn, "SELECT orders.id, orders.order_date, users.fname, users.lname, users.email, users.phone, users.address FROM orders JOIN users ON orders.user_id = users.id");
+        // Fetch all orders
+        $orders_query = mysqli_query($conn, "SELECT orders.id, orders.order_date, users.fname, users.lname, users.email, users.phone, users.address FROM orders JOIN users ON orders.user_id = users.id");
 
-mysqli_close($conn);
-?>
+        mysqli_close($conn);
+        ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -198,4 +198,4 @@ mysqli_close($conn);
 
 </body>
 
-</html>
+</html> -->

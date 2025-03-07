@@ -1,21 +1,21 @@
-<?php
-@include '../db_connect.php';
+<!-- <?php
+        @include '../db_connect.php';
 
-session_start();
+        session_start();
 
-// Ensure session user is set
-if (!isset($_SESSION['id'])) {
-    header("Location: ../admin/admin.php", true, 302);
-    exit();
-}
+        // Ensure session user is set
+        if (!isset($_SESSION['id'])) {
+            header("Location: ../admin/admin.php", true, 302);
+            exit();
+        }
 
-$user_id = $_SESSION['id'];
+        $user_id = $_SESSION['id'];
 
-// Fetch books with current orders count
-$books_query = mysqli_query($conn, "SELECT books.book_image, books.title, books.author, COUNT(orders.id) as order_count FROM books LEFT JOIN orders ON books.id = orders.id GROUP BY books.id");
+        // Fetch books with current orders count
+        $books_query = mysqli_query($conn, "SELECT books.book_image, books.title, books.author, COUNT(orders.id) as order_count FROM books LEFT JOIN orders ON books.id = orders.id GROUP BY books.id");
 
-mysqli_close($conn);
-?>
+        mysqli_close($conn);
+        ?>
 
 <!DOCTYPE html> 
 <html lang="en">
@@ -171,4 +171,4 @@ mysqli_close($conn);
 
 </body>
 
-</html>
+</html> -->

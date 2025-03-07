@@ -9,7 +9,7 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
-// Fetch logged-in user details
+// Fetch logged-in admin details
 $user_id = $_SESSION['id'];
 
 $sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
@@ -22,7 +22,6 @@ if ($row = mysqli_fetch_assoc($result)) {
     $fname = htmlspecialchars($row['fname']);
     $lname = htmlspecialchars($row['lname']);
     $profile_image = $row['profile_image'];
-
     $default_image = '../uploads/default.jpg';
     if (empty($profile_image) || !file_exists("../uploads/" . $profile_image)) {
         $profile_image = $default_image;
@@ -34,10 +33,13 @@ if ($row = mysqli_fetch_assoc($result)) {
     $lname = "User";
     $profile_image = '../uploads/default.jpg';
 }
-
 mysqli_stmt_close($stmt);
 
-// Handle search input
+// Fetch total orders count
+$total_orders_query = mysqli_query($conn, "SELECT COUNT(*) FROM orders");
+$total_orders = mysqli_fetch_row($total_orders_query)[0];
+
+// Search functionality
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 // Pagination
@@ -45,43 +47,47 @@ $items_per_page = 10;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, $_GET['page']) : 1;
 $start = ($page - 1) * $items_per_page;
 
-// Fetch all books with details
-$query = "SELECT isbn, title, book_image, author, copyright, qty, price, total FROM books";
+// Fetch all orders with details, grouped by order_id
+$sql = "SELECT o.id AS order_id, 
+        GROUP_CONCAT(b.title SEPARATOR ', ') AS titles, 
+        GROUP_CONCAT(b.book_image SEPARATOR ',') AS book_images, 
+        o.shipping_address, o.order_date, 
+        (SELECT SUM(oi.price * oi.quantity) FROM order_items oi WHERE oi.order_id = o.id) AS total, 
+        o.status, u.fname, u.lname
+        FROM orders o
+        JOIN users u ON o.user_id = u.id
+        JOIN order_items oi ON o.id = oi.order_id
+        JOIN books b ON oi.book_id = b.isbn";
 $conditions = [];
 $params = [];
 $types = '';
 
 if (!empty($search)) {
-    $conditions[] = "(title LIKE ? OR author LIKE ?)";
-    $search_param = "%$search%";
-    $params[] = $search_param;
-    $params[] = $search_param;
-    $types .= "ss";
+    $conditions[] = "CONCAT(u.fname, ' ', u.lname) LIKE ?";
+    $params[] = "%$search%";
+    $types .= 's';
 }
 
 if (!empty($conditions)) {
-    $query .= " WHERE " . implode(' AND ', $conditions);
+    $sql .= " WHERE " . implode(' AND ', $conditions);
 }
 
-$query .= " ORDER BY isbn DESC";
-$stmt = mysqli_prepare($conn, $query);
-
+$sql .= " GROUP BY o.id ORDER BY o.id DESC";
+$stmt = mysqli_prepare($conn, $sql);
 if (!empty($params)) {
     mysqli_stmt_bind_param($stmt, $types, ...$params);
 }
-
 mysqli_stmt_execute($stmt);
-$books_query = mysqli_stmt_get_result($stmt);
+$result = mysqli_stmt_get_result($stmt);
 
-$books = [];
-while ($row = mysqli_fetch_assoc($books_query)) {
-    $books[] = $row;
+$orders = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $orders[] = $row;
 }
 
 // Apply pagination
-$total_books = count($books);
-$total_pages = ceil($total_books / $items_per_page);
-$paginated_books = array_slice($books, $start, $items_per_page);
+$total_pages = ceil(count($orders) / $items_per_page);
+$paginated_orders = array_slice($orders, $start, $items_per_page);
 ?>
 
 <!DOCTYPE html>
@@ -90,7 +96,7 @@ $paginated_books = array_slice($books, $start, $items_per_page);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Total Books</title>
+    <title>View Orders</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" href="./images/Readscape.png">
     <style>
@@ -101,7 +107,6 @@ $paginated_books = array_slice($books, $start, $items_per_page);
             margin: 0;
             padding: 0;
         }
-
 
         .navbar {
             display: flex;
@@ -195,25 +200,24 @@ $paginated_books = array_slice($books, $start, $items_per_page);
             background-color: #c9302c;
         }
 
-        .book-section {
+        .order-section {
             width: 100%;
         }
 
-        .book-section h3 {
+        .order-section h3 {
             margin-bottom: 20px;
             font-size: 18px;
             color: #333;
         }
 
-        .book-section table {
+        .order-section table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0 10px;
-            /* Adds vertical spacing between rows */
             margin-top: 10px;
         }
 
-        .book-section th {
+        .order-section th {
             background-color: #e9ecef;
             padding: 12px;
             text-align: center;
@@ -222,64 +226,70 @@ $paginated_books = array_slice($books, $start, $items_per_page);
             font-weight: bold;
         }
 
-        .book-section td {
+        .order-section td {
             padding: 12px;
             text-align: center;
             background-color: #fff;
             border-bottom: 1px solid #dee2e6;
+            vertical-align: middle;
+            /* Ensure vertical centering */
         }
 
-        .book-section td img {
+        .order-section td img {
             width: 50px;
             height: 50px;
             object-fit: cover;
             border-radius: 5px;
+            margin-right: 5px;
+            /* Reduced margin for tighter alignment */
             vertical-align: middle;
         }
 
-        .add-book-btn {
-            display: inline-block;
-            background-color: #28a745;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
+        .product-cell {
+            display: flex;
+            flex-direction: column;
+            /* Change to vertical layout */
+            justify-content: left;
+            /* Center horizontally */
+            align-items: left;
+            /* Center vertically */
+            gap: 5px;
+            /* Space between items */
+            width: auto;
+            /* Allow dynamic width based on content */
+            margin: 0 auto;
+            /* Center the container within the cell */
+            max-width: 100%;
+            /* Prevent overflow beyond cell width */
         }
 
-        .add-book-btn:hover {
-            background-color: #218838;
+        .product-cell .book-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            /* Reduced gap for better alignment */
         }
 
-        .update-btn {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
+        .status {
             padding: 5px 10px;
             border-radius: 12px;
-            text-decoration: none;
             font-size: 12px;
-            transition: background-color 0.3s ease;
-            margin-right: 5px;
-        }
-
-        .update-btn:hover {
-            background-color: #0056b3;
-        }
-
-        .delete-btn {
             display: inline-block;
-            background-color: #dc3545;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 12px;
-            transition: background-color 0.3s ease;
         }
 
-        .delete-btn:hover {
-            background-color: #c82333;
+        .status.complete {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status.canceled {
+            background-color: #f8d7da;
+            color: #721c24;
         }
 
         .pagination {
@@ -322,64 +332,72 @@ $paginated_books = array_slice($books, $start, $items_per_page);
 
     <div class="container">
         <div class="search-container">
-            <h1>Total Books: <?php echo $total_books; ?></h1>
+            <h1>Order <?php echo $total_orders; ?> orders found</h1>
             <div class="search-bar">
                 <form method="GET">
-                    <input type="text" name="search" placeholder="Search by Title or Author" value="<?php echo htmlspecialchars($search); ?>">
+                    <input type="text" name="search" placeholder="Search by Full Name" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                     <button type="submit">Search</button>
-                    <a href="total_books.php" class="reset-btn">Reset</a>
+                    <a href="view_orders.php" class="reset-btn">Reset</a>
                 </form>
             </div>
         </div>
 
-        <div class="book-section">
-            <a href="add_book.php" class="add-book-btn">Add New Book</a>
-            <?php if (empty($paginated_books)): ?>
-                <p>No books found.</p>
+        <div class="order-section">
+            <?php if (empty($paginated_orders)): ?>
+                <p>No orders found.</p>
             <?php else: ?>
                 <table>
                     <thead>
                         <tr>
-                            <th>ISBN</th>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Copyright</th>
-                            <th>Quantity</th>
+                            <th>Order ID</th>
+                            <th>Product Name</th>
+                            <th>Address</th>
+                            <th>Shipped To</th>
+                            <th>Date</th>
                             <th>Price</th>
-                            <th>Total</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($paginated_books as $book): ?>
+                        <?php foreach ($paginated_orders as $order): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($book['isbn']); ?></td>
-                                <td><img src="../images/<?php echo htmlspecialchars($book['book_image'] ?: 'default_book.png'); ?>" alt="Book Image"></td>
-                                <td><?php echo htmlspecialchars($book['title']); ?></td>
-                                <td><?php echo htmlspecialchars($book['author']); ?></td>
-                                <td><?php echo htmlspecialchars($book['copyright']); ?></td>
-                                <td><?php echo htmlspecialchars($book['qty']); ?></td>
-                                <td>₱<?php echo number_format($book['price'], 2); ?></td>
-                                <td>₱<?php echo number_format($book['total'], 2); ?></td>
+                                <td>#<?php echo htmlspecialchars($order['order_id']); ?></td>
                                 <td>
-                                    <a href="../admin/edit_book.php?isbn=<?php echo $book['isbn']; ?>" class="update-btn">Update</a>
-                                    <a href="../admin/delete_book.php?isbn=<?php echo $book['isbn']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this book?');">Delete</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-                <div class="pagination">
-                    <button onclick="window.location.href='?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>'" <?php echo $page <= 1 ? 'disabled' : ''; ?>>Previous</button>
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <button class="<?php echo $i === $page ? 'active' : ''; ?>" onclick="window.location.href='?page=<?php echo $i; ?>&search=<?php echo $search; ?>'"><?php echo $i; ?></button>
-                    <?php endfor; ?>
-                    <button onclick="window.location.href='?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>'" <?php echo $page >= $total_pages ? 'disabled' : ''; ?>>Next</button>
-                </div>
-                <p>Showing <?php echo $start + 1; ?> to <?php echo min($start + $items_per_page, $total_books); ?> of <?php echo $total_books; ?> entries</p>
-            <?php endif; ?>
+                                    <?php
+                                    $titles = explode(', ', $order['titles']);
+                                    $images = explode(',', $order['book_images']);
+                                    echo '<div class="product-cell">';
+                                    for ($i = 0; $i < count($titles); $i++):
+                                        $image = !empty($images[$i]) ? htmlspecialchars(trim($images[$i])) : 'default_book.png';
+                                    ?>
+                                        <div class="book-item">
+                                            <img src="../images/<?php echo $image; ?>" alt="Product">
+                                            <span><?php echo htmlspecialchars($titles[$i]); ?></span>
+                                        </div>
+                                    <?php endfor; ?>
         </div>
+        </td>
+        <td><?php echo htmlspecialchars($order['shipping_address']); ?></td>
+        <td><?php echo htmlspecialchars($order['fname'] . ' ' . $order['lname']); ?></td>
+        <td><?php echo date('d/m/Y', strtotime($order['order_date'])); ?></td>
+        <td>₱<?php echo number_format($order['total'], 2); ?></td>
+        <td><span class="status <?php echo strtolower($order['status']); ?>"><?php echo ucfirst($order['status']); ?></span></td>
+        <td class="actions"><a href="order_detail.php?id=<?php echo $order['order_id']; ?>"><i class="fas fa-eye"></i></a></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+    </table>
+    <div class="pagination">
+        <button onclick="window.location.href='?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>'" <?php echo $page <= 1 ? 'disabled' : ''; ?>>Previous</button>
+        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+            <button class="<?php echo $i === $page ? 'active' : ''; ?>" onclick="window.location.href='?page=<?php echo $i; ?>&search=<?php echo $search; ?>'"><?php echo $i; ?></button>
+        <?php endfor; ?>
+        <button onclick="window.location.href='?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>'" <?php echo $page >= $total_pages ? 'disabled' : ''; ?>>Next</button>
+    </div>
+    <p>Showing <?php echo $start + 1; ?> to <?php echo min($start + $items_per_page, $total_orders); ?> of <?php echo $total_orders; ?> entries</p>
+<?php endif; ?>
+    </div>
     </div>
 </body>
 

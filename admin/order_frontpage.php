@@ -1,44 +1,44 @@
-<?php
-@include '../db_connect.php';
+<!-- <?php
+        @include '../db_connect.php';
 
-session_start();
+        session_start();
 
-// Ensure session user is set
-if (!isset($_SESSION['id'])) {
-    header("Location: ../admin/admin.php", true, 302);
-    exit();
-}
+        // Ensure session user is set
+        if (!isset($_SESSION['id'])) {
+            header("Location: ../admin/admin.php", true, 302);
+            exit();
+        }
 
-$user_id = $_SESSION['id'];
+        $user_id = $_SESSION['id'];
 
-// Fetch user details
-$sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+        // Fetch user details
+        $sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
+        $stmt = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
 
-if ($row = mysqli_fetch_assoc($result)) {
-    $fname = htmlspecialchars($row['fname']);
-    $lname = htmlspecialchars($row['lname']);
-    $profile_image = $row['profile_image'];
+        if ($row = mysqli_fetch_assoc($result)) {
+            $fname = htmlspecialchars($row['fname']);
+            $lname = htmlspecialchars($row['lname']);
+            $profile_image = $row['profile_image'];
 
-    // Ensure correct path to the image
-    $default_image = '../uploads/default.jpg';
-    if (empty($profile_image) || !file_exists("../uploads/" . $profile_image)) {
-        $profile_image = $default_image;
-    } else {
-        $profile_image = '../uploads/' . $profile_image;
-    }
-} else {
-    $fname = "User";
-    $lname = "Not Found";
-    $profile_image = '../uploads/default.jpg';
-}
+            // Ensure correct path to the image
+            $default_image = '../uploads/default.jpg';
+            if (empty($profile_image) || !file_exists("../uploads/" . $profile_image)) {
+                $profile_image = $default_image;
+            } else {
+                $profile_image = '../uploads/' . $profile_image;
+            }
+        } else {
+            $fname = "User";
+            $lname = "Not Found";
+            $profile_image = '../uploads/default.jpg';
+        }
 
-mysqli_stmt_close($stmt);
-mysqli_close($conn);
-?>
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+        ?>
 
 <!DOCTYPE html>
 <html>
@@ -188,4 +188,4 @@ mysqli_close($conn);
     </div>
 </body>
 
-</html>
+</html> -->
