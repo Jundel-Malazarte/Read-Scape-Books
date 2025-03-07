@@ -553,15 +553,15 @@ mysqli_stmt_close($stmt);
             document.getElementById('preview-state').textContent = state;
             document.getElementById('preview-zipcode').textContent = zipcode;
 
-            // Hide form and show previewasdasdasd
-            document.getElementById('shipping-form').style.display = 'none';
+            // Hide the shipping form inputs and show the preview
+            document.querySelector('.shipping-form').style.display = 'none';
             document.getElementById('address-preview').style.display = 'block';
         }
 
         function editAddress() {
-            // Hide preview and show form
+            // Hide preview and show the shipping form inputs
             document.getElementById('address-preview').style.display = 'none';
-            document.getElementById('shipping-form').style.display = 'block';
+            document.querySelector('.shipping-form').style.display = 'flex';
         }
 
         // Check if cart is empty and display message using JavaScript
