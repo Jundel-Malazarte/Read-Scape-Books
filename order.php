@@ -140,7 +140,6 @@ mysqli_close($conn);
         .order-list {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            /* Two equal columns */
             gap: 20px;
             max-width: 90%;
             margin: 20px auto;
@@ -172,28 +171,40 @@ mysqli_close($conn);
         }
 
         .order-items {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            width: 100%;
         }
 
-        .order-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+        .order-items table {
+            width: 100%;
+            border-collapse: collapse;
+            border: none;
         }
 
-        .order-item img {
-            width: 100px;
-            height: 150px;
+        .order-items td {
+            vertical-align: top;
+            padding: 10px 0;
+        }
+
+        .order-items td.image {
+            width: 120px;
+            padding-right: 20px;
+        }
+
+        .order-items td.image img {
+            width: 120px;
+            height: 180px;
             object-fit: cover;
             border-radius: 10px;
         }
 
-        .item-details p {
-            font-size: 15px;
+        .order-items td.name {
+            flex: 1;
+        }
+
+        .name p {
+            font-size: 14px;
             color: #444;
-            margin: 5px 0;
+            margin: 3px 0;
         }
 
         .order-footer {
@@ -296,7 +307,6 @@ mysqli_close($conn);
             }
         }
 
-        /* Tab Navigation Styles */
         .tab-nav {
             display: flex;
             justify-content: center;
@@ -323,17 +333,43 @@ mysqli_close($conn);
             color: white;
         }
 
-        /* Responsive Design for Smaller Screens */
         @media (max-width: 768px) {
             .order-list {
                 grid-template-columns: 1fr;
-                /* Single column on smaller screens */
             }
 
             .order-card {
                 width: 90%;
-                /* Adjust card width for smaller screens */
             }
+        }
+
+        /* Styles for See More button */
+        .see-more-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .see-more-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Ensure hidden-items only controls visibility, not layout */
+        .hidden-items {
+            display: none;
+        }
+
+        /* Ensure hidden items maintain the same layout as order-item */
+        .expanded .hidden-items {
+            display: table-row;
         }
     </style>
 </head>
@@ -394,24 +430,52 @@ mysqli_close($conn);
                         <p class="order-date">Order Date: <?php echo htmlspecialchars(date('d/m/Y', strtotime($order['order_date']))); ?></p>
                         <p class="status <?php echo strtolower($order['status']); ?>"><?php echo ucfirst($order['status']); ?></p>
                         <div class="order-items">
-                            <?php
-                            $total_price = 0;
-                            for ($i = 0; $i < count($order['titles']); $i++):
+                            <table>
+                                <?php
+                                $total_price = 0;
+                                $item_count = count($order['titles']);
+                                // Display only the first item statically
+                                $i = 0;
                                 $image_path = !empty($order['book_images'][$i]) ? 'images/' . htmlspecialchars($order['book_images'][$i]) : 'images/default_book.png';
                                 $subtotal = $order['prices'][$i] * $order['quantities'][$i];
                                 $total_price += $subtotal;
-                            ?>
-                                <div class="order-item">
-                                    <img src="<?php echo $image_path; ?>" alt="Book Image">
-                                    <div class="item-details">
+                                ?>
+                                <tr>
+                                    <td class="image">
+                                        <img src="<?php echo $image_path; ?>" alt="Book Image">
+                                    </td>
+                                    <td class="name">
                                         <p><strong><?php echo htmlspecialchars($order['titles'][$i]); ?></strong></p>
                                         <p>Author: <?php echo htmlspecialchars($order['authors'][$i]); ?></p>
                                         <p>Quantity: <?php echo htmlspecialchars($order['quantities'][$i]); ?></p>
                                         <p>Price: ₱<?php echo number_format($order['prices'][$i], 2); ?></p>
                                         <p>Subtotal: ₱<?php echo number_format($subtotal, 2); ?></p>
-                                    </div>
-                                </div>
-                            <?php endfor; ?>
+                                    </td>
+                                </tr>
+                                <?php if ($item_count > 1): ?>
+                                    <?php
+                                    // Hidden items for orders with more than one item
+                                    for ($i = 1; $i < $item_count; $i++):
+                                        $image_path = !empty($order['book_images'][$i]) ? 'images/' . htmlspecialchars($order['book_images'][$i]) : 'images/default_book.png';
+                                        $subtotal = $order['prices'][$i] * $order['quantities'][$i];
+                                        $total_price += $subtotal;
+                                    ?>
+                                        <tr class="hidden-items">
+                                            <td class="image">
+                                                <img src="<?php echo $image_path; ?>" alt="Book Image">
+                                            </td>
+                                            <td class="name">
+                                                <p><strong><?php echo htmlspecialchars($order['titles'][$i]); ?></strong></p>
+                                                <p>Author: <?php echo htmlspecialchars($order['authors'][$i]); ?></p>
+                                                <p>Quantity: <?php echo htmlspecialchars($order['quantities'][$i]); ?></p>
+                                                <p>Price: ₱<?php echo number_format($order['prices'][$i], 2); ?></p>
+                                                <p>Subtotal: ₱<?php echo number_format($subtotal, 2); ?></p>
+                                            </td>
+                                        </tr>
+                                    <?php endfor; ?>
+                                    <button class="see-more-btn" onclick="toggleItems(this)" aria-expanded="false">See More ↓</button>
+                                <?php endif; ?>
+                            </table>
                         </div>
                         <hr style="margin: 15px 0;">
                         <div class="order-footer">
@@ -441,6 +505,19 @@ mysqli_close($conn);
                 }
             };
             xhr.send();
+        }
+
+        function toggleItems(button) {
+            const card = button.closest('.order-card');
+            const hiddenItems = card.querySelectorAll('.hidden-items');
+            const isExpanded = card.classList.toggle('expanded');
+
+            hiddenItems.forEach(item => {
+                item.style.display = isExpanded ? 'table-row' : 'none';
+            });
+
+            button.textContent = isExpanded ? 'See Less ↑' : 'See More ↓';
+            button.setAttribute('aria-expanded', isExpanded);
         }
 
         // Call updateCartCounter() when page loads
