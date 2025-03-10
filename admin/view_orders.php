@@ -35,9 +35,26 @@ if ($row = mysqli_fetch_assoc($result)) {
 }
 mysqli_stmt_close($stmt);
 
-// Fetch total orders count
-$total_orders_query = mysqli_query($conn, "SELECT COUNT(*) FROM orders");
-$total_orders = mysqli_fetch_row($total_orders_query)[0];
+// Tab filter functionality
+$status_filter = isset($_GET['status']) ? trim($_GET['status']) : 'all';
+$valid_statuses = ['all', 'completed', 'pending', 'canceled'];
+if (!in_array($status_filter, $valid_statuses)) {
+    $status_filter = 'all';
+}
+
+// Fetch total orders count based on status
+$total_orders_query = "SELECT COUNT(*) FROM orders";
+if ($status_filter !== 'all') {
+    $total_orders_query .= " WHERE status = ?";
+    $stmt = mysqli_prepare($conn, $total_orders_query);
+    mysqli_stmt_bind_param($stmt, "s", $status_filter);
+    mysqli_stmt_execute($stmt);
+    $total_orders = mysqli_fetch_row(mysqli_stmt_get_result($stmt))[0];
+    mysqli_stmt_close($stmt);
+} else {
+    $total_orders_query = mysqli_query($conn, $total_orders_query);
+    $total_orders = mysqli_fetch_row($total_orders_query)[0];
+}
 
 // Search functionality
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
@@ -61,6 +78,12 @@ $sql = "SELECT o.id AS order_id,
 $conditions = [];
 $params = [];
 $types = '';
+
+if ($status_filter !== 'all') {
+    $conditions[] = "o.status = ?";
+    $params[] = $status_filter;
+    $types .= 's';
+}
 
 if (!empty($search)) {
     $conditions[] = "CONCAT(u.fname, ' ', u.lname) LIKE ?";
@@ -232,7 +255,6 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
             background-color: #fff;
             border-bottom: 1px solid #dee2e6;
             vertical-align: middle;
-            /* Ensure vertical centering */
         }
 
         .order-section td img {
@@ -241,33 +263,24 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
             object-fit: cover;
             border-radius: 5px;
             margin-right: 5px;
-            /* Reduced margin for tighter alignment */
             vertical-align: middle;
         }
 
         .product-cell {
             display: flex;
             flex-direction: column;
-            /* Change to vertical layout */
             justify-content: left;
-            /* Center horizontally */
             align-items: left;
-            /* Center vertically */
             gap: 5px;
-            /* Space between items */
             width: auto;
-            /* Allow dynamic width based on content */
             margin: 0 auto;
-            /* Center the container within the cell */
             max-width: 100%;
-            /* Prevent overflow beyond cell width */
         }
 
         .product-cell .book-item {
             display: flex;
             align-items: center;
             gap: 5px;
-            /* Reduced gap for better alignment */
         }
 
         .status {
@@ -315,6 +328,31 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
         .pagination button:hover {
             background-color: #e9ecef;
         }
+
+        /* Tab Navigation Styles */
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-nav a {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            border-bottom: 2px solid transparent;
+            transition: border-bottom 0.3s ease, color 0.3s ease;
+        }
+
+        .tab-nav a.active {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+        }
+
+        .tab-nav a:hover {
+            color: #007bff;
+        }
     </style>
 </head>
 
@@ -335,14 +373,23 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
             <h1>Order <?php echo $total_orders; ?> orders found</h1>
             <div class="search-bar">
                 <form method="GET">
+                    <input type="hidden" name="status" value="<?php echo htmlspecialchars($status_filter); ?>">
                     <input type="text" name="search" placeholder="Search by Full Name" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                     <button type="submit">Search</button>
-                    <a href="view_orders.php" class="reset-btn">Reset</a>
+                    <a href="view_orders.php?status=<?php echo htmlspecialchars($status_filter); ?>" class="reset-btn">Reset</a>
                 </form>
             </div>
         </div>
 
         <div class="order-section">
+            <!-- Tab Navigation -->
+            <div class="tab-nav">
+                <a href="view_orders.php?status=all&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'all' ? 'active' : ''; ?>">All Orders</a>
+                <a href="view_orders.php?status=completed&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'completed' ? 'active' : ''; ?>">Completed</a>
+                <a href="view_orders.php?status=pending&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'pending' ? 'active' : ''; ?>">Pending</a>
+                <a href="view_orders.php?status=canceled&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'canceled' ? 'active' : ''; ?>">Cancel</a>
+            </div>
+
             <?php if (empty($paginated_orders)): ?>
                 <p>No orders found.</p>
             <?php else: ?>
@@ -389,11 +436,11 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
     </tbody>
     </table>
     <div class="pagination">
-        <button onclick="window.location.href='?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>'" <?php echo $page <= 1 ? 'disabled' : ''; ?>>Previous</button>
+        <button onclick="window.location.href='?page=<?php echo $page - 1; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>'" <?php echo $page <= 1 ? 'disabled' : ''; ?>>Previous</button>
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <button class="<?php echo $i === $page ? 'active' : ''; ?>" onclick="window.location.href='?page=<?php echo $i; ?>&search=<?php echo $search; ?>'"><?php echo $i; ?></button>
+            <button class="<?php echo $i === $page ? 'active' : ''; ?>" onclick="window.location.href='?page=<?php echo $i; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>'"><?php echo $i; ?></button>
         <?php endfor; ?>
-        <button onclick="window.location.href='?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>'" <?php echo $page >= $total_pages ? 'disabled' : ''; ?>>Next</button>
+        <button onclick="window.location.href='?page=<?php echo $page + 1; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>'" <?php echo $page >= $total_pages ? 'disabled' : ''; ?>>Next</button>
     </div>
     <p>Showing <?php echo $start + 1; ?> to <?php echo min($start + $items_per_page, $total_orders); ?> of <?php echo $total_orders; ?> entries</p>
 <?php endif; ?>
