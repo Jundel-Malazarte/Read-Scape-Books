@@ -1,8 +1,7 @@
 <?php
-@include 'db_connect.php';
 session_start();
+include 'db_connect.php';
 
-// Redirect to sign-in if user is not logged in
 if (!isset($_SESSION['id'])) {
     header("Location: sign-in.php");
     exit();
@@ -10,59 +9,82 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
-// Fetch user details with error handling
+// Fetch user details
 $sql = "SELECT fname, lname, profile_image FROM users WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
+$user = mysqli_fetch_assoc($result);
+mysqli_stmt_close($stmt);
 
-if ($result && mysqli_num_rows($result) > 0) {
-    $user = mysqli_fetch_assoc($result);
-    $fname = htmlspecialchars($user['fname']);
-    $lname = htmlspecialchars($user['lname']);
-    $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jpg";
-} else {
-    echo "Error: User not found.";
+$fname = htmlspecialchars($user['fname']);
+$lname = htmlspecialchars($user['lname']);
+$profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jpg";
+
+// Check if an ISBN is passed for single-item checkout (from "Buy Now")
+$single_item = false;
+$items = [];
+$total_price = 0;
+$shipping_cost = 100.00; // Default shipping cost (Standard Delivery)
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $_SESSION['fname'] = $_POST['first_name'] ?? $_SESSION['fname'];
+    $_SESSION['lname'] = $_POST['last_name'] ?? $_SESSION['lname'];
+    $_SESSION['email'] = $_POST['email'] ?? $_SESSION['email'];
+    $_SESSION['mobile'] = $_POST['mobile'] ?? $_SESSION['mobile'];
+    // Submit to process_order.php
+    header("Location: process_order.php");
     exit();
 }
-mysqli_stmt_close($stmt);
 
-// Fetch cart items with error handling
-$sql = "SELECT books.isbn, books.title, books.book_image, books.price, books.author, cart.quantity, 
-        (books.price * cart.quantity) AS total 
-    FROM cart 
-    JOIN books ON cart.isbn = books.isbn 
-    WHERE cart.user_id = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+if (isset($_GET['isbn']) && !empty($_GET['isbn'])) {
+    $isbn = $_GET['isbn'];
+    $single_item = true;
 
-$total_price = 0;
-$cart_items = [];
-if ($result && mysqli_num_rows($result) > 0) {
-    while ($row = mysqli_fetch_assoc($result)) {
-        $cart_items[] = $row;
-        $total_price += $row['total'];
+    // Fetch the specific book
+    $sql = "SELECT isbn, title, book_image, author, price FROM books WHERE isbn = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "s", $isbn);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($book = mysqli_fetch_assoc($result)) {
+        $items[] = [
+            'isbn' => $book['isbn'],
+            'title' => $book['title'],
+            'book_image' => $book['book_image'],
+            'author' => $book['author'],
+            'price' => $book['price'],
+            'quantity' => 1, // Quantity is 1 for "Buy Now"
+            'total' => $book['price'] * 1
+        ];
+        $total_price = $book['price'];
     }
+    mysqli_stmt_close($stmt);
 } else {
-    $cart_items = []; // Ensure empty array if no items
+    // Fetch cart items for regular checkout
+    $sql = "SELECT books.isbn, books.title, books.book_image, books.author, books.price, cart.quantity, 
+            (books.price * cart.quantity) AS total 
+        FROM cart 
+        JOIN books ON cart.isbn = books.isbn 
+        WHERE cart.user_id = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    while ($cart_item = mysqli_fetch_assoc($result)) {
+        $items[] = $cart_item;
+        $total_price += $cart_item['total'];
+    }
+    mysqli_stmt_close($stmt);
 }
-mysqli_stmt_close($stmt);
 
-// Fixed shipping cost (as per code, though image suggests $5.17)
-$shipping_cost = 100.00; // Adjust to $5.17 if intended to match image
-$grand_total = $total_price + $shipping_cost;
+$total_with_shipping = $total_price + $shipping_cost;
+$cart_count = count($items);
 
-// Fetch cart count for navbar
-$sql = "SELECT COUNT(*) FROM cart WHERE user_id = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$cart_count_result = mysqli_stmt_get_result($stmt);
-$cart_count = mysqli_fetch_row($cart_count_result)[0];
-mysqli_stmt_close($stmt);
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>
@@ -71,19 +93,18 @@ mysqli_stmt_close($stmt);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Readscape</title>
+    <title>Checkout</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
-    <link rel="icon" href="./images/Readscape.png">    
+    <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
         }
 
         .navbar {
@@ -92,16 +113,6 @@ mysqli_stmt_close($stmt);
             align-items: center;
             background-color: #333;
             padding: 10px 20px;
-        }
-
-        .navbar img {
-            border-radius: 50%;
-        }
-
-        .readscape-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .navbar a {
@@ -115,8 +126,6 @@ mysqli_stmt_close($stmt);
             border-radius: 5px;
         }
 
-        /** Profile info */
-
         .profile-info {
             display: flex;
             align-items: center;
@@ -129,7 +138,6 @@ mysqli_stmt_close($stmt);
             border-radius: 50%;
             object-fit: cover;
         }
-
 
         .sidenav {
             height: 100%;
@@ -175,49 +183,28 @@ mysqli_stmt_close($stmt);
             }
         }
 
-        span {
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .checkout-container {
+        .container {
             max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
+            margin: 20px auto;
             display: flex;
-            gap: 30px;
+            gap: 20px;
+            padding: 20px;
         }
 
         .left-column {
-            padding: 5px;
             flex: 2;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .right-column {
             flex: 1;
             background: #f8f9fa;
-            padding: 25px;
+            padding: 20px;
             border-radius: 10px;
-            height: fit-content;
-        }
-
-        h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a2b49;
-            margin-bottom: 20px;
-        }
-
-        .shipping-form {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .order-summary {
-            margin-top: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .cart-table {
@@ -245,77 +232,90 @@ mysqli_stmt_close($stmt);
             color: #333;
         }
 
-        .cart-table .item-details {
+        .item-details {
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .cart-table .item-details img {
+        .item-details img {
             width: 80px;
             height: 80px;
             object-fit: cover;
             border-radius: 5px;
         }
 
-        .cart-table .item-details h3 {
+        .item-details h3 {
             font-size: 16px;
             font-weight: 700;
             margin: 0;
         }
 
-        .cart-table .item-details p {
-            font-size: 12px;
-            color: #666;
-            margin: 0;
-        }
-
+        .shipping-form,
         .address-preview {
             margin-top: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 5px;
-            border: 1px solid #ddd;
         }
 
+        .shipping-form label,
         .address-preview p {
+            display: block;
+            margin-bottom: 10px;
             font-size: 14px;
-            color: #333;
-            margin: 5px 0;
         }
 
-        .edit-address-btn {
-            background-color: #007bff;
+        .shipping-form input,
+        .shipping-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .shipping-form textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .edit-address-btn,
+        .checkout-btn {
+            background-color: #000;
             color: white;
-            padding: 8px 15px;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 14px;
-            margin-top: 10px;
             transition: background 0.3s;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 10px;
         }
 
-        .edit-address-btn:hover {
-            background-color: #0056b3;
+        .edit-address-btn:hover,
+        .checkout-btn:hover {
+            background-color: #333;
         }
 
-        .price-summary {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        .address-preview {
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .price-summary h3,
+        .payment-methods h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a2b49;
+            margin-bottom: 20px;
         }
 
         .total-price {
-            font-size: 18px;
-            font-weight: bold;
-            text-align: right;
-            margin-top: 10px;
-        }
-
-        .payment-methods {
-            margin: 20px 0;
+            font-size: 16px;
+            margin-top: 15px;
         }
 
         .payment-methods select {
@@ -327,69 +327,13 @@ mysqli_stmt_close($stmt);
             margin-top: 5px;
         }
 
-        label {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        input,
-        textarea,
-        select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-        }
-
-        textarea {
-            height: 100px;
-            resize: vertical;
-        }
-
-        .checkout-btn {
-            margin-top: 20px;
-            background-color: #000;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s;
-            width: 100%;
-        }
-
-        .checkout-btn:hover {
-            background-color: #333;
-            transform: scale(1.05);
-        }
-
-        .empty-cart-message {
-            font-size: 16px;
-            color: #666;
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .checkout-container {
-                flex-direction: column;
-            }
-
-            .left-column,
-            .right-column {
-                width: 100%;
-            }
+        .readscape {
+            border-radius: 50%;
         }
     </style>
 </head>
 
 <body>
-    <!-- Navbar -->
     <div class="navbar">
         <div id="Sidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
@@ -400,7 +344,7 @@ mysqli_stmt_close($stmt);
             <a href="order.php">My Orders</a>
             <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong>ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰<strong> ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
         <div class="profile-info">
             <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
                 🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
@@ -412,14 +356,15 @@ mysqli_stmt_close($stmt);
         </div>
     </div>
 
-    <!-- Checkout Content -->
-    <div class="checkout-container">
+    <div class="container">
         <div class="left-column">
             <h2>Shipping Information</h2>
-            <form id="checkout-form" action="process_checkout.php" method="post">
+            <!-- Inside the <form> in checkout.php -->
+            <form id="checkout-form" method="POST" action="process_order.php<?php echo isset($_GET['isbn']) ? '?isbn=' . urlencode($_GET['isbn']) : ''; ?>">
+                <!-- Existing form fields -->
                 <div class="shipping-form">
                     <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    <input type="email" id="email" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
 
                     <label for="first_name">First Name</label>
                     <input type="text" id="first_name" name="first_name" value="<?php echo $fname; ?>" required>
@@ -428,7 +373,7 @@ mysqli_stmt_close($stmt);
                     <input type="text" id="last_name" name="last_name" value="<?php echo $lname; ?>" required>
 
                     <label for="mobile">Mobile Number</label>
-                    <input type="tel" id="mobile" name="mobile" required>
+                    <input type="tel" id="mobile" name="mobile" placeholder="+639123456789" required>
 
                     <label for="address">Address</label>
                     <textarea id="address" name="address" required></textarea>
@@ -436,7 +381,7 @@ mysqli_stmt_close($stmt);
                     <label for="city">City</label>
                     <input type="text" id="city" name="city" required>
 
-                    <label for="state">State</label>
+                    <label for="state">State/Province</label>
                     <input type="text" id="state" name="state" required>
 
                     <label for="zipcode">Zipcode</label>
@@ -452,7 +397,7 @@ mysqli_stmt_close($stmt);
                     <p><strong>Mobile Number:</strong> <span id="preview-mobile"></span></p>
                     <p><strong>Address:</strong> <span id="preview-address"></span></p>
                     <p><strong>City:</strong> <span id="preview-city"></span></p>
-                    <p><strong>State:</strong> <span id="preview-state"></span></p>
+                    <p><strong>State/Province:</strong> <span id="preview-state"></span></p>
                     <p><strong>Zipcode:</strong> <span id="preview-zipcode"></span></p>
                     <button type="button" class="edit-address-btn" onclick="editAddress()">Edit Address</button>
                 </div>
@@ -460,7 +405,7 @@ mysqli_stmt_close($stmt);
 
             <h2 style="margin-top: 30px;">Order Summary</h2>
             <div class="order-summary" id="order-summary">
-                <?php if (!empty($cart_items)): ?>
+                <?php if (!empty($items)): ?>
                     <table class="cart-table">
                         <thead>
                             <tr>
@@ -468,10 +413,11 @@ mysqli_stmt_close($stmt);
                                 <th>Author Name</th>
                                 <th>Quantity</th>
                                 <th>Price Each</th>
+                                <th>Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php foreach ($cart_items as $item): ?>
+                            <?php foreach ($items as $item): ?>
                                 <tr>
                                     <td>
                                         <div class="item-details">
@@ -483,11 +429,14 @@ mysqli_stmt_close($stmt);
                                     </td>
                                     <td><?php echo htmlspecialchars($item['author'] ?? 'Unknown'); ?></td>
                                     <td><?php echo htmlspecialchars($item['quantity']); ?></td>
-                                    <td>₱<?php echo number_format($item['price'], 2); ?></td>
+                                    <td>₱<?php echo number_format($item['price'], 2, '.', ','); ?></td>
+                                    <td>₱<?php echo number_format($item['total'], 2, '.', ','); ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                <?php else: ?>
+                    <p>No items in the checkout.</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -495,15 +444,15 @@ mysqli_stmt_close($stmt);
         <div class="right-column">
             <div class="price-summary">
                 <h3>Summary</h3>
-                <?php if (empty($cart_items)): ?>
-                    <p>No items in the cart.</p>
-                <?php else: ?>
+                <?php if (!empty($items)): ?>
                     <div class="total-price">
-                        Items: <?php echo $cart_count; ?><br>
-                        Shipping: ₱<?php echo number_format($shipping_cost, 2); ?><br>
+                        <p>Items: <?php echo $cart_count; ?></p>
+                        <p>Shipping: ₱<?php echo number_format($shipping_cost, 2, '.', ','); ?></p>
                         <hr style="margin: 15px 0;">
-                        Total Price: ₱<?php echo number_format($grand_total, 2); ?>
+                        <p><strong>Total Price:</strong> ₱<?php echo number_format($total_with_shipping, 2, '.', ','); ?></p>
                     </div>
+                <?php else: ?>
+                    <p>No items in the checkout.</p>
                 <?php endif; ?>
             </div>
 
@@ -519,7 +468,6 @@ mysqli_stmt_close($stmt);
         </div>
     </div>
 
-    <!-- JavaScript for Navbar and Address Preview -->
     <script>
         function openNav() {
             document.getElementById("Sidenav").style.width = "240px";
@@ -555,26 +503,23 @@ mysqli_stmt_close($stmt);
             document.getElementById('preview-state').textContent = state;
             document.getElementById('preview-zipcode').textContent = zipcode;
 
-            // Hide form and show previewasdasdasd
-            document.getElementById('shipping-form').style.display = 'none';
+            // Hide the shipping form inputs and show the preview
+            document.querySelector('.shipping-form').style.display = 'none';
             document.getElementById('address-preview').style.display = 'block';
         }
 
         function editAddress() {
-            // Hide preview and show form
+            // Hide preview and show the shipping form inputs
             document.getElementById('address-preview').style.display = 'none';
-            document.getElementById('shipping-form').style.display = 'block';
+            document.querySelector('.shipping-form').style.display = 'block';
         }
 
-        // Check if cart is empty and display message using JavaScript
+        // Check if items exist and adjust display
         window.onload = function() {
             const orderSummary = document.getElementById('order-summary');
-            const cartItemsExist = orderSummary.querySelector('table') !== null;
-
-            if (!cartItemsExist) {
+            if (!orderSummary.querySelector('table')) {
                 const emptyMessage = document.createElement('p');
-                emptyMessage.className = 'empty-cart-message';
-                emptyMessage.textContent = 'No items in the cart.';
+                emptyMessage.textContent = 'No items in the checkout.';
                 orderSummary.appendChild(emptyMessage);
             }
         };

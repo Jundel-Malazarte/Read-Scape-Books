@@ -23,9 +23,9 @@ $fname = htmlspecialchars($user['fname']);
 $lname = htmlspecialchars($user['lname']);
 $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jpg";
 
-// Fetch cart items
+// Fetch cart items with stock check
 $sql = "SELECT books.isbn, books.title, books.book_image, books.price, books.author, cart.quantity, 
-        (books.price * cart.quantity) AS total 
+        books.qty AS stock, (books.price * cart.quantity) AS item_total 
     FROM cart 
     JOIN books ON cart.isbn = books.isbn 
     WHERE cart.user_id = ?";
@@ -44,6 +44,21 @@ $cart_count = mysqli_fetch_row($cart_count_result)[0];
 mysqli_stmt_close($stmt);
 
 $total_price = 0;
+$stock_errors = []; // Array to store stock-related errors
+$cart_items = []; // Array to store cart items for display
+while ($cart_item = mysqli_fetch_assoc($result)) {
+    if ($cart_item['quantity'] > $cart_item['stock']) {
+        $stock_errors[] = "Not enough stock for '" . htmlspecialchars($cart_item['title']) . "'. Available: " . $cart_item['stock'] . ", Requested: " . $cart_item['quantity'];
+    }
+    $total_price += $cart_item['item_total']; // Sum the item totals
+    $cart_items[] = $cart_item; // Store items for display
+}
+// No need to reset pointer since we’re using a separate array now
+
+// Default shipping cost (can be updated via the dropdown)
+$shipping_cost = 100.00; // Standard shipping from your dropdown
+$total_with_shipping = $total_price + $shipping_cost;
+
 ?>
 
 <!DOCTYPE html>
@@ -357,6 +372,13 @@ $total_price = 0;
             background-color: #cccccc;
         }
 
+        .stock-error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .cart-container {
                 flex-direction: column;
@@ -386,7 +408,7 @@ $total_price = 0;
             <a href="order.php">My Orders</a>
             <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong> ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰<strong> ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
         <div class="profile-info">
             <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
                 🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
@@ -402,6 +424,13 @@ $total_price = 0;
         <div class="cart-container">
             <div class="cart-left">
                 <h2 class="cart-header">Your Cart (<?php echo $cart_count; ?> items)</h2>
+                <?php if (!empty($stock_errors)): ?>
+                    <div class="stock-error">
+                        <?php foreach ($stock_errors as $error): ?>
+                            <p><?php echo $error; ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
                 <table class="cart-table">
                     <thead>
                         <tr>
@@ -413,7 +442,7 @@ $total_price = 0;
                         </tr>
                     </thead>
                     <tbody id="cart-items">
-                        <?php while ($cart_item = mysqli_fetch_assoc($result)): ?>
+                        <?php foreach ($cart_items as $cart_item): ?>
                             <tr id="cart-item-<?php echo $cart_item['isbn']; ?>">
                                 <td>
                                     <div class="item-details">
@@ -426,9 +455,9 @@ $total_price = 0;
                                 <td><?php echo htmlspecialchars($cart_item['author'] ?? 'Unknown'); ?></td>
                                 <td>
                                     <div class="quantity-control">
-                                        <button class="decrement-btn" onclick="updateQuantity('<?php echo $cart_item['isbn']; ?>', -1)">-</button>
+                                        <button class="decrement-btn" onclick="updateQuantity('<?php echo $cart_item['isbn']; ?>', -1)" <?php echo ($cart_item['quantity'] <= 1) ? 'disabled' : ''; ?>>-</button>
                                         <span class="quantity"><?php echo htmlspecialchars($cart_item['quantity']); ?></span>
-                                        <button class="increment-btn" onclick="updateQuantity('<?php echo $cart_item['isbn']; ?>', 1)">+</button>
+                                        <button class="increment-btn" onclick="updateQuantity('<?php echo $cart_item['isbn']; ?>', 1)" <?php echo ($cart_item['quantity'] >= $cart_item['stock']) ? 'disabled' : ''; ?>>+</button>
                                     </div>
                                 </td>
                                 <td>₱<?php echo number_format($cart_item['price'], 2, '.', ','); ?></td>
@@ -436,8 +465,7 @@ $total_price = 0;
                                     <button class="remove-btn" onclick="removeFromCart('<?php echo $cart_item['isbn']; ?>')">X</button>
                                 </td>
                             </tr>
-                            <?php $total_price += $cart_item['total']; ?>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
@@ -448,14 +476,13 @@ $total_price = 0;
                         <p><span>Items <?php echo $cart_count; ?></span><span id="subtotal-price">₱<?php echo number_format($total_price, 2, '.', ','); ?></span></p>
                         <div class="shipping-options">
                             <span>Shipping</span>
-                            <select id="shipping-method" name="shipping_method">
-                                <option value="standard">Standard Delivery - ₱100.00</option>
-                                <option value="express">Express Delivery - ₱200.00</option>
+                            <select id="shipping-method" name="shipping_method" onchange="updateTotal()">
+                                <option value="100">Standard Delivery - ₱100.00</option>
                             </select>
                         </div>
-                        <p class="total"><span>Total Price</span><span id="total-price">₱<?php echo number_format($total_price + 100, 2, '.', ','); ?></span></p>
+                        <p class="total"><span>Total Price</span><span id="total-price">₱<?php echo number_format($total_with_shipping, 2, '.', ','); ?></span></p>
                     </div>
-                    <a href="checkout.php" class="checkout-btn" id="checkout-btn" <?php if ($cart_count == 0) echo 'disabled'; ?>>Checkout</a>
+                    <a href="checkout.php" class="checkout-btn" id="checkout-btn" <?php echo (!empty($stock_errors) || $cart_count == 0) ? 'disabled' : ''; ?>>Checkout</a>
                 </div>
             </div>
         </div>
@@ -506,16 +533,22 @@ $total_price = 0;
                     if (response.success) {
                         quantitySpan.innerText = response.new_quantity;
                         document.getElementById("subtotal-price").innerText = "₱" + response.new_subtotal;
-                        document.getElementById("total-price").innerText = "₱" + response.new_total_price;
-
-                        // Update cart count and button state after quantity change
-                        updateCartState();
+                        updateTotal(); // Update total price including shipping
+                        updateCartState(); // Update cart state and button
                     } else {
                         alert(response.message);
+                        location.reload(); // Reload to reflect stock changes
                     }
                 }
             };
             xhr.send("isbn=" + isbn + "&new_quantity=" + newQuantity);
+        }
+
+        function updateTotal() {
+            const shippingMethod = parseFloat(document.getElementById("shipping-method").value);
+            const subtotal = parseFloat(document.getElementById("subtotal-price").innerText.replace('₱', '').replace(',', ''));
+            const totalPrice = subtotal + shippingMethod;
+            document.getElementById("total-price").innerText = "₱" + totalPrice.toFixed(2);
         }
 
         // Function to update cart state (cart count and checkout button)
@@ -533,16 +566,17 @@ $total_price = 0;
             }
         }
 
-        // Initial cart state check
+        // Initial cart state and total check
         window.onload = function() {
             updateCartState();
+            updateTotal(); // Initialize total price with default shipping
 
             // Add event listener to the checkout button to prevent default behavior if disabled
             const checkoutBtn = document.getElementById("checkout-btn");
             checkoutBtn.addEventListener("click", function(event) {
                 if (checkoutBtn.hasAttribute("disabled")) {
                     event.preventDefault();
-                    alert("Your cart is empty. Please add items to proceed to checkout.");
+                    alert("Cannot proceed to checkout. Please resolve stock issues or add items to your cart.");
                 }
             });
         };

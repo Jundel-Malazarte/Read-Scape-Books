@@ -214,7 +214,7 @@ mysqli_close($conn);
             </a>
         </div>
         <div class="dashboard-container">
-            <a href="order_frontpage.php">
+            <a href="view_orders.php">
                 <div class="card">
                     <img src="../images/total-orders.png" alt="Order Icon">
                     <div class="card-content">
