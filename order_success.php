@@ -1,175 +1,306 @@
 <?php
 session_start();
-@include 'db_connect.php';
+include 'db_connect.php';
 
-// Check if the user is logged in and `order_id` is set
-if (!isset($_SESSION['id']) || !isset($_GET['order_id'])) {
-    header("Location: dashboard.php");
+if (!isset($_SESSION['id'])) {
+    header("Location: sign-in.php");
     exit();
 }
 
-$order_id = intval($_GET['order_id']);
 $user_id = $_SESSION['id'];
-$fixed_shipping_fee = 100.00; // Set shipping fee
+$order_id = $_GET['order_id'] ?? 0;
 
-// Fetch order details
+// Fetch order details (using only existing columns)
 $stmt = $conn->prepare(
-    "SELECT shipping_address, payment_method, order_date FROM orders WHERE id = ? AND user_id = ?"
+    "SELECT o.total, o.shipping_address, o.payment_method, 
+            oi.book_id, oi.quantity, oi.price, b.title 
+     FROM orders o 
+     LEFT JOIN order_items oi ON o.id = oi.order_id 
+     LEFT JOIN books b ON oi.book_id = b.isbn 
+     WHERE o.id = ? AND o.user_id = ?"
 );
 $stmt->bind_param("ii", $order_id, $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
-$order = $result->fetch_assoc();
 
-if (!$order) {
-    die("Order not found."); // Stop execution if order is not found
-}
-
-// Fetch user details
-$stmt = $conn->prepare("SELECT fname, lname FROM users WHERE id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-
-if (!$user) {
-    die("User not found."); // Stop execution if user is not found
-}
-
-// Fetch order items
-$stmt = $conn->prepare(
-    "SELECT b.title, oi.quantity, oi.price FROM order_items oi 
-    JOIN books b ON oi.book_id = b.isbn WHERE oi.order_id = ?"
-);
-$stmt->bind_param("i", $order_id);
-$stmt->execute();
-$order_items = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-// Calculate subtotal
-$subtotal = 0;
-if ($order_items) {
-    foreach ($order_items as $item) {
-        $subtotal += $item['quantity'] * $item['price'];
+$order_details = [];
+$order = null;
+while ($row = $result->fetch_assoc()) {
+    if (!$order) {
+        $order = [
+            'total' => $row['total'],
+            'shipping_address' => $row['shipping_address'],
+            'payment_method' => $row['payment_method']
+        ];
+    }
+    if ($row['book_id']) {
+        $order_details[] = [
+            'book_id' => $row['book_id'],
+            'title' => $row['title'],
+            'quantity' => $row['quantity'],
+            'price' => $row['price'],
+            'total' => $row['price'] * $row['quantity']
+        ];
     }
 }
 
-// Calculate total
-$final_total = $subtotal + $fixed_shipping_fee;
+if (!$order) {
+    echo "<script>alert('Order not found.'); window.location.href='dashboard.php';</script>";
+    exit();
+}
+
+// Parse shipping address (assuming format: address, city, state, zipcode)
+$address_parts = explode(", ", $order['shipping_address']);
+$address = $address_parts[0] ?? '';
+$city = $address_parts[1] ?? '';
+$state = $address_parts[2] ?? '';
+$zipcode = $address_parts[3] ?? '';
+
+$shipping = 100.00; // Consistent with checkout.php and process_order.php
+$subtotal = $order['total'] - $shipping;
+
+// Close database connections
+$stmt->close();
+$conn->close();
 ?>
 
 <!DOCTYPE html>
-<html>
-    <head>
-    <title>Order Success</title>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
-        <link rel="icon" href="./images/Readscape.png">
-<style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="icon" href="./images/Readscape.png">
+    <style>
         body {
-            font-family: Courier, monospace;
-            text-align: center;
+            font-family: 'Courier', monospace;
+            font-size: 14px;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .receipt {
-            width: 280px;
-            margin: 0 auto;
-            padding: 10px;
-            border: 1px solid #000;
-            text-align: left;
+            max-width: 600px;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .store-title {
-            font-size: 18px;
-            font-weight: bold;
+        .header {
             text-align: center;
+            margin-bottom: 20px;
         }
 
-        .info,
-        .total {
-            font-size: 14px;
-            margin-top: 5px;
+        .checkmark-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .checkmark-circle {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            border: 3px solid #28a745;
+            background: #fff;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .checkmark {
+            width: 30px;
+            height: 15px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            border-bottom: 4px solid #28a745;
+            border-left: 4px solid #28a745;
+            opacity: 0;
+            animation: drawCheck 0.5s ease forwards 0.5s;
+        }
+
+        @keyframes drawCheck {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+
+            50% {
+                width: 30px;
+                height: 0;
+                opacity: 1;
+            }
+
+            100% {
+                width: 30px;
+                height: 15px;
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+
+        .section {
+            margin-bottom: 20px;
         }
 
         table {
             width: 100%;
-            font-size: 14px;
             border-collapse: collapse;
+            margin: 15px 0;
         }
 
-        .right {
-            text-align: right;
+        th,
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
         }
 
-        .total {
+        th {
+            background-color: #f1f1f1;
             font-weight: bold;
-            border-top: 1px dashed #000;
-            padding-top: 5px;
         }
 
-        .buttons {
+        .total-row {
+            font-weight: bold;
+            background-color: #e9ecef;
+        }
+
+        .footer {
             text-align: center;
             margin-top: 20px;
+            color: #666;
         }
 
-        .buttons button {
-            padding: 8px 15px;
-            font-size: 14px;
-            margin: 5px;
-            cursor: pointer;
+        .footer a {
+            color: #000;
+            text-decoration: none;
+            padding: 8px 16px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
         }
 
-        @media print {
-            .buttons {
-                display: none;
-            }
+        .footer a:hover {
+            background-color: #ddd;
         }
     </style>
 </head>
 
 <body>
     <div class="receipt">
-        <div class="store-title">BOOK STORE</div>
-        <div class="info">
-            Order ID: <?= htmlspecialchars($order_id) ?><br>
-            Date: <?= htmlspecialchars($order['order_date'] ?? 'N/A') ?><br>
-            Customer: <?= htmlspecialchars(($user['fname'] ?? '') . ' ' . ($user['lname'] ?? '')) ?><br>
-            Address: <?= htmlspecialchars($order['shipping_address'] ?? 'N/A') ?><br>
-            Payment: <?= htmlspecialchars($order['payment_method'] ?? 'N/A') ?>
+        <div class="header">
+            <h1>Order Confirmation</h1>
+            <p>Order #<?php echo htmlspecialchars($order_id); ?></p>
         </div>
-        <table>
-            <tbody>
-                <?php if ($order_items): ?>
-                    <?php foreach ($order_items as $item): ?>
+
+        <div class="checkmark-container">
+            <div class="checkmark-circle">
+                <div class="checkmark"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Shipping Information</h2>
+            <?php
+            $full_name = trim($_SESSION['fname'] . ' ' . ($_SESSION['lname'] ?? ''));
+            $email = $_SESSION['email'] ?? '';
+            $mobile = $_SESSION['mobile'] ?? '';
+
+            if (empty($full_name) || empty($email) || empty($mobile)) {
+                echo "<p><strong>Warning:</strong> Some shipping information is missing. Please contact support.</p>";
+            }
+            ?>
+            <p><strong>Full Name:</strong> <?php echo htmlspecialchars($full_name) ?: 'Not available'; ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($email) ?: 'Not available'; ?></p>
+            <p><strong>Contact Number:</strong> <?php echo htmlspecialchars($mobile) ?: 'Not available'; ?></p>
+            <p><strong>Address:</strong> <?php echo htmlspecialchars($address); ?></p>
+            <p><strong>City:</strong> <?php echo htmlspecialchars($city); ?></p>
+            <p><strong>State/Province:</strong> <?php echo htmlspecialchars($state); ?></p>
+            <p><strong>Zipcode:</strong> <?php echo htmlspecialchars($zipcode); ?></p>
+            <p><strong>Payment Method:</strong> <?php echo htmlspecialchars($order['payment_method']); ?></p>
+        </div>
+
+        <div class="section">
+            <h2>Order Details</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($order_details as $item): ?>
                         <tr>
-                            <td><?= htmlspecialchars($item['title']) ?></td>
-                            <td class="right">x<?= $item['quantity'] ?></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td class="right">₱<?= number_format($item['quantity'] * $item['price'], 2) ?></td>
+                            <td><?php echo htmlspecialchars($item['title']); ?></td>
+                            <td>₱<?php echo number_format($item['price'], 2); ?></td>
+                            <td><?php echo htmlspecialchars($item['quantity']); ?></td>
+                            <td>₱<?php echo number_format($item['total'], 2); ?></td>
                         </tr>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="2">No items found.</td>
+                </tbody>
+                <tfoot>
+                    <tr class="total-row">
+                        <td colspan="3">Subtotal</td>
+                        <td>₱<?php echo number_format($subtotal, 2); ?></td>
                     </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-        <div class="total">
-            Subtotal: <span class="right">₱<?= number_format($subtotal, 2) ?></span><br>
-            Shipping: <span class="right">₱<?= number_format($fixed_shipping_fee, 2) ?></span><br>
-            Total: <span class="right">₱<?= number_format($final_total, 2) ?></span>
+                    <tr>
+                        <td colspan="3">Shipping</td>
+                        <td>₱<?php echo number_format($shipping, 2); ?></td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="3">Total</td>
+                        <td>₱<?php echo number_format($order['total'], 2); ?></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>Thank you for your order!</p>
+            <p><a href="dashboard.php">Back to Home</a></p>
         </div>
     </div>
 
-    <div class="buttons">
-        <button onclick="window.print()">Print Receipt</button>
-        <a href="dashboard.php"><button>Go Back to Dashboard</button></a>
-    </div>
+    <script>
+        // JavaScript to ensure the animation runs on page load
+        window.onload = function() {
+            const checkmark = document.querySelector('.checkmark');
+            checkmark.style.animation = 'none'; // Reset animation
+            void checkmark.offsetWidth; // Trigger reflow
+            checkmark.style.animation = 'drawCheck 0.5s ease forwards 0.5s'; // Restart animation
+        };
+    </script>
 </body>
 
 </html>

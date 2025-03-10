@@ -1,9 +1,9 @@
 <?php
 session_start();
-@include 'db_connect.php';
+include 'db_connect.php';
 
 if (!isset($_SESSION['id'])) {
-    echo json_encode(["success" => false]);
+    echo json_encode(['success' => false, 'message' => 'User not logged in']);
     exit();
 }
 
@@ -11,10 +11,16 @@ $user_id = $_SESSION['id'];
 $isbn = $_GET['isbn'];
 
 $sql = "DELETE FROM cart WHERE user_id = ? AND isbn = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "is", $user_id, $isbn);
-$success = mysqli_stmt_execute($stmt);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("is", $user_id, $isbn);
 
-echo json_encode(["success" => $success]);
-mysqli_stmt_close($stmt);
-mysqli_close($conn);
+$response = ['success' => false];
+if ($stmt->execute()) {
+    $response = ['success' => true, 'message' => 'Item removed from cart successfully'];
+} else {
+    $response = ['success' => false, 'message' => 'Failed to remove item from cart'];
+}
+
+echo json_encode($response);
+$stmt->close();
+$conn->close();

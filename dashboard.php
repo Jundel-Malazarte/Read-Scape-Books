@@ -63,13 +63,14 @@ mysqli_close($conn);
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link rel="icon" href="./images/Readscape.png">
     <style>
-   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap');
+
         /** Google fonts */
         .poppins-thin {
-                font-family: "Poppins", sans-serif;
-                font-weight: 100;
-                font-style: normal;
-            }
+            font-family: "Poppins", sans-serif;
+            font-weight: 100;
+            font-style: normal;
+        }
 
         body {
             font-family: Arial, sans-serif;
@@ -454,7 +455,7 @@ mysqli_close($conn);
                         </button>
 
                         <button class="buy-now-btn" onclick="buyNow('<?php echo htmlspecialchars($book['isbn']); ?>')">
-                            <a href="checkout.php">⚡ Buy Now</a>
+                            ⚡ Buy Now
                         </button>
                     </div>
                 </div>
@@ -478,8 +479,7 @@ mysqli_close($conn);
         });
 
         function buyNow(isbn) {
-            alert("Redirecting to checkout for book ISBN: " + isbn);
-            window.location.href = "checkout.php?isbn=" + isbn;
+            window.location.href = "checkout.php?isbn=" + encodeURIComponent(isbn);
         }
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -600,10 +600,11 @@ mysqli_close($conn);
             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
             text-align: center;
             transition: transform 0.2s;
-            margin-bottom: 20px; /* Add space between cards */
+            margin-bottom: 20px;
+            /* Add space between cards */
         }
     </style>
-          
+
 </body>
 
 </html>

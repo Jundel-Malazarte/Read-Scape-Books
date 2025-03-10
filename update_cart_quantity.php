@@ -1,9 +1,9 @@
 <?php
 session_start();
-@include 'db_connect.php';
+include 'db_connect.php';
 
 if (!isset($_SESSION['id'])) {
-    echo json_encode(['success' => false, 'message' => 'Not logged in.']);
+    echo json_encode(['success' => false, 'message' => 'User not logged in']);
     exit();
 }
 
@@ -11,41 +11,47 @@ $user_id = $_SESSION['id'];
 $isbn = $_POST['isbn'];
 $new_quantity = intval($_POST['new_quantity']);
 
-if ($new_quantity < 1) {
-    echo json_encode(['success' => false, 'message' => 'Invalid quantity.']);
+// Check stock
+$sql = "SELECT qty FROM books WHERE isbn = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $isbn);
+$stmt->execute();
+$result = $stmt->get_result();
+$book = $result->fetch_assoc();
+
+if ($new_quantity > $book['qty']) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Not enough stock available. Max: ' . $book['qty'],
+        'available_stock' => $book['qty']
+    ]);
     exit();
 }
 
-// Update the quantity in the cart
+// Update quantity
 $sql = "UPDATE cart SET quantity = ? WHERE user_id = ? AND isbn = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "iis", $new_quantity, $user_id, $isbn);
-$success = mysqli_stmt_execute($stmt);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("iis", $new_quantity, $user_id, $isbn);
 
-if ($success) {
-    // Recalculate the subtotal for the entire cart
-    $sql = "SELECT SUM(books.price * cart.quantity) AS subtotal 
-            FROM cart 
-            JOIN books ON cart.isbn = books.isbn 
-            WHERE cart.user_id = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $user_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($result);
-    $subtotal = $row['subtotal'];
-    $total = $subtotal + 50; // Fixed shipping cost of ₱50
+$response = ['success' => false];
+if ($stmt->execute()) {
+    $sql = "SELECT SUM(books.price * cart.quantity) AS subtotal FROM cart JOIN books ON cart.isbn = books.isbn WHERE cart.user_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $subtotal = $result->fetch_assoc()['subtotal'] ?? 0;
+    $shipping = 100; // Default shipping
+    $total_price = $subtotal + $shipping;
 
-    // Return the updated values
-    echo json_encode([
+    $response = [
         'success' => true,
         'new_quantity' => $new_quantity,
-        'new_subtotal' => number_format($subtotal, 2, '.', ','),
-        'new_total_price' => number_format($total, 2, '.', ',')
-    ]);
-} else {
-    echo json_encode(['success' => false, 'message' => 'Failed to update quantity.']);
+        'new_subtotal' => number_format($subtotal, 2),
+        'new_total_price' => number_format($total_price, 2)
+    ];
 }
 
-mysqli_stmt_close($stmt);
-mysqli_close($conn);
+echo json_encode($response);
+$stmt->close();
+$conn->close();

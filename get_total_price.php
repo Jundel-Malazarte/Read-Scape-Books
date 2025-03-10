@@ -2,6 +2,11 @@
 @include 'db_connect.php';
 session_start();
 
+if (!isset($_SESSION['id'])) {
+        echo json_encode(['success' => false, 'message' => 'User not logged in']);
+        exit();
+}
+
 $user_id = $_SESSION['id'];
 $sql = "SELECT SUM(books.price * cart.quantity) AS total 
         FROM cart 

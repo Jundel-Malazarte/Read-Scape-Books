@@ -138,16 +138,16 @@ mysqli_close($conn);
         }
 
         .order-list {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            /* Two equal columns */
             gap: 20px;
             max-width: 90%;
             margin: 20px auto;
-            align-items: center;
+            align-items: stretch;
         }
 
         .order-card {
-            width: 50%;
             background: white;
             padding: 20px;
             border-radius: 12px;
@@ -321,6 +321,19 @@ mysqli_close($conn);
         .tab-nav a:hover {
             background: #555;
             color: white;
+        }
+
+        /* Responsive Design for Smaller Screens */
+        @media (max-width: 768px) {
+            .order-list {
+                grid-template-columns: 1fr;
+                /* Single column on smaller screens */
+            }
+
+            .order-card {
+                width: 90%;
+                /* Adjust card width for smaller screens */
+            }
         }
     </style>
 </head>

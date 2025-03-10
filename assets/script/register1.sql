@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 10, 2025 at 03:03 AM
+-- Generation Time: Mar 10, 2025 at 04:21 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,10 +43,10 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`isbn`, `title`, `book_image`, `author`, `copyright`, `qty`, `price`, `total`) VALUES
-(2, 'The Hacienda', '1740032179_book2.jpg', 'Isabel Cañas', 2002, 8, 299, 2990),
-(5, 'El filibusterismo', '1740450422_book4.jpg', 'José Rizal', 1891, 8, 249, 2490),
+(2, 'The Hacienda', '1740032179_book2.jpg', 'Isabel Cañas', 2002, 6, 299, 2990),
+(5, 'El filibusterismo', '1740450422_book4.jpg', 'José Rizal', 1891, 3, 249, 2490),
 (6, 'Legend of Mariang Makiling', '1740701783_book6.jpg', 'Nick Joaquin', 1997, 5, 280, 2800),
-(7, 'Alamat ng Sampalok', '1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 8, 280, 3360),
+(7, 'Alamat ng Sampalok', '1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 7, 280, 3360),
 (8, 'Alamat ng Bahaghari', '1740703364_book8.png', 'Rene O. Villanueva', 2003, 9, 250, 2500);
 
 -- --------------------------------------------------------
@@ -62,13 +62,6 @@ CREATE TABLE `cart` (
   `quantity` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `cart`
---
-
-INSERT INTO `cart` (`id`, `user_id`, `isbn`, `quantity`) VALUES
-(78, 11, 8, 77);
-
 -- --------------------------------------------------------
 
 --
@@ -82,25 +75,41 @@ CREATE TABLE `orders` (
   `shipping_address` text NOT NULL,
   `payment_method` varchar(50) NOT NULL,
   `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `status` varchar(20) DEFAULT NULL
+  `status` varchar(20) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `first_name` varchar(100) DEFAULT NULL,
+  `last_name` varchar(100) DEFAULT NULL,
+  `mobile` varchar(20) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `zipcode` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`id`, `user_id`, `total`, `shipping_address`, `payment_method`, `order_date`, `status`) VALUES
-(1, 11, 3785.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 01:36:21', 'completed'),
-(2, 11, 330.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 02:02:15', 'pending'),
-(3, 11, 349.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 02:14:32', 'canceled'),
-(4, 11, 548.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 03:19:00', 'pending'),
-(5, 11, 330.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'credit_card', '2025-03-03 03:19:48', 'canceled'),
-(6, 11, 1170.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-04 06:52:35', 'completed'),
-(7, 11, 349.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-04 07:26:46', 'pending'),
-(8, 11, 300.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'credit_card', '2025-03-04 07:27:56', 'pending'),
-(9, 11, 299.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-06 06:47:18', 'pending'),
-(10, 11, 330.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-06 06:52:25', 'pending'),
-(11, 12, 859.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'credit_card', '2025-03-06 07:23:57', 'completed');
+INSERT INTO `orders` (`id`, `user_id`, `total`, `shipping_address`, `payment_method`, `order_date`, `status`, `email`, `first_name`, `last_name`, `mobile`, `address`, `city`, `state`, `zipcode`) VALUES
+(1, 11, 3785.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 01:36:21', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(2, 11, 330.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 02:02:15', 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(3, 11, 349.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 02:14:32', 'canceled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 11, 548.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-03 03:19:00', 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 11, 330.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'credit_card', '2025-03-03 03:19:48', 'canceled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 11, 1170.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-04 06:52:35', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 11, 349.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-04 07:26:46', 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 11, 300.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'credit_card', '2025-03-04 07:27:56', 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 11, 299.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-06 06:47:18', 'canceled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 11, 330.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-06 06:52:25', 'canceled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(11, 12, 859.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'credit_card', '2025-03-06 07:23:57', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(12, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 02:51:15', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(13, 11, 349.00, 'Cebu, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 02:51:58', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(14, 11, 349.00, 'Lorega San Miguel, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:01:50', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(15, 11, 349.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:02:07', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(16, 11, 349.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:05:20', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(17, 11, 349.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:06:44', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(18, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:17:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(19, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:18:08', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -134,7 +143,15 @@ INSERT INTO `order_items` (`id`, `order_id`, `book_id`, `quantity`, `price`) VAL
 (11, 10, 7, 1, 280.00),
 (12, 11, 5, 1, 249.00),
 (13, 11, 6, 1, 280.00),
-(14, 11, 7, 1, 280.00);
+(14, 11, 7, 1, 280.00),
+(15, 12, 2, 1, 299.00),
+(16, 13, 5, 1, 249.00),
+(17, 14, 5, 1, 249.00),
+(18, 15, 5, 1, 249.00),
+(19, 16, 5, 1, 249.00),
+(20, 17, 5, 1, 249.00),
+(21, 18, 2, 1, 299.00),
+(22, 19, 7, 1, 280.00);
 
 -- --------------------------------------------------------
 
@@ -226,19 +243,19 @@ ALTER TABLE `books`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=82;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=90;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `users`
