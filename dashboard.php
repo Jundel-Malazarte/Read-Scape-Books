@@ -527,7 +527,7 @@ mysqli_close($conn);
     <div class="footer">
         <div class="footer-content">
             <div class="footer-logo">
-                <img src="images/Readscape.png" alt="Readscape Logo">
+                <img src="./images/Readscape.png" alt="Readscape Logo">
                 <strong>ReadScape</strong>
             </div>
             <div class="footer-links">
@@ -549,12 +549,13 @@ mysqli_close($conn);
     </div>
     <style>
         .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
             background-color: #333;
             color: white;
             padding: 20px 0;
             text-align: center;
-            width: 100%;
-            margin-top: 20px;
         }
 
         .footer-content {
