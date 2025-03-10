@@ -458,11 +458,24 @@ mysqli_close($conn);
 
             <div class="payment-methods">
                 <label for="payment_method">Payment Method</label>
-                <select id="payment_method" name="payment_method" form="checkout-form">
+                <select id="payment_method" name="payment_method" form="checkout-form" onchange="handlePaymentMethodChange()">
                     <option value="cash_on_delivery">Cash on Delivery</option>
-                    <option value="credit_card">GCash</option>
+                    <option value="gcash">GCash</option>
                 </select>
             </div>
+
+            <script>
+                function handlePaymentMethodChange() {
+                    const paymentMethod = document.getElementById('payment_method').value;
+                    const checkoutForm = document.getElementById('checkout-form');
+
+                    if (paymentMethod === 'gcash') {
+                        checkoutForm.action = 'login.gcash.php';
+                    } else {
+                        checkoutForm.action = 'process_order.php<?php echo isset($_GET['isbn']) ? '?isbn=' . urlencode($_GET['isbn']) : ''; ?>';
+                    }
+                }
+            </script>
 
             <button type="submit" form="checkout-form" class="checkout-btn">Place Order</button>
         </div>
