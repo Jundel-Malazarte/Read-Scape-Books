@@ -80,6 +80,7 @@ mysqli_close($conn);
 
         .navbar {
             display: flex;
+            position: sticky;
             justify-content: space-between;
             align-items: center;
             background-color: #333;
