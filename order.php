@@ -23,20 +23,45 @@ $fname = htmlspecialchars($user['fname']);
 $lname = htmlspecialchars($user['lname']);
 $profile_image = htmlspecialchars($user['profile_image']) ?: "uploads/default.jpg";
 
-// Fetch purchased items
-$sql = "SELECT books.title, books.book_image, books.author, order_items.quantity, order_items.price, orders.order_date 
-        FROM orders 
-        JOIN order_items ON orders.id = order_items.order_id 
-        JOIN books ON order_items.book_id = books.isbn 
-        WHERE orders.user_id = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$purchased_items = mysqli_stmt_get_result($stmt);
-mysqli_stmt_close($stmt);
+// Get the selected status from URL or default to 'all'
+$status_filter = isset($_GET['status']) ? $_GET['status'] : 'all';
+$search = isset($_GET['search']) ? $_GET['search'] : ''; // For future search functionality
 
+// Fetch orders with grouped items and status
+$sql = "SELECT orders.id AS order_id, orders.order_date, orders.status,
+        GROUP_CONCAT(books.title SEPARATOR '|||') AS titles,
+        GROUP_CONCAT(books.book_image SEPARATOR '|||') AS book_images,
+        GROUP_CONCAT(books.author SEPARATOR '|||') AS authors,
+        GROUP_CONCAT(order_items.quantity SEPARATOR '|||') AS quantities,
+        GROUP_CONCAT(order_items.price SEPARATOR '|||') AS prices
+        FROM orders
+        JOIN order_items ON orders.id = order_items.order_id
+        JOIN books ON order_items.book_id = books.isbn
+        WHERE orders.user_id = ? AND (orders.status = ? OR ? = 'all')
+        GROUP BY orders.id
+        ORDER BY orders.order_date DESC";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "iss", $user_id, $status_filter, $status_filter);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+$orders = [];
+while ($row = mysqli_fetch_assoc($result)) {
+    $orders[] = [
+        'order_id' => $row['order_id'],
+        'order_date' => $row['order_date'],
+        'status' => $row['status'],
+        'titles' => explode('|||', $row['titles']),
+        'book_images' => explode('|||', $row['book_images']),
+        'authors' => explode('|||', $row['authors']),
+        'quantities' => explode('|||', $row['quantities']),
+        'prices' => explode('|||', $row['prices']),
+    ];
+}
+mysqli_stmt_close($stmt);
 mysqli_close($conn);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -118,10 +143,11 @@ mysqli_close($conn);
             gap: 20px;
             max-width: 90%;
             margin: 20px auto;
+            align-items: center;
         }
 
         .order-card {
-            display: flex;
+            width: 50%;
             background: white;
             padding: 20px;
             border-radius: 12px;
@@ -133,43 +159,99 @@ mysqli_close($conn);
             transform: scale(1.02);
         }
 
-        .order-card img {
-            width: 150px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-right: 20px;
+        .order-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
         }
 
-        .order-details {
+        .order-card .order-date {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 15px;
+        }
+
+        .order-items {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 15px;
         }
 
-        .order-details h3 {
-            font-size: 18px;
-            margin: 0;
+        .order-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
 
-        .order-details p {
+        .order-item img {
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .item-details p {
             font-size: 15px;
             color: #444;
             margin: 5px 0;
         }
 
-        .order-details .order-date {
-            font-size: 14px;
-            color: #888;
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
         }
 
-        .order-details .order-total {
+        .order-total {
             font-size: 16px;
             font-weight: bold;
             color: #333;
         }
 
-        /** Slider nav */
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status.completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status.pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status.canceled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-buttons {
+            margin: 0;
+        }
+
+        .cancel-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #dc3545;
+        }
+
+        .cancel-btn:hover {
+            background-color: #c82333;
+        }
+
         .sidenav {
             height: 100%;
             width: 0;
@@ -214,13 +296,39 @@ mysqli_close($conn);
             }
         }
 
+        /* Tab Navigation Styles */
+        .tab-nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tab-nav a {
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+            background: #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .tab-nav a.active {
+            background: #333;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tab-nav a:hover {
+            background: #555;
+            color: white;
+        }
     </style>
 </head>
 
 <body>
     <div class="navbar">
         <div id="Sidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
             <a href="dashboard.php">Home</a>
             <a href="profile.php">Profile</a>
             <a href="changepass.php">Change password</a>
@@ -228,7 +336,7 @@ mysqli_close($conn);
             <a href="order.php">My Orders</a>
             <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong> ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰<strong> ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
         <script>
             function openNav() {
                 document.getElementById("Sidenav").style.width = "240px";
@@ -248,70 +356,69 @@ mysqli_close($conn);
             <a href="logout.php"><strong>Log Out</strong></a>
         </div>
     </div>
+
     <div class="search-header">
         <div class="header-text">
             <h2>My Orders!</h2>
         </div>
     </div>
+
+    <div class="tab-nav">
+        <a href="order.php?status=all" class="<?php echo $status_filter === 'all' ? 'active' : ''; ?>">All Orders</a>
+        <a href="order.php?status=completed" class="<?php echo $status_filter === 'completed' ? 'active' : ''; ?>">Completed</a>
+        <a href="order.php?status=pending" class="<?php echo $status_filter === 'pending' ? 'active' : ''; ?>">Pending</a>
+        <a href="order.php?status=canceled" class="<?php echo $status_filter === 'canceled' ? 'active' : ''; ?>">Canceled</a>
+    </div>
+
     <div class="container">
         <div class="order-list">
-            <?php while ($item = mysqli_fetch_assoc($purchased_items)) { ?>
-                <div class="order-card">
-                    <img src="<?php echo htmlspecialchars($item['book_image']); ?>" alt="Book Image">
-                    <div class="order-details">
-                        <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                        <p>Author: <?php echo htmlspecialchars($item['author']); ?></p>
-                        <p>Quantity: <?php echo htmlspecialchars($item['quantity']); ?></p>
-                        <p class="order-total">Total Price: ₱<?php echo htmlspecialchars($item['price'] * $item['quantity']); ?></p>
-                        <p class="order-date">Order Date: <?php echo htmlspecialchars($item['order_date']); ?></p>
+            <?php if (empty($orders)): ?>
+                <p>No orders found.</p>
+            <?php else: ?>
+                <?php foreach ($orders as $order): ?>
+                    <div class="order-card">
+                        <h3>Order #<?php echo htmlspecialchars($order['order_id']); ?></h3>
+                        <p class="order-date">Order Date: <?php echo htmlspecialchars(date('d/m/Y', strtotime($order['order_date']))); ?></p>
+                        <p class="status <?php echo strtolower($order['status']); ?>"><?php echo ucfirst($order['status']); ?></p>
+                        <div class="order-items">
+                            <?php
+                            $total_price = 0;
+                            for ($i = 0; $i < count($order['titles']); $i++):
+                                $image_path = !empty($order['book_images'][$i]) ? 'images/' . htmlspecialchars($order['book_images'][$i]) : 'images/default_book.png';
+                                $subtotal = $order['prices'][$i] * $order['quantities'][$i];
+                                $total_price += $subtotal;
+                            ?>
+                                <div class="order-item">
+                                    <img src="<?php echo $image_path; ?>" alt="Book Image">
+                                    <div class="item-details">
+                                        <p><strong><?php echo htmlspecialchars($order['titles'][$i]); ?></strong></p>
+                                        <p>Author: <?php echo htmlspecialchars($order['authors'][$i]); ?></p>
+                                        <p>Quantity: <?php echo htmlspecialchars($order['quantities'][$i]); ?></p>
+                                        <p>Price: ₱<?php echo number_format($order['prices'][$i], 2); ?></p>
+                                        <p>Subtotal: ₱<?php echo number_format($subtotal, 2); ?></p>
+                                    </div>
+                                </div>
+                            <?php endfor; ?>
+                        </div>
+                        <hr style="margin: 15px 0;">
+                        <div class="order-footer">
+                            <p class="order-total">Total: ₱<?php echo number_format($total_price, 2); ?></p>
+                            <?php if (strtolower($order['status']) === 'pending'): ?>
+                                <div class="status-buttons">
+                                    <form action="cancel_order.php" method="POST" style="display: inline;">
+                                        <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                                        <button type="submit" class="cancel-btn">Cancel Order</button>
+                                    </form>
+                                </div>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                </div>
-            <?php } ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
+
     <script>
-        document.getElementById("search-input").addEventListener("keyup", function() {
-            let query = this.value.trim();
-            let xhr = new XMLHttpRequest();
-            xhr.open("GET", "fetch_books.php?q=" + encodeURIComponent(query), true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    document.getElementById("book-list").innerHTML = xhr.responseText;
-                }
-            };
-            xhr.send();
-        });
-
-        function buyNow(isbn) {
-            alert("Redirecting to checkout for book ISBN: " + isbn);
-            window.location.href = "checkout.php?isbn=" + isbn;
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const bookList = document.querySelector(".book-list");
-
-            bookList.addEventListener("wheel", function(event) {
-                event.preventDefault();
-                bookList.scrollLeft += event.deltaY; // Convert vertical scroll to horizontal
-            });
-        });
-
-        function addToCart(isbn) {
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "add_to_cart.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    let response = JSON.parse(xhr.responseText);
-                    alert(response.message);
-                    updateCartCounter(); // Update the cart counter after adding
-                }
-            };
-
-            xhr.send("isbn=" + encodeURIComponent(isbn));
-        }
-
         function updateCartCounter() {
             let xhr = new XMLHttpRequest();
             xhr.open("GET", "cart_counter.php", true);
@@ -323,7 +430,7 @@ mysqli_close($conn);
             xhr.send();
         }
 
-        // Call updateCartCounter() when page loads to show correct count
+        // Call updateCartCounter() when page loads
         document.addEventListener("DOMContentLoaded", updateCartCounter);
     </script>
 </body>
