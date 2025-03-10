@@ -290,7 +290,8 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
             display: inline-block;
         }
 
-        .status.complete {
+        .status.completed {
+            /* Changed to .completed */
             background-color: #d4edda;
             color: #155724;
         }
@@ -329,7 +330,6 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
             background-color: #e9ecef;
         }
 
-        /* Tab Navigation Styles */
         .tab-nav {
             display: flex;
             gap: 10px;
@@ -371,6 +371,9 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
     <div class="container">
         <div class="search-container">
             <h1>Order <?php echo $total_orders; ?> orders found</h1>
+            <?php if (isset($_GET['success']) && $_GET['success'] === 'status_updated'): ?>
+                <p style="color: green;">Order status updated successfully!</p>
+            <?php endif; ?>
             <div class="search-bar">
                 <form method="GET">
                     <input type="hidden" name="status" value="<?php echo htmlspecialchars($status_filter); ?>">
@@ -382,7 +385,6 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
         </div>
 
         <div class="order-section">
-            <!-- Tab Navigation -->
             <div class="tab-nav">
                 <a href="view_orders.php?status=all&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'all' ? 'active' : ''; ?>">All Orders</a>
                 <a href="view_orders.php?status=completed&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'completed' ? 'active' : ''; ?>">Completed</a>
@@ -430,7 +432,7 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
         <td><?php echo date('d/m/Y', strtotime($order['order_date'])); ?></td>
         <td>₱<?php echo number_format($order['total'], 2); ?></td>
         <td><span class="status <?php echo strtolower($order['status']); ?>"><?php echo ucfirst($order['status']); ?></span></td>
-        <td class="actions"><a href="order_detail.php?id=<?php echo $order['order_id']; ?>"><i class="fas fa-eye"></i></a></td>
+        <td class="actions"><a href="order_details.php?id=<?php echo $order['order_id']; ?>"><i class="fas fa-eye"></i></a></td> <!-- Fixed typo -->
         </tr>
     <?php endforeach; ?>
     </tbody>

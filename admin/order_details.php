@@ -147,7 +147,7 @@ mysqli_stmt_close($stmt);
         }
 
         .container {
-            width: 90%;
+            width: 40%;
             margin: auto;
             background: white;
             padding: 20px;
@@ -184,7 +184,8 @@ mysqli_stmt_close($stmt);
             display: inline-block;
         }
 
-        .status.complete {
+        .status.completed {
+            /* Changed to .completed */
             background-color: #d4edda;
             color: #155724;
         }
@@ -197,6 +198,37 @@ mysqli_stmt_close($stmt);
         .status.canceled {
             background-color: #f8d7da;
             color: #721c24;
+        }
+
+        .status-buttons {
+            margin-top: 10px;
+        }
+
+        .complete-btn,
+        .cancel-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .complete-btn {
+            background-color: #28a745;
+        }
+
+        .complete-btn:hover {
+            background-color: #218838;
+        }
+
+        .cancel-btn {
+            background-color: #dc3545;
+        }
+
+        .cancel-btn:hover {
+            background-color: #c82333;
         }
 
         .order-items {
@@ -281,6 +313,13 @@ mysqli_stmt_close($stmt);
 
     <div class="container">
         <h1>Order Details - #<?php echo $order_id; ?></h1>
+        <?php
+        if (isset($_GET['success']) && $_GET['success'] === 'status_updated') {
+            echo '<p style="color: green;">Order status updated successfully!</p>';
+        } elseif (isset($_GET['error'])) {
+            echo '<p style="color: red;">Error: ' . htmlspecialchars($_GET['error']) . '</p>';
+        }
+        ?>
 
         <div class="order-info">
             <p><strong>Order Date:</strong> <?php echo $order_date; ?></p>
@@ -288,6 +327,20 @@ mysqli_stmt_close($stmt);
             <p><strong>Email:</strong> <?php echo $customer_email; ?></p>
             <p><strong>Shipping Address:</strong> <?php echo $shipping_address; ?></p>
             <p><strong>Status:</strong> <span class="status <?php echo strtolower($status); ?>"><?php echo ucfirst($status); ?></span></p>
+            <?php if (strtolower($status) === 'pending'): ?>
+                <div class="status-buttons">
+                    <form action="update_order_status.php" method="POST" style="display: inline;">
+                        <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+                        <input type="hidden" name="status" value="completed"> <!-- Changed to "completed" -->
+                        <button type="submit" class="complete-btn">Mark as Complete</button>
+                    </form>
+                    <form action="update_order_status.php" method="POST" style="display: inline;"> <!-- Fixed path -->
+                        <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+                        <input type="hidden" name="status" value="canceled">
+                        <button type="submit" class="cancel-btn">Cancel Order</button>
+                    </form>
+                </div>
+            <?php endif; ?>
         </div>
 
         <div class="order-items">
