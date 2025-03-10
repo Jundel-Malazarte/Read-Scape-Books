@@ -602,7 +602,6 @@ mysqli_close($conn);
             text-align: center;
             transition: transform 0.2s;
             margin-bottom: 20px;
-            /* Add space between cards */
         }
     </style>
 
