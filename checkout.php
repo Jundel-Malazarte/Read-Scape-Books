@@ -460,7 +460,7 @@ mysqli_close($conn);
                 <label for="payment_method">Payment Method</label>
                 <select id="payment_method" name="payment_method" form="checkout-form">
                     <option value="cash_on_delivery">Cash on Delivery</option>
-                    <option value="credit_card">Credit Card</option>
+                    <option value="credit_card">GCash</option>
                 </select>
             </div>
 
