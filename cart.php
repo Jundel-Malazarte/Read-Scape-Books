@@ -386,16 +386,15 @@ $total_price = 0;
             <a href="order.php">My Orders</a>
             <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰
-            <img src="./images/Readscape.png" alt="logo" class="readscape" width="40px" height="40px"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong> ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
         <div class="profile-info">
             <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
                 🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
             </a>
             <br>
             <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
-            <a href="logout.php">Log Out</a>
+            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
+            <a href="logout.php"><strong>Log Out</strong></a>
         </div>
     </div>
 

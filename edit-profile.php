@@ -285,7 +285,7 @@ ob_end_flush(); // End buffering
             <a href="order.php">My Orders</a>
             <a href="logout.php">Log Out</a>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776; <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong>ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
 
         <script>
             function openNav() {
@@ -301,8 +301,8 @@ ob_end_flush(); // End buffering
                 🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
             </a>
             <br>
-            <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
-            <a href="logout.php">Log Out</a>
+            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
+            <a href="logout.php"><strong>Log Out</strong></a>
         </div>
     </div>
 
