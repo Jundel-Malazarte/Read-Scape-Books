@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta charSet="utf-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>GCash Pay</title>
     <meta name="next-head-count" content="3" />
@@ -23,16 +23,23 @@
 
     .container {
         display: grid;
-        
     }
 
     .w-screen {
         width: 50%;
-        height: 70%;
+        height: 80%;
         justify-self: center;
         align-self: center;
         align-items: center;
-        margin: auto
+        margin: auto;
+    }
+
+    .flex-col-w-full {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 500px;
+        min-height: 400px;
     }
 
     .container-box {
@@ -46,7 +53,38 @@
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
+    .pay-button {
+        background-color: #007cff;
+        color: white;
+        font-weight: bold;
+        padding: 8px 16px;
+        border-radius: 20px;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+        display: inline-block;
+        margin-top: 10px;
+        width: 50%;
+    }
 
+    .pay-with-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    .pay-with-left {
+        font-size: 2xl;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .pay-with-right {
+        font-size: 2xl;
+        font-weight: bold;
+        color: #000;
+    }
 
     #nprogress {
         pointer-events: none;
@@ -130,29 +168,32 @@
     <div id="__next">
         <div class="container" style="background-color: #007cff; width:100%; height:380px;">
             <div class="w-screen h-screen px-5">
-                <div class="flex flex-col w-full">
+                <div class="flex-col-w-full">
                     <img src="./images/gcash.png" alt="gcash" class="h-60 object-contain" />
                     <div class="container-box">
                         <div class="flex flex-col gap-4">
-                            <span class="text-gray text-2xl font-bold text-center" style="color: blue;">ReadScape</span>
-                            <span class="text-gray text-2xl font-20px">PAY WITH</span>
-                            <span class="text-gray text-2xl font-20px">Gcash</span>
+                            <span class="text-black text-2xl font-bold text-center" style="color: blue;"><strong>ReadScape</strong></span>
+                            <div class="pay-with-row">
+                                <span class="pay-with-left">PAY WITH</span>
+                                <span class="text-black font-bold text-xl">Balance</span>
+
+                            </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-gray text-xl">Balance</span>
-                                <span class="text-gray text-xl">PHP 10,000</span>
+                                <span class="pay-with-right">Gcash</span>
+                                <span class="text-black font-bold text-xl">PHP 10,000</span>
                             </div>
-                            <span class="text-gray text-xl">You are about to pay</span>
+                            <span class="text-black font-bold text-xl">You are about to pay</span>
                             <div class="flex justify-between items-center py-2">
-                                <span class="text-black">Amount</span>
-                                <span class="text-black">PHP 1.00</span> 
+                                <span class="font-bold text-black">Amount</span>
+                                <span class="font-bold text-black">PHP 1.00</span>
                             </div>
-                            <hr style="margin: 15px 0px;">
-                            <div class="flex justify-between items-center py-2">
-                                <span class="text-black">Total</span>
-                                <span class="text-black">PHP 1.00</span>
-                            </div>
-                            <div class="mt-16 flex flex-col items-center gap-4">
-                                <a class="px-3 py-2 rounded-full text-white text-base text-center tracking-wide" style="background-color: #007cff; width: 50%;" href="#">PAY PHP 1.00</a>
+                            <hr style="margin: 10px 0px;">
+                            <div class="flex flex-col items-center py-1">
+                                <div class="flex justify-between w-full">
+                                    <span class="text-black font-bold">Total</span>
+                                    <span class="text-black font-bold">PHP 1.00</span>
+                                </div>
+                                <a class="pay-button" href="#">PAY PHP 1.00</a>
                             </div>
                         </div>
                         <div class="fixed bottom-0 w-full left-0 px-6 py-2">
@@ -165,6 +206,7 @@
                 </div>
             </div>
         </div>
+    </div>
 </body>
 
 </html>
