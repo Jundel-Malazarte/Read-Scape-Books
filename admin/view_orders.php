@@ -353,6 +353,25 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
         .tab-nav a:hover {
             color: #007bff;
         }
+
+        .success-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            border-left: 5px solid #28a745;
+            margin-bottom: 15px;
+        }
+
+        .success-message i {
+            margin-right: 8px;
+            color: #28a745;
+        }
     </style>
 </head>
 
@@ -372,7 +391,8 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
         <div class="search-container">
             <h1>Order <?php echo $total_orders; ?> orders found</h1>
             <?php if (isset($_GET['success']) && $_GET['success'] === 'status_updated'): ?>
-                <p style="color: green;">Order status updated successfully!</p>
+                echo '<div class="success-message"><i class="fas fa-check-circle"></i> Order status updated successfully!</div>';
+
             <?php endif; ?>
             <div class="search-bar">
                 <form method="GET">
