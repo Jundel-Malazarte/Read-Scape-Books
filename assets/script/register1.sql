@@ -206,6 +206,18 @@ INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `pass`, `phone`, `address`
 (13, 'Jundel', 'Malazarte', 'jundelmalazarte348@gmail.com', '$2y$10$HVIbYCfBvpprnRC367OxNOPsFr4MvqxrE3LVUf6KRE/SAEM.wJF5q', '09812371231', 'Sambag 1 Cebu City', '2025-03-10 02:03:40', 'uploads/67ce487c82fe8_default.jpg');
 
 --
+-- Table structure for table `gcash_users2`
+--
+
+CREATE TABLE `gcash_users2` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `mobile_number` varchar(15) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `balance` decimal(15,2) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
 -- Indexes for dumped tables
 --
 

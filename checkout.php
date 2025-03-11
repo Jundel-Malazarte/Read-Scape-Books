@@ -359,7 +359,6 @@ mysqli_close($conn);
     <div class="container">
         <div class="left-column">
             <h2>Shipping Information</h2>
-            <!-- Inside the <form> in checkout.php -->
             <form id="checkout-form" method="POST" action="process_order.php<?php echo isset($_GET['isbn']) ? '?isbn=' . urlencode($_GET['isbn']) : ''; ?>">
                 <!-- Existing form fields -->
                 <div class="shipping-form">
@@ -387,6 +386,12 @@ mysqli_close($conn);
                     <label for="zipcode">Zipcode</label>
                     <input type="text" id="zipcode" name="zipcode" required>
 
+                    <label for="payment_method">Payment Method</label>
+                    <select id="payment_method" name="payment_method" required>
+                        <option value="cash_on_delivery">Cash on Delivery</option>
+                        <option value="gcash">GCash</option>
+                    </select>
+
                     <button type="button" class="edit-address-btn" onclick="previewAddress()">Save Address</button>
                 </div>
 
@@ -399,6 +404,7 @@ mysqli_close($conn);
                     <p><strong>City:</strong> <span id="preview-city"></span></p>
                     <p><strong>State/Province:</strong> <span id="preview-state"></span></p>
                     <p><strong>Zipcode:</strong> <span id="preview-zipcode"></span></p>
+                    <p><strong>Payment Method:</strong> <span id="preview-payment-method"></span></p>
                     <button type="button" class="edit-address-btn" onclick="editAddress()">Edit Address</button>
                 </div>
             </form>
@@ -456,14 +462,6 @@ mysqli_close($conn);
                 <?php endif; ?>
             </div>
 
-            <div class="payment-methods">
-                <label for="payment_method">Payment Method</label>
-                <select id="payment_method" name="payment_method" required>
-                    <option value="cash_on_delivery">Cash on Delivery</option>
-                    <option value="gcash">GCash</option>
-                </select>
-            </div>
-
             <button type="button" onclick="submitOrder()" class="checkout-btn">Place Order</button>
         </div>
     </div>
@@ -487,9 +485,10 @@ mysqli_close($conn);
             const city = document.getElementById('city').value;
             const state = document.getElementById('state').value;
             const zipcode = document.getElementById('zipcode').value;
+            const paymentMethod = document.getElementById('payment_method').value;
 
             // Validate that all fields are filled
-            if (!email || !firstName || !lastName || !mobile || !address || !city || !state || !zipcode) {
+            if (!email || !firstName || !lastName || !mobile || !address || !city || !state || !zipcode || !paymentMethod) {
                 alert("Please fill in all shipping information fields.");
                 return;
             }
@@ -502,6 +501,7 @@ mysqli_close($conn);
             document.getElementById('preview-city').textContent = city;
             document.getElementById('preview-state').textContent = state;
             document.getElementById('preview-zipcode').textContent = zipcode;
+            document.getElementById('preview-payment-method').textContent = paymentMethod;
 
             // Hide the shipping form inputs and show the preview
             document.querySelector('.shipping-form').style.display = 'none';
@@ -513,16 +513,6 @@ mysqli_close($conn);
             document.getElementById('address-preview').style.display = 'none';
             document.querySelector('.shipping-form').style.display = 'block';
         }
-
-        // Check if items exist and adjust display
-        window.onload = function() {
-            const orderSummary = document.getElementById('order-summary');
-            if (!orderSummary.querySelector('table')) {
-                const emptyMessage = document.createElement('p');
-                emptyMessage.textContent = 'No items in the checkout.';
-                orderSummary.appendChild(emptyMessage);
-            }
-        };
 
         function submitOrder() {
             const form = document.getElementById('checkout-form');

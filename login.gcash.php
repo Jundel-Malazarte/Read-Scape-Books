@@ -30,9 +30,19 @@ if (empty($mobile_number) || empty($email)) {
 // Check if the mobile number already exists in the database (gcash_users2)
 $sql = "SELECT mobile_number FROM gcash_users2 WHERE mobile_number = ?";
 $stmt = mysqli_prepare($conn, $sql);
+
+if ($stmt === false) {
+    die('Error preparing statement: ' . htmlspecialchars(mysqli_error($conn)));
+}
+
 mysqli_stmt_bind_param($stmt, "s", $formatted_mobile_number);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
+
+if ($result === false) {
+    die('Error executing statement: ' . htmlspecialchars(mysqli_error($conn)));
+}
+
 $existing_user = mysqli_fetch_assoc($result);
 mysqli_stmt_close($stmt);
 
@@ -41,6 +51,11 @@ if (!$existing_user) {
     $default_balance = 1000000.00;
     $sql = "INSERT INTO gcash_users2 (mobile_number, email, balance) VALUES (?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
+
+    if ($stmt === false) {
+        die('Error preparing statement: ' . htmlspecialchars(mysqli_error($conn)));
+    }
+
     mysqli_stmt_bind_param($stmt, "ssd", $formatted_mobile_number, $email, $default_balance);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
@@ -51,7 +66,6 @@ $_SESSION['gcash_mobile'] = $formatted_mobile_number;
 
 mysqli_close($conn);
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -206,3 +220,31 @@ mysqli_close($conn);
 </body>
 
 </html>
+
+<?php
+include 'db_connect.php';
+
+$mobile_number = '9816650907'; // Example mobile number
+
+$sql = "SELECT * FROM gcash_users2 WHERE mobile_number = ?";
+$stmt = mysqli_prepare($conn, $sql);
+
+if ($stmt) {
+    mysqli_stmt_bind_param($stmt, 's', $mobile_number);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result) {
+        $user = mysqli_fetch_assoc($result);
+        // ...existing code...
+    } else {
+        echo "Error fetching user: " . mysqli_error($conn);
+    }
+
+    mysqli_stmt_close($stmt);
+} else {
+    echo "Error preparing statement: " . mysqli_error($conn);
+}
+
+mysqli_close($conn);
+?>

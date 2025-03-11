@@ -99,7 +99,7 @@ if (isset($_POST['confirm_payment'])) {
 
         $conn->commit();
         $_SESSION['payment_success'] = true;
-        header("Location: order_success.php?order_id=" . $order_id);
+        header("Location: order.php");
         exit();
     } catch (Exception $e) {
         $conn->rollback();
