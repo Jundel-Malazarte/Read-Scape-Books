@@ -180,14 +180,14 @@
                             <span class="text-black font-2xl text-center">Sent via GCash</span>
                             <div class="flex justify-between items-center py-2">
                                 <span class="font-bold" style="color: #283593;">Amount</span>
-                                <span class="font-bold text-black" style="color: #283593;">PHP 1.00</span>
+                                <span class="font-bold text-black" style="color: #283593;">PHP 1,000</span>
                             </div>
                             <!-- break; -->
                             <hr style="margin: 10px 0px;">
                             <div class="flex flex-col items-center py-1">
                                 <div class="flex justify-between w-full">
                                     <span class="text-black font-bold" style="color: #283593;">Total Amount Sent</span>
-                                    <span class="text-black font-bold text-xl" style="color: #283593;">PHP 1.00</span>
+                                    <span class="text-black font-bold text-xl" style="color: #283593;">PHP 1,000</span>
                                 </div>
                                 <div style="display: flex; justify-content: space-between; width: 100%;">
                                     <span class="text-black font-20px text-1xl left-0" style="color: #283593; padding: 10px; margin: 2px; text-align: left; width: 50%;">Reference ID: 123456789</span>
