@@ -9,14 +9,16 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
+// Update session values if new ones are provided
 $_SESSION['fname'] = $_POST['first_name'] ?? $_SESSION['fname'];
 $_SESSION['lname'] = $_POST['last_name'] ?? $_SESSION['lname'];
 $_SESSION['email'] = $_POST['email'] ?? $_SESSION['email'];
 $_SESSION['mobile'] = $_POST['mobile'] ?? $_SESSION['mobile'];
 
-// Ensure all form fields are provided
+// Ensure all required fields are provided
 $required_fields = ['email', 'first_name', 'last_name', 'mobile', 'address', 'city', 'state', 'zipcode', 'payment_method'];
 $missing_fields = [];
+
 foreach ($required_fields as $field) {
     if (empty($_POST[$field])) {
         $missing_fields[] = $field;
@@ -24,7 +26,6 @@ foreach ($required_fields as $field) {
 }
 
 if (!empty($missing_fields)) {
-    // Output HTML with JavaScript to show error and redirect
 ?>
     <!DOCTYPE html>
     <html>
@@ -46,36 +47,32 @@ if (!empty($missing_fields)) {
     exit();
 }
 
-// Store shipping information
+// Sanitize user input
 $shipping_info = [
-    'email' => $_POST['email'],
-    'first_name' => $_POST['first_name'],
-    'last_name' => $_POST['last_name'],
-    'mobile' => $_POST['mobile'],
-    'address' => $_POST['address'],
-    'city' => $_POST['city'],
-    'state' => $_POST['state'],
-    'zipcode' => $_POST['zipcode'],
-    'payment_method' => $_POST['payment_method']
+    'email' => htmlspecialchars($_POST['email']),
+    'first_name' => htmlspecialchars($_POST['first_name']),
+    'last_name' => htmlspecialchars($_POST['last_name']),
+    'mobile' => htmlspecialchars($_POST['mobile']),
+    'address' => htmlspecialchars($_POST['address']),
+    'city' => htmlspecialchars($_POST['city']),
+    'state' => htmlspecialchars($_POST['state']),
+    'zipcode' => htmlspecialchars($_POST['zipcode']),
+    'payment_method' => htmlspecialchars($_POST['payment_method'])
 ];
 
 $full_address = "{$shipping_info['address']}, {$shipping_info['city']}, {$shipping_info['state']}, {$shipping_info['zipcode']}";
 
-// Fetch cart items with stock check
+// Fetch cart items (or single item)
 $single_item = false;
 $cart_items = [];
-$shipping = 100.00; // Align with checkout.php
+$shipping = 100.00; // Fixed shipping cost
 
 if (isset($_GET['isbn']) && !empty($_GET['isbn'])) {
     $single_item = true;
     $isbn = $_GET['isbn'];
 
-    // Fetch the specific book
-    $stmt = $conn->prepare(
-        "SELECT isbn AS book_id, title, price, qty AS stock 
-         FROM books 
-         WHERE isbn = ?"
-    );
+    // Fetch single book details
+    $stmt = $conn->prepare("SELECT isbn AS book_id, title, price, qty AS stock FROM books WHERE isbn = ?");
     $stmt->bind_param("s", $isbn);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -111,7 +108,7 @@ if (isset($_GET['isbn']) && !empty($_GET['isbn'])) {
         exit();
     }
 } else {
-    // Fetch cart items for regular checkout
+    // Fetch cart items for checkout
     $stmt = $conn->prepare(
         "SELECT c.isbn AS book_id, b.title, b.price, c.quantity, b.qty AS stock 
          FROM cart c 
@@ -124,7 +121,7 @@ if (isset($_GET['isbn']) && !empty($_GET['isbn'])) {
     $cart_items = $result->fetch_all(MYSQLI_ASSOC);
 }
 
-// Check for empty cart
+// Check if cart is empty
 if (empty($cart_items)) {
     ?>
     <!DOCTYPE html>
@@ -132,24 +129,10 @@ if (empty($cart_items)) {
 
     <head>
         <title>Checkout Error</title>
-        <style>
-            .empty-cart-message {
-                font-family: Arial, sans-serif;
-                font-size: 16px;
-                color: #666;
-                text-align: center;
-                margin-top: 50px;
-            }
-        </style>
         <script>
             window.onload = function() {
-                const container = document.createElement('div');
-                container.className = 'empty-cart-message';
-                container.textContent = 'No items in the cart.';
-                document.body.appendChild(container);
-                setTimeout(function() {
-                    window.location.href = "cart.php";
-                }, 2000);
+                alert("No items in the cart.");
+                window.location.href = "cart.php";
             };
         </script>
     </head>
@@ -164,7 +147,6 @@ if (empty($cart_items)) {
 // Validate stock levels
 foreach ($cart_items as $item) {
     if ($item['quantity'] > $item['stock']) {
-        $error_message = "Error: Not enough stock for '" . htmlspecialchars($item['title']) . "'. Available stock: " . $item['stock'];
     ?>
         <!DOCTYPE html>
         <html>
@@ -173,7 +155,7 @@ foreach ($cart_items as $item) {
             <title>Checkout Error</title>
             <script>
                 window.onload = function() {
-                    alert("<?php echo $error_message; ?>");
+                    alert("Error: Not enough stock for '<?php echo htmlspecialchars($item['title']); ?>'. Available stock: <?php echo $item['stock']; ?>");
                     window.location.href = "cart.php";
                 };
             </script>
@@ -187,7 +169,7 @@ foreach ($cart_items as $item) {
     }
 }
 
-// Calculate order total
+// Calculate total price
 $subtotal = 0;
 foreach ($cart_items as $item) {
     $subtotal += $item['price'] * $item['quantity'];
@@ -197,21 +179,15 @@ $total = $subtotal + $shipping;
 // Start transaction
 $conn->begin_transaction();
 try {
-    // Insert order record (using only existing columns)
-    $stmt = $conn->prepare(
-        "INSERT INTO orders (user_id, total, shipping_address, payment_method) VALUES (?, ?, ?, ?)"
-    );
+    // Insert order record
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, total, shipping_address, payment_method) VALUES (?, ?, ?, ?)");
     $stmt->bind_param("idss", $user_id, $total, $full_address, $shipping_info['payment_method']);
     $stmt->execute();
     $order_id = $stmt->insert_id;
 
-    // Insert order items & update stock
-    $stmt = $conn->prepare(
-        "INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (?, ?, ?, ?)"
-    );
-    $update_stock_stmt = $conn->prepare(
-        "UPDATE books SET qty = qty - ? WHERE isbn = ?"
-    );
+    // Insert order items and update stock
+    $stmt = $conn->prepare("INSERT INTO order_items (order_id, book_id, quantity, price) VALUES (?, ?, ?, ?)");
+    $update_stock_stmt = $conn->prepare("UPDATE books SET qty = qty - ? WHERE isbn = ?");
 
     foreach ($cart_items as $item) {
         $stmt->bind_param("iisd", $order_id, $item['book_id'], $item['quantity'], $item['price']);
@@ -222,7 +198,7 @@ try {
         $update_stock_stmt->execute();
     }
 
-    // Clear cart (only for cart-based checkout)
+    // Clear cart (only if checking out multiple items)
     if (!$single_item) {
         $stmt = $conn->prepare("DELETE FROM cart WHERE user_id = ?");
         $stmt->bind_param("i", $user_id);
@@ -232,7 +208,7 @@ try {
     // Commit transaction
     $conn->commit();
 
-    // Redirect to order confirmation page
+    // Redirect to order success page
     header("Location: order_success.php?order_id=" . $order_id);
     exit();
 } catch (Exception $e) {
@@ -245,7 +221,7 @@ try {
         <title>Checkout Error</title>
         <script>
             window.onload = function() {
-                alert("Error processing order: <?php echo $e->getMessage(); ?>");
+                alert("Error processing order: <?php echo htmlspecialchars($e->getMessage()); ?>");
                 window.location.href = "cart.php";
             };
         </script>

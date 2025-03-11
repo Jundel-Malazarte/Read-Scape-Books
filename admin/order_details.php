@@ -295,6 +295,39 @@ mysqli_stmt_close($stmt);
         .back-btn:hover {
             background-color: #0056b3;
         }
+
+        .delete-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 12px;
+            background-color: #6c757d;
+        }
+
+        .delete-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .success-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            border-left: 5px solid #28a745;
+            margin-bottom: 15px;
+        }
+
+        .success-message i {
+            margin-right: 8px;
+            color: #28a745;
+        }
     </style>
 </head>
 
@@ -315,7 +348,7 @@ mysqli_stmt_close($stmt);
         <h1>Order Details - #<?php echo $order_id; ?></h1>
         <?php
         if (isset($_GET['success']) && $_GET['success'] === 'status_updated') {
-            echo '<p style="color: green;">Order status updated successfully!</p>';
+            echo '<div class="success-message"><i class="fas fa-check-circle"></i> Order status updated successfully!</div>';
         } elseif (isset($_GET['error'])) {
             echo '<p style="color: red;">Error: ' . htmlspecialchars($_GET['error']) . '</p>';
         }
@@ -331,16 +364,23 @@ mysqli_stmt_close($stmt);
                 <div class="status-buttons">
                     <form action="update_order_status.php" method="POST" style="display: inline;">
                         <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
-                        <input type="hidden" name="status" value="completed"> <!-- Changed to "completed" -->
+                        <input type="hidden" name="status" value="completed">
                         <button type="submit" class="complete-btn">Mark as Complete</button>
                     </form>
-                    <form action="update_order_status.php" method="POST" style="display: inline;"> <!-- Fixed path -->
+                    <form action="update_order_status.php" method="POST" style="display: inline;">
                         <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
                         <input type="hidden" name="status" value="canceled">
                         <button type="submit" class="cancel-btn">Cancel Order</button>
                     </form>
+                    <form action="delete_order.php" method="POST" style="display: inline;">
+                        <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+                        <button type="submit" class="delete-btn" onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.');">
+                            Delete Order
+                        </button>
+                    </form>
                 </div>
             <?php endif; ?>
+
         </div>
 
         <div class="order-items">
