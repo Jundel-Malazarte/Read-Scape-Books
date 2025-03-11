@@ -458,26 +458,13 @@ mysqli_close($conn);
 
             <div class="payment-methods">
                 <label for="payment_method">Payment Method</label>
-                <select id="payment_method" name="payment_method" form="checkout-form" onchange="handlePaymentMethodChange()">
+                <select id="payment_method" name="payment_method" required>
                     <option value="cash_on_delivery">Cash on Delivery</option>
                     <option value="gcash">GCash</option>
                 </select>
             </div>
 
-            <script>
-                function handlePaymentMethodChange() {
-                    const paymentMethod = document.getElementById('payment_method').value;
-                    const checkoutForm = document.getElementById('checkout-form');
-
-                    if (paymentMethod === 'gcash') {
-                        checkoutForm.action = 'login.gcash.php';
-                    } else {
-                        checkoutForm.action = 'process_order.php<?php echo isset($_GET['isbn']) ? '?isbn=' . urlencode($_GET['isbn']) : ''; ?>';
-                    }
-                }
-            </script>
-
-            <button type="submit" form="checkout-form" class="checkout-btn">Place Order</button>
+            <button type="button" onclick="submitOrder()" class="checkout-btn">Place Order</button>
         </div>
     </div>
 
@@ -536,6 +523,33 @@ mysqli_close($conn);
                 orderSummary.appendChild(emptyMessage);
             }
         };
+
+        function submitOrder() {
+            const form = document.getElementById('checkout-form');
+            const paymentMethod = document.getElementById('payment_method').value;
+
+            // Validate form fields
+            const requiredFields = ['email', 'first_name', 'last_name', 'mobile', 'address', 'city', 'state', 'zipcode'];
+            for (let field of requiredFields) {
+                if (!document.getElementById(field).value) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+            }
+
+            if (paymentMethod === 'gcash') {
+                // Store form data in session before redirecting
+                const formData = new FormData(form);
+                fetch('store_checkout_data.php', {
+                    method: 'POST',
+                    body: formData
+                }).then(() => {
+                    window.location.href = 'login.gcash.php';
+                });
+            } else {
+                form.submit();
+            }
+        }
     </script>
 </body>
 

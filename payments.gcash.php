@@ -1,12 +1,60 @@
+<?php
+session_start();
+include 'db_connect.php';
+
+// Get the mobile number from checkout data
+$mobile = isset($_SESSION['checkout_data']['mobile']) ? substr($_SESSION['checkout_data']['mobile'], 3) : '';
+
+// Set shipping cost
+$shipping_cost = 100.00;
+
+// Calculate subtotal from cart or single item
+$user_id = $_SESSION['id'] ?? 0;
+$subtotal = 0;
+
+if (isset($_GET['isbn']) && !empty($_GET['isbn'])) {
+    $isbn = $_GET['isbn'];
+    $stmt = $conn->prepare("SELECT price FROM books WHERE isbn = ?");
+    $stmt->bind_param("i", $isbn);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $book = $result->fetch_assoc();
+    $subtotal = $book ? $book['price'] : 0;
+} else {
+    $stmt = $conn->prepare(
+        "SELECT SUM(b.price * c.quantity) AS subtotal 
+         FROM cart c 
+         JOIN books b ON c.isbn = b.isbn 
+         WHERE c.user_id = ?"
+    );
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $subtotal = $row['subtotal'] ?? 0;
+}
+
+// Calculate total with shipping
+$total_with_shipping = $subtotal + $shipping_cost;
+
+// Format prices for display
+$subtotal_formatted = number_format($subtotal, 2);
+$shipping_formatted = number_format($shipping_cost, 2);
+$total_formatted = number_format($total_with_shipping, 2);
+
+// Store total in session for next page
+$_SESSION['total_with_shipping'] = $total_with_shipping;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charSet="utf-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>GCash Payments</title>
     <meta name="next-head-count" content="3" />
-    <link rel="preload" href=".css" as="style" />
+    <link rel="preload" href="./assets/css/main.css" as="style" />
     <link rel="stylesheet" href="./assets/css/main.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -41,8 +89,6 @@
         padding: 20px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
-
-
 
     #nprogress {
         pointer-events: none;
@@ -87,7 +133,7 @@
         border-top-color: #007cff;
         border-left-color: #007cff;
         border-radius: 50%;
-        -webkit-animation: nprogresss-spinner 400ms linear infinite;
+        -webkit-animation: nprogress-spinner 400ms linear infinite;
         animation: nprogress-spinner 400ms linear infinite;
     }
 
@@ -131,13 +177,14 @@
                     <div class="container-box">
                         <div class="flex flex-col gap-4">
                             <span class="text-gray text-xl font-20px">Merchant: ReadScape</span>
-                            <span class="text-gray text-xl font-20px">Amount Due: <span style="color: #007cff;">PHP 1.00</span></span>
+
+
                             <span class="text-gray text-xl font-bold">Login to pay with GCash</span>
                             <div class="flex flex-col gap-1 py-2">
                                 <span class="text-black">Enter your mobile number</span>
                                 <div class="flex flex-row gap-1 border-b border-gcash-secondary-blue p-1">
                                     <span class="font-medium text-base text-black border-r border-gcash-secondary-blue pr-4">+63</span>
-                                    <input pattern="[0-9]*" type="tel" maxLength="12" class="w-full outline-none transition-all appearance-none bg-transparent text-black text-base font-medium" />
+                                    <input pattern="[0-9]*" type="tel" maxLength="12" class="w-full outline-none transition-all appearance-none bg-transparent text-black text-base font-medium" value="<?php echo htmlspecialchars($mobile); ?>" readonly />
                                 </div>
                             </div>
                             <div class="mt-16 flex flex-col items-center gap-4">
@@ -154,6 +201,7 @@
                 </div>
             </div>
         </div>
+    </div>
 </body>
 
 </html>

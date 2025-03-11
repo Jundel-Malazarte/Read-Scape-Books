@@ -1,3 +1,40 @@
+<?php
+session_start();
+include 'db_connect.php';
+
+// Get GCash balance
+$gcash_number = $_SESSION['gcash_number'] ?? '';
+$stmt = $conn->prepare("SELECT balance FROM gcash_users2 WHERE mobile_number = ?");
+$stmt->bind_param("s", $gcash_number);
+$stmt->execute();
+$result = $stmt->get_result();
+$balance = $result->fetch_assoc()['balance'] ?? 10000;
+$balance_formatted = number_format($balance, 2);
+
+// Get total price from session
+$total_with_shipping = isset($_SESSION['total_with_shipping']) ? $_SESSION['total_with_shipping'] : 0;
+$total_formatted = number_format($total_with_shipping, 2);
+
+// Process payment when Pay button is clicked
+if (isset($_POST['process_payment'])) {
+    if ($balance >= $total_with_shipping) {
+        // Update GCash balance
+        $new_balance = $balance - $total_with_shipping;
+        $update_stmt = $conn->prepare("UPDATE gcash_users2 SET balance = ? WHERE mobile_number = ?");
+        $update_stmt->bind_param("ds", $new_balance, $gcash_number);
+
+        if ($update_stmt->execute()) {
+            $_SESSION['payment_success'] = true;
+            header("Location: receipt.gcash.php");
+            exit();
+        } else {
+            $error = "Payment failed. Please try again.";
+        }
+    } else {
+        $error = "Insufficient balance";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -180,20 +217,35 @@
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-grey pay-with-right text-2xl">Gcash</span>
-                                <span class="text-black font-20px text-xl">PHP 10,000</span>
+                                <span class="text-black font-20px text-xl">PHP <?php echo $balance_formatted; ?></span>
                             </div>
                             <span class="text-black font-bold text-xl">You are about to pay</span>
                             <div class="flex justify-between items-center py-2">
                                 <span class="font-bold text-black">Amount</span>
-                                <span class="font-bold text-black">PHP 1.00</span>
+                                <span class="font-bold text-black">PHP <?php echo $total_formatted; ?></span>
                             </div>
                             <hr style="margin: 10px 0px;">
                             <div class="flex flex-col items-center py-1">
                                 <div class="flex justify-between w-full">
                                     <span class="text-black font-bold">Total</span>
-                                    <span class="text-black font-bold text-xl">PHP 1.00</span>
+                                    <span class="text-black font-bold text-xl">PHP <?php echo $total_formatted; ?></span>
                                 </div>
-                                <a class="pay-button" href="receipt.gcash.php">PAY PHP 1.00</a>
+                                <form method="POST" class="w-full flex flex-col items-center">
+                                    <?php if (isset($error)): ?>
+                                        <div class="text-red-500 mb-2"><?php echo $error; ?></div>
+                                    <?php endif; ?>
+
+                                    <?php if ($balance >= $total_with_shipping): ?>
+                                        <button type="submit" name="process_payment" class="pay-button">
+                                            PAY PHP <?php echo $total_formatted; ?>
+                                        </button>
+                                    <?php else: ?>
+                                        <div class="text-red-500 mb-2">Insufficient balance</div>
+                                        <button type="button" class="pay-button opacity-50" disabled>
+                                            PAY PHP <?php echo $total_formatted; ?>
+                                        </button>
+                                    <?php endif; ?>
+                                </form>
                             </div>
                         </div>
                         <div class="fixed bottom-0 w-full left-0 px-6 py-2">

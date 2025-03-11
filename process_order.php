@@ -9,11 +9,15 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
-// Update session values if new ones are provided
-$_SESSION['fname'] = $_POST['first_name'] ?? $_SESSION['fname'];
-$_SESSION['lname'] = $_POST['last_name'] ?? $_SESSION['lname'];
-$_SESSION['email'] = $_POST['email'] ?? $_SESSION['email'];
-$_SESSION['mobile'] = $_POST['mobile'] ?? $_SESSION['mobile'];
+// Update session values with submitted data
+$_SESSION['fname'] = htmlspecialchars($_POST['first_name'] ?? $_SESSION['fname'] ?? '');
+$_SESSION['lname'] = htmlspecialchars($_POST['last_name'] ?? $_SESSION['lname'] ?? '');
+$_SESSION['email'] = htmlspecialchars($_POST['email'] ?? $_SESSION['email'] ?? '');
+$_SESSION['phone'] = htmlspecialchars($_POST['mobile'] ?? $_SESSION['phone'] ?? '');
+$_SESSION['address'] = htmlspecialchars($_POST['address'] ?? '');
+$_SESSION['city'] = htmlspecialchars($_POST['city'] ?? '');
+$_SESSION['state'] = htmlspecialchars($_POST['state'] ?? '');
+$_SESSION['zipcode'] = htmlspecialchars($_POST['zipcode'] ?? '');
 
 // Ensure all required fields are provided
 $required_fields = ['email', 'first_name', 'last_name', 'mobile', 'address', 'city', 'state', 'zipcode', 'payment_method'];
@@ -35,7 +39,7 @@ if (!empty($missing_fields)) {
         <script>
             window.onload = function() {
                 alert("Error: All fields are required. Missing: <?php echo implode(', ', $missing_fields); ?>");
-                window.location.href = "checkout.php";
+                window.location.href = "checkout.php<?php echo isset($_GET['isbn']) ? '?isbn=' . urlencode($_GET['isbn']) : ''; ?>";
             };
         </script>
     </head>
@@ -65,22 +69,22 @@ $full_address = "{$shipping_info['address']}, {$shipping_info['city']}, {$shippi
 // Fetch cart items (or single item)
 $single_item = false;
 $cart_items = [];
-$shipping = 100.00; // Fixed shipping cost
+$shipping_cost = 100.00; // Matches the shipping cost in checkout.php
 
 if (isset($_GET['isbn']) && !empty($_GET['isbn'])) {
     $single_item = true;
     $isbn = $_GET['isbn'];
 
     // Fetch single book details
-    $stmt = $conn->prepare("SELECT isbn AS book_id, title, price, qty AS stock FROM books WHERE isbn = ?");
-    $stmt->bind_param("s", $isbn);
+    $stmt = $conn->prepare("SELECT isbn, title, price, qty AS stock FROM books WHERE isbn = ?");
+    $stmt->bind_param("i", $isbn); // isbn is an int in your schema
     $stmt->execute();
     $result = $stmt->get_result();
     $book = $result->fetch_assoc();
 
     if ($book) {
         $cart_items[] = [
-            'book_id' => $book['book_id'],
+            'book_id' => $book['isbn'],
             'title' => $book['title'],
             'price' => $book['price'],
             'quantity' => 1,
@@ -174,14 +178,14 @@ $subtotal = 0;
 foreach ($cart_items as $item) {
     $subtotal += $item['price'] * $item['quantity'];
 }
-$total = $subtotal + $shipping;
+$total = $subtotal + $shipping_cost;
 
 // Start transaction
 $conn->begin_transaction();
 try {
     // Insert order record
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, total, shipping_address, payment_method) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("idss", $user_id, $total, $full_address, $shipping_info['payment_method']);
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, total, shipping_address, payment_method, email, first_name, last_name, mobile, address, city, state, zipcode) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("idssssssssss", $user_id, $total, $full_address, $shipping_info['payment_method'], $shipping_info['email'], $shipping_info['first_name'], $shipping_info['last_name'], $shipping_info['mobile'], $shipping_info['address'], $shipping_info['city'], $shipping_info['state'], $shipping_info['zipcode']);
     $stmt->execute();
     $order_id = $stmt->insert_id;
 
@@ -190,11 +194,11 @@ try {
     $update_stock_stmt = $conn->prepare("UPDATE books SET qty = qty - ? WHERE isbn = ?");
 
     foreach ($cart_items as $item) {
-        $stmt->bind_param("iisd", $order_id, $item['book_id'], $item['quantity'], $item['price']);
+        $stmt->bind_param("iiid", $order_id, $item['book_id'], $item['quantity'], $item['price']);
         $stmt->execute();
 
         // Reduce stock
-        $update_stock_stmt->bind_param("is", $item['quantity'], $item['book_id']);
+        $update_stock_stmt->bind_param("ii", $item['quantity'], $item['book_id']);
         $update_stock_stmt->execute();
     }
 
