@@ -130,9 +130,9 @@
                     <img src="./images/gcash.png" alt="gcash" class="h-60 object-contain" />
                     <div class="container-box">
                         <div class="flex flex-col gap-4">
-                            <span class="text-gray text-2xl font-bold">Merchant: ReadScape</span>
-                            <span class="text-gray text-2xl font-bold">Amount Due: </span>
-                            <span class="text-gray text-xl">Login to pay with GCash</span>
+                            <span class="text-gray text-xl font-20px">Merchant: ReadScape</span>
+                            <span class="text-gray text-xl font-20px">Amount Due: <span style="color: #007cff;">PHP 1.00</span></span>
+                            <span class="text-gray text-xl font-bold">Login to pay with GCash</span>
                             <div class="flex flex-col gap-1 py-2">
                                 <span class="text-black">Enter your mobile number</span>
                                 <div class="flex flex-row gap-1 border-b border-gcash-secondary-blue p-1">
@@ -141,7 +141,7 @@
                                 </div>
                             </div>
                             <div class="mt-16 flex flex-col items-center gap-4">
-                                <a class="px-3 py-2 rounded-full text-white text-base text-center tracking-wide" style="background-color: #007cff; width: 50%;" href="#">Next</a>
+                                <a class="px-3 py-2 rounded-full text-white text-base text-center tracking-wide" style="background-color: #007cff; width: 50%;" href="pay.gcash.php">Next</a>
                             </div>
                         </div>
                         <div class="fixed bottom-0 w-full left-0 px-6 py-2">

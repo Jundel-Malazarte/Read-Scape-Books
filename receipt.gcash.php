@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>GCash Pay</title>
+    <title>GCash Receipt</title>
     <meta name="next-head-count" content="3" />
     <link rel="preload" href=".css" as="style" />
     <link rel="stylesheet" href="./assets/css/main.css" />
@@ -18,7 +18,7 @@
 <style>
     body {
         font-family: 'Poppins', sans-serif;
-        background-color: #eceff1;
+        background-color:  #007cff;;
     }
 
     .container {
@@ -26,8 +26,8 @@
     }
 
     .w-screen {
-        width: 50%;
-        height: 80%;
+        width: 40%;
+        height: auto;
         justify-self: center;
         align-self: center;
         align-items: center;
@@ -44,9 +44,9 @@
 
     .container-box {
         width: 100%;
-        height: 100%;
+        height: 900px;
         background-color: #fff;
-        color: #212121;
+        color: #fff;
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 100px;
@@ -172,28 +172,27 @@
                     <img src="./images/gcash.png" alt="gcash" class="h-60 object-contain" />
                     <div class="container-box">
                         <div class="flex flex-col gap-4">
-                            <span class="text-black text-xl font-20px text-center" style="color: blue;"><strong>ReadScape</strong></span>
-                            <div class="pay-with-row">
-                                <span class="pay-with-left font-18px text-1xl">PAY WITH</span>
-                                <span class="text-black font-20px text-xl">Balance</span>
-
+                            <div class="text-center">
+                                <i class="fas fa-check-circle" style="color: blue; font-size: 3rem; margin-bottom: 10px;"></i>
                             </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-grey pay-with-right text-2xl">Gcash</span>
-                                <span class="text-black font-20px text-xl">PHP 10,000</span>
-                            </div>
-                            <span class="text-black font-bold text-xl">You are about to pay</span>
+                            <span class="text-black font-bold text-xl text-center" style="color: #283593;">ReadScape Payment</span>
+                            <span class="text-black font-xl text-xl text-center" style="background-color: #e0f2f1; color: #283593; font-weight: bold; border-radius: 10px; display: inline-block; padding: 2px;">+63 123 456 789</span>
+                            <span class="text-black font-2xl text-center">Sent via GCash</span>
                             <div class="flex justify-between items-center py-2">
-                                <span class="font-bold text-black">Amount</span>
-                                <span class="font-bold text-black">PHP 1.00</span>
+                                <span class="font-bold" style="color: #283593;">Amount</span>
+                                <span class="font-bold text-black" style="color: #283593;">PHP 1.00</span>
                             </div>
+                            <!-- break; -->
                             <hr style="margin: 10px 0px;">
                             <div class="flex flex-col items-center py-1">
                                 <div class="flex justify-between w-full">
-                                    <span class="text-black font-bold">Total</span>
-                                    <span class="text-black font-bold text-xl">PHP 1.00</span>
+                                    <span class="text-black font-bold" style="color: #283593;">Total Amount Sent</span>
+                                    <span class="text-black font-bold text-xl" style="color: #283593;">PHP 1.00</span>
                                 </div>
-                                <a class="pay-button" href="receipt.gcash.php">PAY PHP 1.00</a>
+                                <div style="display: flex; justify-content: space-between; width: 100%;">
+                                    <span class="text-black font-20px text-1xl left-0" style="color: #283593; padding: 10px; margin: 2px; text-align: left; width: 50%;">Reference ID: 123456789</span>
+                                    <span style="color: #283593; padding: 10px; margin: 2px; text-align: left; width: 50%;">Mar 10, 2025 7:00pm</span>
+                                </div>
                             </div>
                         </div>
                         <div class="fixed bottom-0 w-full left-0 px-6 py-2">
