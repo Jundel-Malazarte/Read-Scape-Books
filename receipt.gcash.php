@@ -126,6 +126,7 @@ $total_formatted = number_format($total_with_shipping, 2);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link rel="icon" href="./images/gcash.png" type="image/x-icon" style="border-radius: 50%;" />
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -226,20 +227,51 @@ $total_formatted = number_format($total_with_shipping, 2);
                         </div>
 
                         <!-- Confirm Payment Button -->
-                        <form method="POST" action="" style="display: flex; justify-content: center; width: 100%;">
-                            <button type="submit" name="confirm_payment" class="pay-button" style="display: block; margin: 20px auto;">Confirm Payment</button>
-                        </form>
-                    </div>
-                    <div class="fixed bottom-0 w-full left-0 px-6 py-2">
-                        <div class="flex justify-between items-center">
-                            <a class="text-black text-xs" href="">Help Center</a>
-                            <span class="text-gcash-secondary-blue text-xs">v5.56.0:595</span>
+                        <div class="button-container" style="display: flex; justify-content: center; gap: 20px; width: 100%;">
+                            <form method="POST" action="" style="display: flex; justify-content: center;">
+                                <!-- <button type="submit" name="confirm_payment" class="pay-button">
+                                    Confirm Payment
+                                </button> -->
+                            </form>
+
+                            <button onclick="downloadReceipt()" class="pay-button" style="background-color: white; color: #007cff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                        <div class="fixed bottom-0 w-full left-0 px-6 py-2">
+                            <div class="flex justify-between items-center">
+                                <a class="text-black text-xs" href="">Help Center</a>
+                                <span class="text-gcash-secondary-blue text-xs">v5.56.0:595</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 </body>
+<script>
+    function downloadReceipt() {
+        const receiptBox = document.querySelector('.container-box');
+
+        html2canvas(receiptBox, {
+            backgroundColor: '#ffffff',
+            scale: 2, // For better quality
+            logging: false,
+        }).then(canvas => {
+            // Convert the canvas to a data URL
+            const imageData = canvas.toDataURL('image/png');
+
+            // Create a temporary link to download the image
+            const link = document.createElement('a');
+            link.href = imageData;
+            link.download = 'ReadScape_Receipt_<?php echo $reference_id; ?>.png';
+
+            // Trigger the download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    }
+</script>
 
 </html>

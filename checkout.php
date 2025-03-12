@@ -531,11 +531,21 @@ mysqli_close($conn);
                 // Store form data in session before redirecting
                 const formData = new FormData(form);
                 fetch('store_checkout_data.php', {
-                    method: 'POST',
-                    body: formData
-                }).then(() => {
-                    window.location.href = 'login.gcash.php';
-                });
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = 'login.gcash.php';
+                        } else {
+                            alert(data.error || 'Error storing checkout data');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error processing your request');
+                    });
             } else {
                 form.submit();
             }

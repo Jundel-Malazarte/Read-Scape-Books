@@ -1,10 +1,17 @@
 <?php
+// At the top of login.gcash.php
 session_start();
-include 'db_connect.php'; // Ensure this file connects to your database
+include 'db_connect.php';
 
-// Retrieve mobile number and email from session
-$mobile_number = $_SESSION['phone'] ?? '';
-$email = $_SESSION['email'] ?? '';
+// Get data from checkout session
+$checkout_data = $_SESSION['checkout_data'] ?? [];
+$mobile_number = $checkout_data['mobile'] ?? '';
+$email = $checkout_data['email'] ?? '';
+
+if (empty($mobile_number) || empty($email)) {
+    header("Location: checkout.php");
+    exit();
+}
 
 // Format the mobile number
 if (!empty($mobile_number)) {
@@ -19,12 +26,6 @@ if (!empty($mobile_number)) {
     $formatted_mobile_number = substr($formatted_mobile_number, 0, 10);
 } else {
     $formatted_mobile_number = '';
-}
-
-// Check if mobile number and email are provided
-if (empty($mobile_number) || empty($email)) {
-    header("Location: checkout.php?error=no_mobile_or_email");
-    exit();
 }
 
 // Check if the mobile number already exists in the database (gcash_users2)
