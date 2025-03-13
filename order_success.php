@@ -74,6 +74,8 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="icon" href="./images/Readscape.png">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: 'Courier', monospace;
@@ -192,24 +194,26 @@ $conn->close();
             background-color: #e9ecef;
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
+        .footer div {
+            margin-top: 15px;
         }
 
         .footer a {
-            color: #000;
             text-decoration: none;
             padding: 8px 16px;
-            background-color: #f1f1f1;
             border-radius: 5px;
             display: inline-block;
-            margin-top: 10px;
+            transition: all 0.3s ease;
         }
 
-        .footer a:hover {
-            background-color: #ddd;
+        .footer a:first-child {
+            background-color: #f1f1f1;
+            color: #000;
+        }
+
+        .footer a:last-child:hover {
+            background-color: #007bff;
+            color: white;
         }
     </style>
 </head>
@@ -288,7 +292,12 @@ $conn->close();
 
         <div class="footer">
             <p>Thank you for your order!</p>
-            <p><a href="dashboard.php">Back to Home</a></p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <a href="dashboard.php">Back to Home</a>
+                <a href="#" onclick="downloadReceipt(event)" style="background-color: white; color: #007bff; border: 1px solid #007bff;">
+                    <i class="fas fa-download"></i> Download Receipt
+                </a>
+            </div>
         </div>
     </div>
 
@@ -300,6 +309,37 @@ $conn->close();
             void checkmark.offsetWidth; // Trigger reflow
             checkmark.style.animation = 'drawCheck 0.5s ease forwards 0.5s'; // Restart animation
         };
+
+        // Replace the existing downloadReceipt function
+        function downloadReceipt(event) {
+            event.preventDefault();
+            const receiptElement = document.querySelector('.receipt');
+
+            html2canvas(receiptElement, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                logging: false,
+                useCORS: true
+            }).then(canvas => {
+                // Initialize jsPDF
+                const {
+                    jsPDF
+                } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+
+                // Calculate dimensions to fit the receipt on the PDF
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 297; // A4 height in mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+
+                // Add the image to PDF
+                const imgData = canvas.toDataURL('image/png');
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+
+                // Save the PDF
+                pdf.save('ReadScape_Order_<?php echo $order_id; ?>.pdf');
+            });
+        }
     </script>
 </body>
 

@@ -14,7 +14,7 @@ $total_with_shipping = isset($_SESSION['total_with_shipping']) ? $_SESSION['tota
 $subtotal = $total_with_shipping - $shipping_cost;
 
 // Get GCash number from session (assuming set in login.gcash.php or checkout.php)
-$gcash_number = $_SESSION['gcash_number'] ?? $_SESSION['phone'] ?? '';
+$gcash_number = '+639428013424';
 
 // Generate random reference ID (10 digits)
 $reference_id = mt_rand(1000000000, 9999999999);
@@ -202,7 +202,17 @@ $total_formatted = number_format($total_with_shipping, 2);
                             <i class="fas fa-check-circle" style="color: blue; font-size: 3rem; margin-bottom: 10px;"></i>
                         </div>
                         <span class="text-black font-bold text-xl text-center" style="color: #283593;">ReadScape Payment</span>
-                        <span class="text-black font-xl text-xl text-center" style="background-color: #e0f2f1; color: #283593; font-weight: bold; border-radius: 10px; padding: 2px;"><?php echo htmlspecialchars($gcash_number); ?></span>
+                        <span class="text-black font-xl text-xl text-center"
+                            style="background-color: #e0f2f1; 
+                                     color: #283593; 
+                                     font-weight: bold; 
+                                     border-radius: 10px; 
+                                     padding: 5px 10px; 
+                                     display: inline-block; 
+                                     line-height: 1.5;
+                                     margin: 5px 0;">
+                            <?php echo htmlspecialchars($gcash_number); ?>
+                        </span>
                         <span class="text-black font-2xl text-center">Confirm Payment via GCash</span>
 
                         <!-- Amount Details -->

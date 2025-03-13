@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 11, 2025 at 03:12 AM
+-- Generation Time: Mar 13, 2025 at 02:25 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,7 +43,7 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`isbn`, `title`, `book_image`, `author`, `copyright`, `qty`, `price`, `total`) VALUES
-(2, 'The Hacienda', '1740032179_book2.jpg', 'Isabel Cañas', 2002, 5, 299, 2990),
+(2, 'The Hacienda', '1740032179_book2.jpg', 'Isabel Cañas', 2002, 4, 299, 2990),
 (5, 'El filibusterismo', '1740450422_book4.jpg', 'José Rizal', 1891, 1, 249, 2490),
 (6, 'Legend of Mariang Makiling', '1740701783_book6.jpg', 'Nick Joaquin', 1997, 3, 280, 2800),
 (7, 'Alamat ng Sampalok', '1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 5, 280, 3360),
@@ -61,6 +61,34 @@ CREATE TABLE `cart` (
   `isbn` int(11) NOT NULL,
   `quantity` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`id`, `user_id`, `isbn`, `quantity`) VALUES
+(102, 11, 8, 1),
+(103, 1, 2, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `gcash_users2`
+--
+
+CREATE TABLE `gcash_users2` (
+  `id` int(11) NOT NULL,
+  `mobile_number` varchar(15) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `balance` decimal(15,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `gcash_users2`
+--
+
+INSERT INTO `gcash_users2` (`id`, `mobile_number`, `email`, `balance`) VALUES
+(1, '981237123', 'test1@gmail.com', 1000000.00);
 
 -- --------------------------------------------------------
 
@@ -115,7 +143,8 @@ INSERT INTO `orders` (`id`, `user_id`, `total`, `shipping_address`, `payment_met
 (22, 11, 349.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 00:19:01', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (23, 11, 350.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 00:37:03', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (24, 11, 350.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 00:56:12', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(25, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 01:15:39', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(25, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 01:15:39', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(26, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-12 00:43:29', 'canceled', 'ryan123@gmail.com', 'mario', 'hapon', '+639500146972', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000');
 
 -- --------------------------------------------------------
 
@@ -167,7 +196,8 @@ INSERT INTO `order_items` (`id`, `order_id`, `book_id`, `quantity`, `price`) VAL
 (29, 22, 5, 1, 249.00),
 (30, 23, 8, 1, 250.00),
 (31, 24, 8, 1, 250.00),
-(32, 25, 7, 1, 280.00);
+(32, 25, 7, 1, 280.00),
+(33, 26, 2, 1, 299.00);
 
 -- --------------------------------------------------------
 
@@ -206,18 +236,6 @@ INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `pass`, `phone`, `address`
 (13, 'Jundel', 'Malazarte', 'jundelmalazarte348@gmail.com', '$2y$10$HVIbYCfBvpprnRC367OxNOPsFr4MvqxrE3LVUf6KRE/SAEM.wJF5q', '09812371231', 'Sambag 1 Cebu City', '2025-03-10 02:03:40', 'uploads/67ce487c82fe8_default.jpg');
 
 --
--- Table structure for table `gcash_users2`
---
-
-CREATE TABLE `gcash_users2` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `mobile_number` varchar(15) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `balance` decimal(15,2) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
 -- Indexes for dumped tables
 --
 
@@ -234,6 +252,12 @@ ALTER TABLE `cart`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `user_id` (`user_id`,`isbn`),
   ADD KEY `isbn` (`isbn`);
+
+--
+-- Indexes for table `gcash_users2`
+--
+ALTER TABLE `gcash_users2`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `orders`
@@ -271,19 +295,25 @@ ALTER TABLE `books`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+
+--
+-- AUTO_INCREMENT for table `gcash_users2`
+--
+ALTER TABLE `gcash_users2`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `users`
