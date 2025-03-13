@@ -81,7 +81,7 @@ if (isset($_POST['process_payment'])) {
 
     .container-box {
         width: 100%;
-        height: 100%;
+        height: 100vh;
         background-color: #fff;
         color: #212121;
         border-radius: 10px;
@@ -203,34 +203,35 @@ if (isset($_POST['process_payment'])) {
 
 <body class="overflow-hidden scroll-smooth">
     <div id="__next">
-        <div class="container" style="background-color: #007cff; width:100%; height:380px;">
+        <div class="container" style="background-color: #007cff; width:100%; height:400px;">
             <div class="w-screen h-screen px-5">
                 <div class="flex-col-w-full">
                     <img src="./images/gcash.png" alt="gcash" class="h-60 object-contain" />
                     <div class="container-box">
                         <div class="flex flex-col gap-4">
-                            <span class="text-black text-xl font-20px text-center" style="color: blue;"><strong>ReadScape</strong></span>
+                            <span class="text-black text-xl font-20px text-center mt-4"  style="color: #283593;"><strong>ReadScape</strong></span>
                             <div class="pay-with-row">
                                 <span class="pay-with-left font-18px text-1xl">PAY WITH</span>
                                 <span class="text-black font-20px text-xl">Balance</span>
-
                             </div>
                             <div class="flex justify-between items-center">
-                                <span class="text-grey pay-with-right text-2xl">Gcash</span>
+                                <span class="text-gray pay-with-right text-2xl" style="margin-left: 10px;">Gcash</span>
                                 <span class="text-black font-20px text-xl">PHP <?php echo $balance_formatted; ?></span>
                             </div>
                             <span class="text-black font-bold text-xl">You are about to pay</span>
                             <div class="flex justify-between items-center py-2">
-                                <span class="font-bold text-black">Amount</span>
+                                <span class="font-bold text-black" style="margin-left: 10px;">Amount</span>
                                 <span class="font-bold text-black">PHP <?php echo $total_formatted; ?></span>
                             </div>
                             <hr style="margin: 10px 0px;">
                             <div class="flex flex-col items-center py-1">
-                                <div class="flex justify-between w-full">
-                                    <span class="text-black font-bold">Total</span>
-                                    <span class="text-black font-bold text-xl">PHP <?php echo $total_formatted; ?></span>
-                                </div>
-                                <form method="POST" class="w-full flex flex-col items-center">
+                                <span class="text-center text-sm text-black">Please review to ensure that the details are correct before you proceed.</span>
+                                <br>
+                                    <div class="flex justify-between w-full mb-3 mt-3">
+                                        <span class="text-black font-bold">Total</span>
+                                        <span class="text-black font-bold text-xl">PHP <?php echo $total_formatted; ?></span>
+                                    </div>
+                                <form method="POST" class="w-full flex flex-col items-center gap-4 mb-3">
                                     <?php if (isset($error)): ?>
                                         <div class="text-red-500 mb-2"><?php echo $error; ?></div>
                                     <?php endif; ?>
