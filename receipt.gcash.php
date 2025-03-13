@@ -244,16 +244,20 @@ $total_formatted = number_format($total_with_shipping, 2);
                                 </button> -->
                             </form>
 
-                            <button onclick="downloadReceipt()" class="pay-button" style="background-color: white; color: #007cff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                <i class="fas fa-download"></i> Download
+                            <button onclick="downloadReceipt()" class="pay-button" style="background-color: white; color: #007cff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 200px;">
+                                <i class="fas fa-download"></i> Download Receipt
+                            </button>
+                            <button href="dashboard.php" class="pay-button">
+                                <i class="fas fa-arrow-left"></i> Back to dashboard
                             </button>
                         </div>
-                        <div class="fixed bottom-0 w-full left-0 px-6 py-2">
-                            <div class="flex justify-between items-center">
-                                <a class="text-black text-xs" href="">Help Center</a>
-                                <span class="text-gcash-secondary-blue text-xs">v5.56.0:595</span>
-                            </div>
                         </div>
+                            <div class="fixed bottom-0 w-full left-0 px-6 py-2">
+                                <div class="flex justify-between items-center">
+                                      <a class="text-black text-xs" href="">Help Center</a>
+                                      <span class="text-gcash-secondary-blue text-xs">v5.56.0:595</span>
+                                 </div>
+                            </div>
                     </div>
                 </div>
             </div>
