@@ -23,10 +23,12 @@ if (isset($_POST['submit'])) {
             if (isset($_POST['remember'])) {
                 setcookie('email', $email, time() + (86400 * 30), "/"); // 30 days
                 setcookie('pass', $pass, time() + (86400 * 30), "/"); // 30 days
+                setcookie('user_id', $row["id"], time() + (86400 * 30), "/"); // 30 days
             } else {
                 // Clear cookies if "Remember Me" is not checked
                 setcookie('email', '', time() - 3600, "/");
                 setcookie('pass', '', time() - 3600, "/");
+                setcookie('user_id', '', time() - 3600, "/");
             }
 
             header("Location: dashboard.php");
@@ -199,35 +201,35 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
     </style>
 </head>
 <body>
-    <!-- Container Box -->
-    <div id="container">
-        <form id="form-box" action="" method="post" autocomplete="off">
+   <!-- Container Box -->
+<div id="container">
+    <form id="form-box" action="" method="post" autocomplete="off">
         <strong><h1>Login Form</h1></strong>
-            <img src="./images/Readscape.png" alt="readscape" id="logo" width="200px" height="200px">            
-            <div class="input-text">
-                <input type="text" id="email" name="email" placeholder="Email" value="<?php echo $email; ?>" required/><br />
-                <input type="password" id="pass" name="pass" placeholder="Password" value="<?php echo $pass; ?>" required/><br />
-                <!-- Remember Me and Forgot Password -->
-                <div class="options">
-                    <div class="remember-me">
-                        <input type="checkbox" id="checkbox" name="remember" <?php if ($email && $pass) echo 'checked'; ?> />
-                        <label for="checkbox">Remember Me</label>
-                    </div>
-                    <div class="forgot-password">
-                        <a href="forgot_password.php">Forgot Password?</a>
-                    </div>
+        <img src="./images/Readscape.png" alt="readscape" id="logo" width="200px" height="200px">            
+        <div class="input-text">
+            <input type="text" id="email" name="email" placeholder="Email" value="<?php echo $email; ?>" required/><br />
+            <input type="password" id="pass" name="pass" placeholder="Password" value="<?php echo $pass; ?>" required/><br />
+            <!-- Remember Me and Forgot Password -->
+            <div class="options">
+                <div class="remember-me">
+                    <input type="checkbox" id="checkbox" name="remember" <?php if ($email && $pass) echo 'checked'; ?> />
+                    <label for="checkbox">Remember Me</label>
                 </div>
-                <div id="button-login">
-                    <input type="submit" id="submit" name="submit" value="Login" />
+                <div class="forgot-password">
+                    <a href="reset_password.php">Forgot Password?</a>
                 </div>
             </div>
-            <div class="signup">
-                <a href="index.php">Haven't account yet? Sign up</a>
+            <div id="button-login">
+                <input type="submit" id="submit" name="submit" value="Login" />
             </div>
-            <div class="admin">
-                <a href="./admin/admin.php">Switch to admin</a>
-            </div>
-        </form>
-    </div>
+        </div>
+        <div class="signup">
+            <a href="index.php">Haven't account yet? Sign up</a>
+        </div>
+        <div class="admin">
+            <a href="./admin/admin.php">Switch to admin</a>
+        </div>
+    </form>
+</div>
 </body>
 </html>
