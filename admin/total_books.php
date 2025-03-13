@@ -91,46 +91,37 @@ $paginated_books = array_slice($books, $start, $items_per_page);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Total Books</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
 
-
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #212529;
+            padding: 1rem;
         }
 
         .navbar a {
-            color: white;
+            color: #fff;
             text-decoration: none;
-            padding: 10px 15px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
         }
 
         .navbar a:hover {
-            background-color: #555;
+            background-color: #343a40;
             border-radius: 5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 15px;
         }
 
         .profile-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 1rem;
         }
 
         .profile-info img {
@@ -138,207 +129,89 @@ $paginated_books = array_slice($books, $start, $items_per_page);
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2px solid #fff;
         }
 
         .container {
-            width: 90%;
-            margin: auto;
+            max-width: 1200px;
+            margin-top: 2rem;
+            padding: 2rem;
             background: white;
-            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
-            text-align: left;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
 
-        .search-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-bar input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 200px;
-        }
-
-        .search-bar button {
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .search-bar .reset-btn {
-            padding: 8px 15px;
-            background-color: #d9534f;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .search-bar button:hover {
-            background-color: #0056b3;
-        }
-
-        .search-bar .reset-btn:hover {
-            background-color: #c9302c;
-        }
-
-        .book-section {
-            width: 100%;
-        }
-
-        .book-section h3 {
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .book-section table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px;
-            /* Adds vertical spacing between rows */
-            margin-top: 10px;
-        }
-
-        .book-section th {
-            background-color: #e9ecef;
-            padding: 12px;
-            text-align: center;
-            border-bottom: 2px solid #dee2e6;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .book-section td {
-            padding: 12px;
-            text-align: center;
-            background-color: #fff;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .book-section td img {
+        .table img {
             width: 50px;
             height: 50px;
             object-fit: cover;
             border-radius: 5px;
-            vertical-align: middle;
         }
 
         .add-book-btn {
-            display: inline-block;
-            background-color: #28a745;
+            background-color: #198754;
             color: white;
-            padding: 8px 15px;
+            padding: 0.5rem 1rem;
             border-radius: 5px;
             text-decoration: none;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .add-book-btn:hover {
-            background-color: #218838;
-        }
-
-        .update-btn {
-            display: inline-block;
-            background-color: #007bff;
+            background-color: #157347;
             color: white;
-            padding: 5px 10px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 12px;
-            transition: background-color 0.3s ease;
-            margin-right: 5px;
         }
 
-        .update-btn:hover {
-            background-color: #0056b3;
-        }
-
+        .update-btn,
         .delete-btn {
-            display: inline-block;
-            background-color: #dc3545;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-size: 12px;
-            transition: background-color 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            background-color: #c82333;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.875rem;
         }
 
         .pagination {
-            display: flex;
+            margin-top: 2rem;
             justify-content: center;
-            margin-top: 20px;
-            gap: 5px;
-        }
-
-        .pagination button {
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .pagination button.active {
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        .pagination button:hover {
-            background-color: #e9ecef;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="nav-links">
-            <a href="../admin/admin_dashboard.php">Home</a>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div class="nav-links">
+                <a href="../admin/admin_dashboard.php" class="btn btn-outline-light">Home</a>
+            </div>
+            <div class="profile-info">
+                <img src="<?php echo $profile_image; ?>" alt="Profile Image">
+                <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
+                <a href="../admin/logout.php" class="btn btn-danger">Log Out</a>
+            </div>
         </div>
-        <div class="profile-info">
-            <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
-            <a href="../admin/logout.php">Log Out</a>
-        </div>
-    </div>
+    </nav>
 
     <div class="container">
-        <div class="search-container">
-            <h1>Total Books: <?php echo $total_books; ?></h1>
-            <div class="search-bar">
-                <form method="GET">
-                    <input type="text" name="search" placeholder="Search by Title or Author" value="<?php echo htmlspecialchars($search); ?>">
-                    <button type="submit">Search</button>
-                    <a href="total_books.php" class="reset-btn">Reset</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Total Books: <?php echo $total_books; ?></h2>
+            <div class="d-flex gap-2">
+                <form method="GET" class="d-flex gap-2">
+                    <input type="text" class="form-control" name="search" placeholder="Search by Title or Author" value="<?php echo htmlspecialchars($search); ?>">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="total_books.php" class="btn btn-danger">Reset</a>
                 </form>
             </div>
         </div>
 
-        <div class="book-section">
+        <div class="mb-3">
             <a href="add_book.php" class="add-book-btn">Add New Book</a>
-            <?php if (empty($paginated_books)): ?>
-                <p>No books found.</p>
-            <?php else: ?>
-                <table>
-                    <thead>
+        </div>
+
+        <?php if (empty($paginated_books)): ?>
+            <div class="alert alert-info">No books found.</div>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
                         <tr>
                             <th>ISBN</th>
                             <th>Image</th>
@@ -363,24 +236,37 @@ $paginated_books = array_slice($books, $start, $items_per_page);
                                 <td>₱<?php echo number_format($book['price'], 2); ?></td>
                                 <td>₱<?php echo number_format($book['total'], 2); ?></td>
                                 <td>
-                                    <a href="../admin/edit_book.php?isbn=<?php echo $book['isbn']; ?>" class="update-btn">Update</a>
-                                    <a href="../admin/delete_book.php?isbn=<?php echo $book['isbn']; ?>" class="delete-btn" onclick="return confirm('Are you sure you want to delete this book?');">Delete</a>
+                                    <a href="../admin/edit_book.php?isbn=<?php echo $book['isbn']; ?>" class="btn btn-primary btn-sm update-btn">Update</a>
+                                    <a href="../admin/delete_book.php?isbn=<?php echo $book['isbn']; ?>" class="btn btn-danger btn-sm delete-btn" onclick="return confirm('Are you sure you want to delete this book?');">Delete</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-                <div class="pagination">
-                    <button onclick="window.location.href='?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>'" <?php echo $page <= 1 ? 'disabled' : ''; ?>>Previous</button>
+            </div>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page - 1; ?>&search=<?php echo $search; ?>">Previous</a>
+                    </li>
                     <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <button class="<?php echo $i === $page ? 'active' : ''; ?>" onclick="window.location.href='?page=<?php echo $i; ?>&search=<?php echo $search; ?>'"><?php echo $i; ?></button>
+                        <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                            <a class="page-link" href="?page=<?php echo $i; ?>&search=<?php echo $search; ?>"><?php echo $i; ?></a>
+                        </li>
                     <?php endfor; ?>
-                    <button onclick="window.location.href='?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>'" <?php echo $page >= $total_pages ? 'disabled' : ''; ?>>Next</button>
-                </div>
-                <p>Showing <?php echo $start + 1; ?> to <?php echo min($start + $items_per_page, $total_books); ?> of <?php echo $total_books; ?> entries</p>
-            <?php endif; ?>
-        </div>
+                    <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
+                        <a class="page-link" href="?page=<?php echo $page + 1; ?>&search=<?php echo $search; ?>">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            <p class="text-muted">Showing <?php echo $start + 1; ?> to <?php echo min($start + $items_per_page, $total_books); ?> of <?php echo $total_books; ?> entries</p>
+        <?php endif; ?>
     </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

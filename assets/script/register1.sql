@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 13, 2025 at 02:25 AM
+-- Generation Time: Mar 13, 2025 at 03:47 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,11 +43,11 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`isbn`, `title`, `book_image`, `author`, `copyright`, `qty`, `price`, `total`) VALUES
-(2, 'The Hacienda', '1740032179_book2.jpg', 'Isabel Cañas', 2002, 4, 299, 2990),
+(2, 'The Hacienda', '1740032179_book2.jpg', 'Isabel Cañas', 2002, 2, 299, 2990),
 (5, 'El filibusterismo', '1740450422_book4.jpg', 'José Rizal', 1891, 1, 249, 2490),
 (6, 'Legend of Mariang Makiling', '1740701783_book6.jpg', 'Nick Joaquin', 1997, 3, 280, 2800),
 (7, 'Alamat ng Sampalok', '1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 5, 280, 3360),
-(8, 'Alamat ng Bahaghari', '1740703364_book8.png', 'Rene O. Villanueva', 2003, 6, 250, 2500);
+(8, 'Alamat ng Bahaghari', '1740703364_book8.png', 'Rene O. Villanueva', 2003, 5, 250, 2500);
 
 -- --------------------------------------------------------
 
@@ -67,7 +67,6 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `user_id`, `isbn`, `quantity`) VALUES
-(102, 11, 8, 1),
 (103, 1, 2, 1);
 
 -- --------------------------------------------------------
@@ -144,7 +143,12 @@ INSERT INTO `orders` (`id`, `user_id`, `total`, `shipping_address`, `payment_met
 (23, 11, 350.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 00:37:03', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (24, 11, 350.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 00:56:12', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (25, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 01:15:39', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(26, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-12 00:43:29', 'canceled', 'ryan123@gmail.com', 'mario', 'hapon', '+639500146972', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000');
+(26, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-12 00:43:29', 'canceled', 'ryan123@gmail.com', 'mario', 'hapon', '+639500146972', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000'),
+(27, 11, 350.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-13 01:26:01', 'completed', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000'),
+(28, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-13 02:29:08', 'pending', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000'),
+(29, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-13 02:36:26', 'pending', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000'),
+(30, 11, 399.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-13 02:45:25', 'pending', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', 'Hipolito St. Sitio Sandayong', 'Cebu', 'CEBU', '6000'),
+(31, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-13 02:46:56', 'pending', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000');
 
 -- --------------------------------------------------------
 
@@ -197,7 +201,12 @@ INSERT INTO `order_items` (`id`, `order_id`, `book_id`, `quantity`, `price`) VAL
 (30, 23, 8, 1, 250.00),
 (31, 24, 8, 1, 250.00),
 (32, 25, 7, 1, 280.00),
-(33, 26, 2, 1, 299.00);
+(33, 26, 2, 1, 299.00),
+(34, 27, 8, 1, 250.00),
+(35, 28, 2, 1, 299.00),
+(36, 29, 2, 1, 299.00),
+(37, 30, 2, 1, 299.00),
+(38, 31, 2, 1, 299.00);
 
 -- --------------------------------------------------------
 
@@ -295,7 +304,7 @@ ALTER TABLE `books`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT for table `gcash_users2`
@@ -307,13 +316,13 @@ ALTER TABLE `gcash_users2`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `users`

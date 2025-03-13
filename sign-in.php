@@ -61,7 +61,7 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
                 font-family: "Poppins", sans-serif;
                 font-weight: 100;
                 font-style: normal;
-            }
+}
         body {
             margin: 0;
             background-color: #cfd8dc;
