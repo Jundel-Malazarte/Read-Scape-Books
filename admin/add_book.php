@@ -9,7 +9,31 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
+// Fetch logged-in user details
+$user_id = $_SESSION['id'];
 
+$sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+if ($row = mysqli_fetch_assoc($result)) {
+    $fname = htmlspecialchars($row['fname']);
+    $lname = htmlspecialchars($row['lname']);
+    $profile_image = $row['profile_image'];
+
+    $default_image = '../uploads/default.jpg';
+    if (empty($profile_image) || !file_exists("../uploads/" . $profile_image)) {
+        $profile_image = $default_image;
+    } else {
+        $profile_image = '../uploads/' . $profile_image;
+    }
+} else {
+    $fname = "Admin";
+    $lname = "User";
+    $profile_image = '../uploads/default.jpg';
+}
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -66,91 +90,118 @@ mysqli_close($conn);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Book</title>
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
 
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #212529;
+            padding: 1rem;
         }
 
         .navbar a {
-            color: white;
+            color: #fff;
             text-decoration: none;
-            padding: 10px 15px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
         }
 
         .navbar a:hover {
-            background-color: #555;
+            background-color: #343a40;
             border-radius: 5px;
         }
 
-        .nav-links {
+        .profile-info {
             display: flex;
-            gap: 15px;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
         }
 
         .container {
-            width: 50%;
-            margin: auto;
+            max-width: 600px;
+            margin-top: 2rem;
+            padding: 2rem;
             background: white;
-            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
 
-        input,
-        button {
+        .form-control {
+            margin-bottom: 1rem;
+        }
+
+        .btn-success {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 0.75rem;
+            font-weight: 500;
         }
 
-        button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #218838;
+        h1 {
+            color: #212529;
+            margin-bottom: 2rem;
+            font-weight: 600;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="nav-links">
-            <a href="total_books.php">Back to Books</a>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div class="nav-links">
+                <a href="../admin/admin_dashboard.php" class="btn btn-outline-light">Home</a>
+            </div>
+            <div class="profile-info">
+                <img src="<?php echo $profile_image; ?>" alt="Profile Image">
+                <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
+                <a href="../admin/logout.php" class="btn btn-danger">Log Out</a>
+            </div>
         </div>
-    </div>
+    </nav>
 
     <div class="container">
-        <h1>Add New Book</h1>
+        <h1 class="text-center">Add New Book</h1>
         <form action="add_book.php" method="post" enctype="multipart/form-data">
-            <input type="text" name="isbn" placeholder="ISBN" required>
-            <input type="text" name="title" placeholder="Title" required>
-            <input type="text" name="author" placeholder="Author" required>
-            <input type="text" name="copyright" placeholder="Copyright Year" required>
-            <input type="number" name="qty" placeholder="Quantity" required>
-            <input type="number" step="0.01" name="price" placeholder="Price" required>
-            <input type="file" name="book_image" accept="image/*">
-            <button type="submit">Add Book</button>
+            <div class="mb-3">
+                <input type="text" class="form-control" name="isbn" placeholder="ISBN" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" name="title" placeholder="Title" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" name="author" placeholder="Author" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" name="copyright" placeholder="Copyright Year" required>
+            </div>
+            <div class="mb-3">
+                <input type="number" class="form-control" name="qty" placeholder="Quantity" required>
+            </div>
+            <div class="mb-3">
+                <input type="number" step="0.01" class="form-control" name="price" placeholder="Price" required>
+            </div>
+            <div class="mb-3">
+                <input type="file" class="form-control" name="book_image" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-success">Add Book</button>
         </form>
     </div>
+
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

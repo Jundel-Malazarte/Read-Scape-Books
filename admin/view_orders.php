@@ -120,45 +120,36 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Orders</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
 
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #212529;
+            padding: 1rem;
         }
 
         .navbar a {
-            color: white;
+            color: #fff;
             text-decoration: none;
-            padding: 10px 15px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
         }
 
         .navbar a:hover {
-            background-color: #555;
+            background-color: #343a40;
             border-radius: 5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 15px;
         }
 
         .profile-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 1rem;
         }
 
         .profile-info img {
@@ -166,132 +157,45 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2px solid #fff;
         }
 
         .container {
-            width: 90%;
-            margin: auto;
+            max-width: 1200px;
+            margin-top: 2rem;
+            padding: 2rem;
             background: white;
-            padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .search-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-bar input {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 200px;
-        }
-
-        .search-bar button {
-            padding: 8px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .search-bar .reset-btn {
-            padding: 8px 15px;
-            background-color: #d9534f;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .search-bar button:hover {
-            background-color: #0056b3;
-        }
-
-        .search-bar .reset-btn:hover {
-            background-color: #c9302c;
-        }
-
-        .order-section {
-            width: 100%;
-        }
-
-        .order-section h3 {
-            margin-bottom: 20px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        .order-section table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px;
-            margin-top: 10px;
-        }
-
-        .order-section th {
-            background-color: #e9ecef;
-            padding: 12px;
-            text-align: center;
-            border-bottom: 2px solid #dee2e6;
-            color: #333;
-            font-weight: bold;
-        }
-
-        .order-section td {
-            padding: 12px;
-            text-align: center;
-            background-color: #fff;
-            border-bottom: 1px solid #dee2e6;
-            vertical-align: middle;
-        }
-
-        .order-section td img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-right: 5px;
-            vertical-align: middle;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
 
         .product-cell {
             display: flex;
             flex-direction: column;
-            justify-content: left;
-            align-items: left;
-            gap: 5px;
-            width: auto;
-            margin: 0 auto;
-            max-width: 100%;
+            gap: 0.5rem;
         }
 
-        .product-cell .book-item {
+        .book-item {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 0.5rem;
+        }
+
+        .book-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
         }
 
         .status {
-            padding: 5px 10px;
-            border-radius: 12px;
-            font-size: 12px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.875rem;
             display: inline-block;
         }
 
         .status.completed {
-            /* Changed to .completed */
             background-color: #d4edda;
             color: #155724;
         }
@@ -306,168 +210,155 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
             color: #721c24;
         }
 
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            gap: 5px;
-        }
-
-        .pagination button {
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .pagination button.active {
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        .pagination button:hover {
-            background-color: #e9ecef;
-        }
-
         .tab-nav {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #dee2e6;
         }
 
         .tab-nav a {
-            padding: 10px 20px;
+            padding: 0.75rem 1rem;
+            color: #6c757d;
             text-decoration: none;
-            color: #333;
-            font-weight: bold;
             border-bottom: 2px solid transparent;
-            transition: border-bottom 0.3s ease, color 0.3s ease;
+            margin-right: 0.5rem;
         }
 
         .tab-nav a.active {
-            color: #007bff;
-            border-bottom: 2px solid #007bff;
+            color: #0d6efd;
+            border-bottom: 2px solid #0d6efd;
         }
 
-        .tab-nav a:hover {
-            color: #007bff;
+        .search-container {
+            margin-bottom: 2rem;
         }
 
-        .success-message {
+        .search-bar {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #d4edda;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 14px;
-            font-weight: bold;
-            border-left: 5px solid #28a745;
-            margin-bottom: 15px;
+            gap: 0.5rem;
         }
 
-        .success-message i {
-            margin-right: 8px;
-            color: #28a745;
+        .search-bar input {
+            max-width: 300px;
+        }
+
+        .pagination {
+            margin-top: 2rem;
+            justify-content: center;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="nav-links">
-            <a href="../admin/admin_dashboard.php">Home</a>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div class="nav-links">
+                <a href="../admin/admin_dashboard.php" class="btn btn-outline-light">Home</a>
+            </div>
+            <div class="profile-info">
+                <img src="<?php echo $profile_image; ?>" alt="Profile Image">
+                <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
+                <a href="../admin/logout.php" class="btn btn-danger">Log Out</a>
+            </div>
         </div>
-        <div class="profile-info">
-            <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
-            <a href="../admin/logout.php">Log Out</a>
-        </div>
-    </div>
+    </nav>
 
     <div class="container">
-        <div class="search-container">
-            <h1>Order <?php echo $total_orders; ?> orders found</h1>
-            <?php if (isset($_GET['success']) && $_GET['success'] === 'status_updated'): ?>
-                echo '<div class="success-message"><i class="fas fa-check-circle"></i> Order status updated successfully!</div>';
-
-            <?php endif; ?>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Orders (<?php echo $total_orders; ?>)</h2>
             <div class="search-bar">
-                <form method="GET">
+                <form method="GET" class="d-flex gap-2">
                     <input type="hidden" name="status" value="<?php echo htmlspecialchars($status_filter); ?>">
-                    <input type="text" name="search" placeholder="Search by Full Name" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                    <button type="submit">Search</button>
-                    <a href="view_orders.php?status=<?php echo htmlspecialchars($status_filter); ?>" class="reset-btn">Reset</a>
+                    <input type="text" class="form-control" name="search" placeholder="Search by Full Name" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="view_orders.php?status=<?php echo htmlspecialchars($status_filter); ?>" class="btn btn-danger">Reset</a>
                 </form>
             </div>
         </div>
 
-        <div class="order-section">
-            <div class="tab-nav">
-                <a href="view_orders.php?status=all&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'all' ? 'active' : ''; ?>">All Orders</a>
-                <a href="view_orders.php?status=completed&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'completed' ? 'active' : ''; ?>">Completed</a>
-                <a href="view_orders.php?status=pending&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'pending' ? 'active' : ''; ?>">Pending</a>
-                <a href="view_orders.php?status=canceled&search=<?php echo htmlspecialchars($search); ?>" class="<?php echo $status_filter === 'canceled' ? 'active' : ''; ?>">Cancel</a>
+        <?php if (isset($_GET['success']) && $_GET['success'] === 'status_updated'): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> Order status updated successfully!
             </div>
+        <?php endif; ?>
 
-            <?php if (empty($paginated_orders)): ?>
-                <p>No orders found.</p>
-            <?php else: ?>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Product Name</th>
-                            <th>Address</th>
-                            <th>Shipped To</th>
-                            <th>Date</th>
-                            <th>Price</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($paginated_orders as $order): ?>
-                            <tr>
-                                <td>#<?php echo htmlspecialchars($order['order_id']); ?></td>
-                                <td>
-                                    <?php
-                                    $titles = explode(', ', $order['titles']);
-                                    $images = explode(',', $order['book_images']);
-                                    echo '<div class="product-cell">';
-                                    for ($i = 0; $i < count($titles); $i++):
-                                        $image = !empty($images[$i]) ? htmlspecialchars(trim($images[$i])) : 'default_book.png';
-                                    ?>
-                                        <div class="book-item">
-                                            <img src="../images/<?php echo $image; ?>" alt="Product">
-                                            <span><?php echo htmlspecialchars($titles[$i]); ?></span>
-                                        </div>
-                                    <?php endfor; ?>
+        <div class="tab-nav">
+            <a href="view_orders.php?status=all&search=<?php echo htmlspecialchars($search); ?>"
+                class="<?php echo $status_filter === 'all' ? 'active' : ''; ?>">All Orders</a>
+            <a href="view_orders.php?status=completed&search=<?php echo htmlspecialchars($search); ?>"
+                class="<?php echo $status_filter === 'completed' ? 'active' : ''; ?>">Completed</a>
+            <a href="view_orders.php?status=pending&search=<?php echo htmlspecialchars($search); ?>"
+                class="<?php echo $status_filter === 'pending' ? 'active' : ''; ?>">Pending</a>
+            <a href="view_orders.php?status=canceled&search=<?php echo htmlspecialchars($search); ?>"
+                class="<?php echo $status_filter === 'canceled' ? 'active' : ''; ?>">Canceled</a>
         </div>
-        </td>
-        <td><?php echo htmlspecialchars($order['shipping_address']); ?></td>
-        <td><?php echo htmlspecialchars($order['fname'] . ' ' . $order['lname']); ?></td>
-        <td><?php echo date('d/m/Y', strtotime($order['order_date'])); ?></td>
-        <td>₱<?php echo number_format($order['total'], 2); ?></td>
-        <td><span class="status <?php echo strtolower($order['status']); ?>"><?php echo ucfirst($order['status']); ?></span></td>
-        <td class="actions"><a href="order_details.php?id=<?php echo $order['order_id']; ?>"><i class="fas fa-eye"></i></a></td> <!-- Fixed typo -->
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-    </table>
-    <div class="pagination">
-        <button onclick="window.location.href='?page=<?php echo $page - 1; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>'" <?php echo $page <= 1 ? 'disabled' : ''; ?>>Previous</button>
+
+        <?php if (empty($paginated_orders)): ?>
+            <p>No orders found.</p>
+        <?php else: ?>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Product Name</th>
+                        <th>Address</th>
+                        <th>Shipped To</th>
+                        <th>Date</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($paginated_orders as $order): ?>
+                        <tr>
+                            <td>#<?php echo htmlspecialchars($order['order_id']); ?></td>
+                            <td>
+                                <?php
+                                $titles = explode(', ', $order['titles']);
+                                $images = explode(',', $order['book_images']);
+                                echo '<div class="product-cell">';
+                                for ($i = 0; $i < count($titles); $i++):
+                                    $image = !empty($images[$i]) ? htmlspecialchars(trim($images[$i])) : 'default_book.png';
+                                ?>
+                                    <div class="book-item">
+                                        <img src="../images/<?php echo $image; ?>" alt="Product">
+                                        <span><?php echo htmlspecialchars($titles[$i]); ?></span>
+                                    </div>
+                                <?php endfor; ?>
+    </div>
+    </td>
+    <td><?php echo htmlspecialchars($order['shipping_address']); ?></td>
+    <td><?php echo htmlspecialchars($order['fname'] . ' ' . $order['lname']); ?></td>
+    <td><?php echo date('d/m/Y', strtotime($order['order_date'])); ?></td>
+    <td>₱<?php echo number_format($order['total'], 2); ?></td>
+    <td><span class="status <?php echo strtolower($order['status']); ?>"><?php echo ucfirst($order['status']); ?></span></td>
+    <td class="actions"><a href="order_details.php?id=<?php echo $order['order_id']; ?>"><i class="fas fa-eye"></i></a></td>
+    </tr>
+<?php endforeach; ?>
+</tbody>
+</table>
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <li class="page-item <?php echo $page <= 1 ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo $page - 1; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>">Previous</a>
+        </li>
         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <button class="<?php echo $i === $page ? 'active' : ''; ?>" onclick="window.location.href='?page=<?php echo $i; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>'"><?php echo $i; ?></button>
+            <li class="page-item <?php echo $i === $page ? 'active' : ''; ?>">
+                <a class="page-link" href="?page=<?php echo $i; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>"><?php echo $i; ?></a>
+            </li>
         <?php endfor; ?>
-        <button onclick="window.location.href='?page=<?php echo $page + 1; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>'" <?php echo $page >= $total_pages ? 'disabled' : ''; ?>>Next</button>
-    </div>
-    <p>Showing <?php echo $start + 1; ?> to <?php echo min($start + $items_per_page, $total_orders); ?> of <?php echo $total_orders; ?> entries</p>
+        <li class="page-item <?php echo $page >= $total_pages ? 'disabled' : ''; ?>">
+            <a class="page-link" href="?page=<?php echo $page + 1; ?>&status=<?php echo $status_filter; ?>&search=<?php echo $search; ?>">Next</a>
+        </li>
+    </ul>
+</nav>
+<p>Showing <?php echo $start + 1; ?> to <?php echo min($start + $items_per_page, $total_orders); ?> of <?php echo $total_orders; ?> entries</p>
 <?php endif; ?>
-    </div>
-    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>
