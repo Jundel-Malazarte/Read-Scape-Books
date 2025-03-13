@@ -233,7 +233,7 @@ $total_formatted = number_format($total_with_shipping, 2);
                         <!-- Reference and Time -->
                         <div style="display: flex; justify-content: space-between; width: 100%;">
                             <span style="color: #283593; padding: 10px; text-align: left; width: 50%;">Reference ID: <?php echo $reference_id; ?></span>
-                            <span style="color: #283593; padding: 10px; text-align: left; width: 50%;"><?php echo date('M d, Y h:ia', strtotime($payment_time)); ?></span>
+                            <span style="color: #283593; padding: 10px; text-align: left; width: 50%;"><?php echo date('M d, Y h:ia'); ?></span>
                         </div>
 
                         <!-- Confirm Payment Button -->
@@ -247,7 +247,7 @@ $total_formatted = number_format($total_with_shipping, 2);
                             <button onclick="downloadReceipt()" class="pay-button" style="background-color: white; color: #007cff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 200px;">
                                 <i class="fas fa-download"></i> Download Receipt
                             </button>
-                            <button href="dashboard.php" class="pay-button">
+                            <button onclick="window.location.href='dashboard.php'" class="pay-button">
                                 <i class="fas fa-arrow-left"></i> Back to dashboard
                             </button>
                         </div>

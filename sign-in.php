@@ -214,7 +214,7 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
                         <label for="checkbox">Remember Me</label>
                     </div>
                     <div class="forgot-password">
-                        <a href="#">Forgot Password?</a>
+                        <a href="forgot_password.php">Forgot Password?</a>
                     </div>
                 </div>
                 <div id="button-login">
