@@ -12,7 +12,8 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id']; // Get logged-in user's ID
 
-$sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
+// Update the SQL query to include email
+$sql = "SELECT fname, lname, email, profile_image FROM `users` WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
 mysqli_stmt_execute($stmt);
@@ -21,7 +22,12 @@ $result = mysqli_stmt_get_result($stmt);
 if ($row = mysqli_fetch_assoc($result)) {
     $fname = htmlspecialchars($row['fname']);
     $lname = htmlspecialchars($row['lname']);
+    $email = htmlspecialchars($row['email']); // Add this line
     $profile_image = htmlspecialchars($row['profile_image']);
+} else {
+    // Handle case where user is not found
+    header("Location: sign-in.php");
+    exit();
 }
 
 mysqli_stmt_close($stmt);
@@ -29,313 +35,258 @@ mysqli_close($conn);
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Profile</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link rel="icon" href="./images/Readscape.png">
-    <html>
-        <style>
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                /* Light background for better contrast */
-            }
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
 
-            .navbar {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: #333;
-                padding: 10px 20px;
-            }
+        .navbar {
+            background-color: #212529;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+        }
 
-            .navbar a {
-                color: white;
-                text-decoration: none;
-                padding: 10px 15px;
-            }
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1100;
+            top: 0;
+            left: 0;
+            background-color: #212529;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+        }
 
-            .navbar a:hover {
-                background-color: #555;
-                border-radius: 5px;
-            }
+        .sidenav a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #f8f9fa;
+            display: block;
+            transition: 0.3s;
+        }
 
-            .nav-links {
-                display: flex;
-                gap: 15px;
-            }
+        .sidenav a:hover {
+            background-color: #343a40;
+            color: #fff;
+        }
 
-            .profile-info {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
+        .profile-card {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+            overflow: hidden;
+        }
 
-            .profile-info img {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                object-fit: cover;
-            }
+        .profile-header {
+            background-color: #212529;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
 
-            .logout {
-                margin-left: auto;
-            }
+        .profile-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 5px solid #fff;
+            margin: -90px auto 1rem;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+            object-fit: cover;
+        }
 
-            .container {
-                margin-left: 2rem;
-            }
+        .profile-body {
+            padding: 2rem;
+        }
 
-            /* Profile Card Styles */
+        .profile-info {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .profile-info p {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+        }
+
+        .profile-info strong {
+            color: #212529;
+            min-width: 120px;
+            display: inline-block;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .btn-edit {
+            background-color: #0d6efd;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-deactivate {
+            background-color: #dc3545;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover,
+        .btn-deactivate:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+            color: white;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
             .profile-card {
-                width: 1000px;
-                /* Adjusted width */
-                margin: 30px auto;
-                /* Centered with more top margin */
-                padding: 20px;
-                background-color: #fff;
-                /* White background for the card */
-                border-radius: 8px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                /* Subtle shadow effect */
-                text-align: center;
-                /* Center content within the card */
+                margin: 1rem;
             }
 
-            .profile-card img {
-                width: 180px;
-                /* Adjusted size */
-                height: 180px;
-                border-radius: 50%;
-                object-fit: cover;
-                margin-bottom: 15px;
-                /* Increased spacing */
-                /* Ensures proper margin */
-                margin-left: auto;
-                margin-right: auto;
-                display: block;
-                /* Remove automatic margin */
+            .action-buttons {
+                flex-direction: column;
             }
-
-            .profile-card h2 {
-                margin-top: 0;
-                margin-bottom: 10px;
-                text-align: center;
-                color: #333;
-            }
-
-            .profile-card p {
-                margin: 8px 0;
-                text-align: center;
-                color: #555;
-            }
-
-            .profile-card strong {
-                font-weight: bold;
-                color: #333;
-            }
-
-            /* Profile Details Styles */
-            .profile-details {
-                text-align: center;
-                /* Center the text */
-            }
-
-            /* Action button profile */
-            .action-button {
-                display: flex;
-                text-decoration: none;
-                justify-content: center;
-                margin-top: 20px;
-                gap: 10px;
-            }
-
-            .action-button a {
-                display: block;
-                padding: 10px 20px;
-                text-decoration: none;
-                color: white;
-                border-radius: 5px;
-                border: none;
-            }
-
-            .action-button a.edit-profile {
-                background-color: #1e88e5;
-            }
-
-            .action-button a.deactive-account {
-                background-color: #f41304;
-            }
-
-            span {
-                font-size: 24px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .readscape {
-                width: 40px;
-                /* Match this size with the font-size of the menu icon */
-                height: 40px;
-                /* Keep height and width equal */
-                border-radius: 50%;
-            }
-
-
-            /** Slider nav */
-            .sidenav {
-                height: 100%;
-                width: 0;
-                position: fixed;
-                z-index: 1;
-                top: 0;
-                left: 0;
-                background-color: #212121;
-                overflow-x: hidden;
-                transition: 0.5s;
-                padding-top: 60px;
-            }
-
-            .sidenav a {
-                padding: 8px 8px 8px 32px;
-                text-decoration: none;
-                font-size: 25px;
-                color: white;
-                display: block;
-                transition: 0.3s;
-            }
-
-            .sidenav a:hover {
-                color: #f1f1f1;
-            }
-
-            .sidenav .closebtn {
-                position: absolute;
-                top: 0;
-                right: 25px;
-                font-size: 36px;
-                margin-left: 50px;
-            }
-
-            @media screen and (max-height: 450px) {
-                .sidenav {
-                    padding-top: 15px;
-                }
-
-                .sidenav a {
-                    font-size: 18px;
-                }
-            }
-        </style>
-    </head>
+        }
+    </style>
+</head>
 
 <body>
-    <div class="navbar">
-        <!-- Logo here! -->
-        <div id="Sidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="dashboard.php">Home</a>
-            <a href="profile.php">Profile</a>
-            <a href="changepass.php">Change password</a>
-            <a href="cart.php">Cart</a>
-            <a href="order.php">My Orders</a>
-            <a href="logout.php">Log Out</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <span class="navbar-toggler-icon" onclick="openNav()" style="cursor: pointer; margin-right: 1rem;"></span>
+                <img src="./images/Readscape.png" alt="ReadScape" class="rounded-circle" width="40" height="40">
+                <span class="ms-2 text-white fw-bold">ReadScape</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="position-relative me-3">
+                    <a href="cart.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-counter">0</span>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="<?php echo $profile_image; ?>" alt="Profile" class="rounded-circle me-2" width="40" height="40">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                            <?php echo $fname . " " . $lname; ?>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+                            <li><a class="dropdown-item" href="order.php">My Orders</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong>ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+    </nav>
 
-        <script>
-            function openNav() {
-                document.getElementById("Sidenav").style.width = "240px";
-            }
-
-            function closeNav() {
-                document.getElementById("Sidenav").style.width = "0";
-            }
-        </script>
-        <div class="profile-info">
-            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
-                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
-            </a>
-            <br>
-            <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
-            <a href="logout.php"><strong>Log Out</strong></a>
-        </div>
+    <!-- Sidenav -->
+    <div id="Sidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Home</a>
+        <a href="profile.php"><i class="fas fa-user me-2"></i>Profile</a>
+        <a href="changepass.php"><i class="fas fa-key me-2"></i>Change Password</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart me-2"></i>Cart</a>
+        <a href="order.php"><i class="fas fa-shopping-bag me-2"></i>My Orders</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
     </div>
 
-    <?php
-    @include 'db_connect.php';
-
-
-    if (!isset($_SESSION['id'])) {
-        header("Location: sign-in.php");
-        exit();
-    }
-
-    $user_id = $_SESSION['id'];
-
-    $sql = "SELECT fname, lname, profile_image, email FROM `users` WHERE id = ?"; //added email
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $user_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-
-    if ($row = mysqli_fetch_assoc($result)) {
-        $fname = htmlspecialchars($row['fname']);
-        $lname = htmlspecialchars($row['lname']);
-        $profile_image = htmlspecialchars($row['profile_image']);
-        $email = htmlspecialchars($row['email']); //added email
-    } else {
-        echo "User not found.";
-    }
-
-    mysqli_stmt_close($stmt);
-    mysqli_close($conn);
-    ?>
-
+    <!-- Profile Card -->
     <div class="profile-card">
-        <div>
-            <h2>User Profile</h2>
+        <div class="profile-header">
+            <h2 class="mb-0">User Profile</h2>
         </div>
 
-        <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
-        <div class="profile-details">
-            <p><strong>First Name:</strong> <?php echo "$fname "; ?></p>
-            <p><strong>Last Name:</strong> <?php echo "$lname"; ?></p>
-            <p><strong>Email:</strong> <?php echo $email; ?></p>
-            <div class="action-button">
-                <a href="edit-profile.php" class="edit-profile">Edit Profile</a>
-                <a href="deactive.php" class="deactive-account">Deactive Account</a>
+        <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture" class="profile-image">
+
+        <div class="profile-body">
+            <div class="profile-info">
+                <p><strong>First Name:</strong> <?php echo $fname; ?></p>
+                <p><strong>Last Name:</strong> <?php echo $lname; ?></p>
+                <p><strong>Email:</strong> <?php echo $email; ?></p>
+            </div>
+
+            <div class="action-buttons">
+                <a href="edit-profile.php" class="btn-edit">
+                    <i class="fas fa-edit me-2"></i>Edit Profile
+                </a>
+                <a href="deactive.php" class="btn-deactivate">
+                    <i class="fas fa-user-times me-2"></i>Deactivate Account
+                </a>
             </div>
         </div>
     </div>
 
-</body>
-<script>
-    function updateCartCounter() {
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "cart_counter.php", true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                document.getElementById("cart-counter").innerText = xhr.responseText;
-            }
-        };
-        xhr.send();
-    }
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openNav() {
+            document.getElementById("Sidenav").style.width = "240px";
+        }
 
-    document.addEventListener("DOMContentLoaded", updateCartCounter);
-</script>
+        function closeNav() {
+            document.getElementById("Sidenav").style.width = "0";
+        }
+
+        function updateCartCounter() {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "cart_counter.php", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("cart-counter").innerText = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+        document.addEventListener("DOMContentLoaded", updateCartCounter);
+    </script>
+
+</body>
 
 </html>

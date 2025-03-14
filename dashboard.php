@@ -55,246 +55,49 @@ mysqli_close($conn);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>ReadScape Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link rel="icon" href="./images/Readscape.png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap');
-
-        /** Google fonts */
-        .poppins-thin {
-            font-family: "Poppins", sans-serif;
-            font-weight: 100;
-            font-style: normal;
-        }
-
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin-bottom: 100px;
         }
 
         .navbar {
-            display: flex;
-            position: sticky;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #212529;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
         }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
-        }
-
-        .navbar a:hover {
-            background-color: #555;
-            border-radius: 5px;
-        }
-
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            /* Adjust spacing as needed */
-        }
-
-
-        .profile-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        /* Container for search and header */
-        .search-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 90%;
-            margin: 20px auto;
-        }
-
-        /* Adjusted search input */
-        .search-box {
-            display: flex;
-            align-items: center;
-        }
-
-        .search-box input {
-            width: 350px;
-            /* Slightly wider */
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px 0 0 5px;
-            outline: none;
-        }
-
-        /* Bigger search button */
-        .search-box button {
-            padding: 12px 18px;
-            font-size: 16px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .search-box button:hover {
-            background-color: #555;
-        }
-
-        /* Adjusted header */
-        .header-text h2 {
-            font-size: 22px;
-            margin: 0;
-        }
-
-
-        .book-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            margin-top: 20px;
-            max-width: 90%;
-            /* Make the book list span a larger width */
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .book-list::-webkit-scrollbar {
-            height: 8px;
-            /* Make scrollbar thinner */
-        }
-
-        .book-list::-webkit-scrollbar-thumb {
-            background-color: #555;
-            border-radius: 10px;
-        }
-
-
-
-        .book-card {
-            width: 250px;
-            /* Increased width */
-            background: white;
-            padding: 20px;
-            /* Increased padding */
-            border-radius: 12px;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .book-card:hover {
-            transform: scale(1.05);
-            /* Slight zoom effect for better UX */
-        }
-
-        .book-card img {
-            width: 100%;
-            height: 275px;
-            /* Increased height */
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .book-card h3 {
-            font-size: 18px;
-            /* Larger title */
-            margin: 10px 0;
-        }
-
-        .book-card p {
-            font-size: 15px;
-            /* Increased text size */
-            color: #444;
-        }
-
-        .buy-now-btn {
-            background-color: #28a745;
-            color: white;
-            padding: 10px 14px;
-            /* Larger button */
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            /* Increased font size */
-            margin-top: 12px;
-            width: 100%;
-            transition: background 0.3s, transform 0.2s;
-        }
-
-        .buy-now-btn:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-        }
-
-        .header-text {
-            text-align: left;
-            margin-top: 20px;
-            margin-left: 20px;
-        }
-
-        span {
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .readscape {
-            width: 40px;
-            /* Match this size with the font-size of the menu icon */
-            height: 40px;
-            /* Keep height and width equal */
-            border-radius: 50%;
-        }
-
-
-        /** Slider nav */
         .sidenav {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1;
+            z-index: 1100;
             top: 0;
             left: 0;
-            background-color: #212121;
+            background-color: #212529;
             overflow-x: hidden;
-            transition: 0.5s;
+            transition: 0.3s;
             padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
         }
 
         .sidenav a {
-            padding: 8px 8px 8px 32px;
+            padding: 15px 25px;
             text-decoration: none;
-            font-size: 25px;
-            color: white;
+            font-size: 18px;
+            color: #f8f9fa;
             display: block;
             transition: 0.3s;
         }
 
         .sidenav a:hover {
-            color: #f1f1f1;
+            background-color: #343a40;
+            color: #fff;
         }
 
         .sidenav .closebtn {
@@ -305,167 +108,298 @@ mysqli_close($conn);
             margin-left: 50px;
         }
 
-        @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+        .search-header {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+            margin: 20px auto;
+            max-width: 1600px;
+            width: 95%;
         }
 
-        .add-cart-btn {
-            background-color: #dc3545;
-            /* Red color */
-            color: white;
-            padding: 10px 14px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 12px;
+        .search-box input {
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 0.75rem;
             width: 100%;
-            transition: background 0.3s, transform 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            /* Space between icon and text */
+            max-width: 400px;
+            font-size: 1.1rem;
         }
 
-        .add-cart-btn:hover {
-            background-color: #c82333;
-            transform: scale(1.05);
+        .search-box button {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .search-box button:hover {
+            background-color: #0b5ed7;
+        }
+
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 20px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 95%;
+            justify-items: center;
+            /* Center items horizontally */
+        }
+
+        .book-card {
+            width: 100%;
+            /* Fill the available space */
+            max-width: 280px;
+            /* Maximum width for consistency */
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            /* Stack children vertically */
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, .2);
+        }
+
+        .book-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .book-info {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            /* Allow info section to grow */
+            gap: 0.5rem;
+            /* Add consistent spacing between elements */
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #212529;
+        }
+
+        .book-details {
+            font-size: 1rem;
+            color: #6c757d;
+            line-height: 1.5;
         }
 
         .button-group {
             display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 12px;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding: 1rem;
+            margin-top: auto;
+            width: 100%;
+            align-items: center;
         }
 
-        .add-cart-btn,
-        .buy-now-btn {
-            flex: 1;
-            text-align: center;
-            padding: 10px 14px;
-            font-size: 16px;
-            border: none;
+        .btn-cart,
+        .btn-buy {
+            width: 120%;
+            font-size: 1.1rem;
+            padding: 0.875rem;
             border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.2s;
-            background-color: #28a745;
-            color: white;
-            /* Ensure text remains white */
-
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
         }
 
-        .buy-now-btn a {
-            color: white;
+        .btn-cart i,
+        .btn-buy i {
+            font-size: 1.2rem;
+        }
+
+        .btn-cart:hover,
+        .btn-buy:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #212529;
+            color: #f8f9fa;
+            padding: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .footer-links a {
+            color: #f8f9fa;
             text-decoration: none;
-            display: block;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
         }
 
-        .add-cart-btn {
+        .footer-links a:hover {
+            color: #0d6efd;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
             background-color: #dc3545;
             color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
         }
 
-        .add-cart-btn:hover {
-            background-color: #c82333;
-            transform: scale(1.05);
+        @media (max-width: 768px) {
+            .book-list {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
         }
 
-        .buy-now-btn {
-            background-color: #28a745;
-            color: white;
+        .navbar .fw-bold {
+            font-size: 1.2rem;
         }
 
-        .buy-now-btn:hover {
-            background-color: #218838;
-            transform: scale(1.05);
+        .dropdown-menu {
+            font-size: 1.1rem;
+        }
+
+        .search-header h2 {
+            font-size: 2rem;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <!-- Logo here! -->
-        <div id="Sidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="dashboard.php">Home</a>
-            <a href="profile.php">Profile</a>
-            <a href="changepass.php">Change password</a>
-            <a href="cart.php">Cart</a>
-            <a href="order.php">My Orders</a>
-            <a href="logout.php">Log Out</a>
-        </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong>ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
-        <script>
-            function openNav() {
-                document.getElementById("Sidenav").style.width = "240px";
-            }
-
-            function closeNav() {
-                document.getElementById("Sidenav").style.width = "0";
-            }
-        </script>
-
-
-        <div class="profile-info">
-            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
-                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
-            </a>
-            <br>
-            <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
-            <a href="logout.php"><strong>Log Out</strong></a>
-        </div>
-    </div>
-    <!-- <h2>Welcome, <?php echo $fname . " " . $lname; ?></h2> -->
-
-    <div class="search-header">
-        <div class="header-text">
-            <h2>Picked for you</h2>
-        </div>
-        <div class="search-box">
-            <form method="GET" action="dashboard.php">
-                <input type="text" name="search" id="search-input" placeholder="Search for books..." value="<?php echo htmlspecialchars($search); ?>">
-                <button type="submit">Search</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="book-list" id="book-list">
-        <?php if (mysqli_num_rows($books_query) > 0) : ?>
-            <?php while ($book = mysqli_fetch_assoc($books_query)) : ?>
-                <div class="book-card">
-                    <img src="<?php echo 'images/' . htmlspecialchars($book['book_image']); ?>" alt="Book Image" onerror="this.onerror=null; this.src='uploads/default.jpg';">
-                    <h3><?php echo htmlspecialchars($book['title']); ?></h3>
-                    <!-- <p><strong>ISBN:</strong> <?php echo htmlspecialchars($book['isbn']); ?></p> -->
-                    <p><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
-                    <p><strong>Year Published:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
-                    <p><strong>Stocks:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
-                    <p><strong>Price:</strong> ₱<?php echo htmlspecialchars($book['price']); ?></p>
-                    <!-- <p><strong>Total:</strong> ₱<?php echo htmlspecialchars($book['total']); ?></p> -->
-                    <div class="button-group">
-                        <button class="add-cart-btn" onclick="addToCart('<?php echo htmlspecialchars($book['isbn']); ?>')">
-                            🛒 Add to Cart
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <span class="navbar-toggler-icon" onclick="openNav()" style="cursor: pointer; margin-right: 1rem;"></span>
+                <img src="./images/Readscape.png" alt="ReadScape" class="rounded-circle" width="40" height="40">
+                <span class="ms-2 text-white fw-bold">ReadScape</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="position-relative me-3">
+                    <a href="cart.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-counter">0</span>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="<?php echo $profile_image; ?>" alt="Profile" class="rounded-circle me-2" width="40" height="40">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                            <?php echo $fname . " " . $lname; ?>
                         </button>
-
-                        <button class="buy-now-btn" onclick="buyNow('<?php echo htmlspecialchars($book['isbn']); ?>')">
-                            ⚡ Buy Now
-                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+                            <li><a class="dropdown-item" href="order.php">My Orders</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        </ul>
                     </div>
                 </div>
+            </div>
+        </div>
+    </nav>
 
-            <?php endwhile; ?>
-        <?php else : ?>
-            <p>No books found</p>
-        <?php endif; ?>
+    <div class="sidenav" id="Sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Home</a>
+        <a href="profile.php"><i class="fas fa-user me-2"></i>Profile</a>
+        <a href="changepass.php"><i class="fas fa-key me-2"></i>Change password</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart me-2"></i>Cart</a>
+        <a href="order.php"><i class="fas fa-shopping-bag me-2"></i>My Orders</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
     </div>
+    <script>
+        function openNav() {
+            document.getElementById("Sidenav").style.width = "240px";
+        }
+
+        function closeNav() {
+            document.getElementById("Sidenav").style.width = "0";
+        }
+    </script>
+
+    <div class="main-container">
+        <div class="search-header">
+            <div class="header-text">
+                <h2>Picked for you</h2>
+            </div>
+            <div class="search-box">
+                <form method="GET" action="dashboard.php">
+                    <input type="text" name="search" id="search-input" placeholder="Search for books..." value="<?php echo htmlspecialchars($search); ?>">
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="book-list" id="book-list">
+            <?php if (mysqli_num_rows($books_query) > 0) : ?>
+                <?php while ($book = mysqli_fetch_assoc($books_query)) : ?>
+                    <div class="book-card">
+                        <img src="<?php echo 'images/' . htmlspecialchars($book['book_image']); ?>" alt="Book Image" onerror="this.onerror=null; this.src='uploads/default.jpg';">
+                        <div class="book-info">
+                            <h3 class="book-title"><?php echo htmlspecialchars($book['title']); ?></h3>
+                            <p class="book-details"><strong>Author:</strong> <?php echo htmlspecialchars($book['author']); ?></p>
+                            <p class="book-details"><strong>Year Published:</strong> <?php echo htmlspecialchars($book['copyright']); ?></p>
+                            <p class="book-details"><strong>Stocks:</strong> <?php echo htmlspecialchars($book['qty']); ?></p>
+                            <p class="book-details"><strong>Price:</strong> ₱<?php echo htmlspecialchars($book['price']); ?></p>
+                            <div class="button-group">
+                                <button class="btn-cart" onclick="addToCart('<?php echo htmlspecialchars($book['isbn']); ?>')">
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+                                <button class="btn-buy" onclick="buyNow('<?php echo htmlspecialchars($book['isbn']); ?>')">
+                                    <i class="fas fa-bolt"></i> Buy Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            <?php else : ?>
+                <p>No books found</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <script>
         document.getElementById("search-input").addEventListener("keyup", function() {
             let query = this.value.trim();
@@ -491,7 +425,6 @@ mysqli_close($conn);
                 bookList.scrollLeft += event.deltaY; // Convert vertical scroll to horizontal
             });
         });
-
 
         function addToCart(isbn) {
             let xhr = new XMLHttpRequest();
@@ -524,7 +457,6 @@ mysqli_close($conn);
         document.addEventListener("DOMContentLoaded", updateCartCounter);
     </script>
 
-    <!-- Footer -->
     <div class="footer">
         <div class="footer-content">
             <div class="footer-logo">
@@ -606,6 +538,7 @@ mysqli_close($conn);
         }
     </style>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
