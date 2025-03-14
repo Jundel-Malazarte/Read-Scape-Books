@@ -281,6 +281,13 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
             </div>
         <?php endif; ?>
 
+        <?php if (isset($_GET['success']) && $_GET['success'] === 'order_deleted'): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> Order has been successfully deleted.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+
         <div class="tab-nav">
             <a href="view_orders.php?status=all&search=<?php echo htmlspecialchars($search); ?>"
                 class="<?php echo $status_filter === 'all' ? 'active' : ''; ?>">All Orders</a>

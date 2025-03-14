@@ -243,8 +243,8 @@ mysqli_stmt_close($stmt);
                     </div>
                 </div>
 
-                <?php if (strtolower($status) === 'pending'): ?>
-                    <div class="mt-3">
+                <div class="mt-3">
+                    <?php if (strtolower($status) === 'pending'): ?>
                         <form action="update_order_status.php" method="POST" class="d-inline-block me-2">
                             <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
                             <input type="hidden" name="status" value="completed">
@@ -255,15 +255,15 @@ mysqli_stmt_close($stmt);
                             <input type="hidden" name="status" value="canceled">
                             <button type="submit" class="btn btn-danger btn-sm">Cancel Order</button>
                         </form>
-                        <form action="delete_order.php" method="POST" class="d-inline-block">
-                            <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
-                            <button type="submit" class="btn btn-secondary btn-sm"
-                                onclick="return confirm('Are you sure you want to delete this order?');">
-                                Delete Order
-                            </button>
-                        </form>
-                    </div>
-                <?php endif; ?>
+                    <?php endif; ?>
+                    <form action="delete_order.php" method="POST" class="d-inline-block">
+                        <input type="hidden" name="order_id" value="<?php echo $order_id; ?>">
+                        <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Are you sure you want to delete this order? This action cannot be undone.');">
+                            <i class="fas fa-trash-alt"></i> Delete Order
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
