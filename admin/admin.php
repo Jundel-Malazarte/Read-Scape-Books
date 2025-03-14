@@ -51,168 +51,147 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link rel="icon" href="../images/Readscape.png">
     <style>
         body {
-            margin: 0;
-            background-color: #cfd8dc;
-            position: relative;
-            display: flex;
-            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
             height: 100vh;
-            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        #container {
+        .login-container {
             background-color: white;
-            border-radius: 20px;
-            width: 450px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .logo-container {
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            margin-bottom: 2rem;
         }
 
-        #form-box {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .logo-container img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: contain;
         }
 
-        .input-text {
-            width: 100%;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #dee2e6;
         }
 
-        .input-text input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
+        .form-control:focus {
+            border-color: #212121;
+            box-shadow: 0 0 0 0.2rem rgba(33, 33, 33, 0.25);
         }
 
-        /* Added styles for Remember Me and Forgot Password */
-        .options {
-            width: 100%;
+        .options-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: 10px;
-            margin-bottom: 15px;
-            margin-left: 70px;
-            margin-right: 70px;
+            margin: 1rem 0;
         }
 
         .remember-me {
             display: flex;
-            color: #212121;
-            font-size: 0.9rem;
             align-items: center;
-            justify-content: start;
-            cursor: pointer;
-            gap: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding-left: 10px;
-        }
-
-        .forgot-password {
-            font-size: 0.9rem;
-            padding-right: 10px;
+            gap: 0.5rem;
+            color: #212121;
         }
 
         .forgot-password a {
             color: #212121;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
 
         .forgot-password a:hover {
             text-decoration: underline;
         }
 
-        #button-submit {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        #button-login #submit {
-            width: calc(150% - 20px);
-            padding: 10px;
+        .btn-login {
             background-color: #212121;
             color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            width: 100%;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
-        #button-login #submit:hover {
-            background-color: #212121;
-            opacity: 0.8;
+        .btn-login:hover {
+            background-color: #424242;
+            color: white;
         }
 
-        /* havent acc*/
-        .signup a {
-            padding: 10px;
+        .switch-user {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .switch-user a {
             color: #212121;
             text-decoration: none;
+            transition: all 0.3s ease;
         }
-        #logo {
-            padding: 5px;
-            border-radius: 50%;
+
+        .switch-user a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
-    <!-- Container Box -->
-    <div id="container">
-        <form id="form-box" action="" method="post" autocomplete="off">
-            <h1>Admin Login</h1>
-            <img src="../images/Readscape.png" alt="readscape" id="logo" width="200px" height="200px">
-            <div class="input-text">
-                <input type="text" id="email" name="email" placeholder="Email" value="<?php echo $email; ?>" required /><br />
-                <input type="password" id="pass" name="pass" placeholder="Password" value="<?php echo $pass; ?>" required /><br />
-                <!-- Remember Me and Forgot Password -->
-                <div class="options">
-                    <div class="remember-me">
-                        <input type="checkbox" id="checkbox" name="remember" <?php if ($email && $pass) echo 'checked'; ?> />
-                        <label for="checkbox">Remember Me</label>
-                    </div>
-                    <div class="forgot-password">
-                        <a href="#">Forgot Password?</a>
-                    </div>
+    <div class="login-container">
+        <div class="logo-container">
+            <h1 class="mb-4">Admin Login</h1>
+            <img src="../images/Readscape.png" alt="readscape" class="mb-4">
+        </div>
+
+        <form action="" method="post" autocomplete="off">
+            <div class="mb-3">
+                <input type="text" class="form-control" id="email" name="email"
+                    placeholder="Email" value="<?php echo $email; ?>" required>
+            </div>
+
+            <div class="mb-3">
+                <input type="password" class="form-control" id="pass" name="pass"
+                    placeholder="Password" value="<?php echo $pass; ?>" required>
+            </div>
+
+            <div class="options-container">
+                <div class="remember-me">
+                    <input type="checkbox" class="form-check-input" id="checkbox" name="remember"
+                        <?php if ($email && $pass) echo 'checked'; ?>>
+                    <label class="form-check-label" for="checkbox">Remember Me</label>
                 </div>
-                <div id="button-login">
-                    <input type="submit" id="submit" name="submit" value="Login" />
+                <div class="forgot-password">
+                    <a href="#">Forgot Password?</a>
                 </div>
             </div>
-            <div class="signup">
+
+            <button type="submit" name="submit" class="btn btn-login">Login</button>
+
+            <div class="switch-user">
                 <a href="../sign-in.php">Switch to User</a>
             </div>
         </form>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

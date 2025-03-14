@@ -10,6 +10,10 @@ if (!isset($_SESSION['id'])) {
 $user_id = $_SESSION['id'];
 
 // Update session values with submitted data
+$_SESSION['fname'] = $_POST['first_name'] ?? '';
+$_SESSION['lname'] = $_POST['last_name'] ?? '';
+$_SESSION['email'] = $_POST['email'] ?? '';
+$_SESSION['mobile'] = $_POST['mobile'] ?? '';
 $_SESSION['fname'] = htmlspecialchars($_POST['first_name'] ?? $_SESSION['fname'] ?? '');
 $_SESSION['lname'] = htmlspecialchars($_POST['last_name'] ?? $_SESSION['lname'] ?? '');
 $_SESSION['email'] = htmlspecialchars($_POST['email'] ?? $_SESSION['email'] ?? '');
@@ -53,16 +57,19 @@ if (!empty($missing_fields)) {
 
 // Sanitize user input
 $shipping_info = [
-    'email' => htmlspecialchars($_POST['email']),
-    'first_name' => htmlspecialchars($_POST['first_name']),
-    'last_name' => htmlspecialchars($_POST['last_name']),
-    'mobile' => htmlspecialchars($_POST['mobile']),
-    'address' => htmlspecialchars($_POST['address']),
-    'city' => htmlspecialchars($_POST['city']),
-    'state' => htmlspecialchars($_POST['state']),
-    'zipcode' => htmlspecialchars($_POST['zipcode']),
-    'payment_method' => htmlspecialchars($_POST['payment_method'])
+    'email' => $_POST['email'],
+    'first_name' => $_POST['first_name'],
+    'last_name' => $_POST['last_name'],
+    'mobile' => $_POST['mobile'],
+    'address' => $_POST['address'],
+    'city' => $_POST['city'],
+    'state' => $_POST['state'],
+    'zipcode' => $_POST['zipcode'],
+    'payment_method' => $_POST['payment_method'] ?? 'cash_on_delivery'
 ];
+
+// Store shipping info in session
+$_SESSION['shipping_info'] = $shipping_info;
 
 $full_address = "{$shipping_info['address']}, {$shipping_info['city']}, {$shipping_info['state']}, {$shipping_info['zipcode']}";
 

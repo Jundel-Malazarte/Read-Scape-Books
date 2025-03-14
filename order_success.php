@@ -10,10 +10,9 @@ if (!isset($_SESSION['id'])) {
 $user_id = $_SESSION['id'];
 $order_id = $_GET['order_id'] ?? 0;
 
-// Fetch order details (using only existing columns)
+// Update the order query to include all shipping information
 $stmt = $conn->prepare(
-    "SELECT o.total, o.shipping_address, o.payment_method, 
-            oi.book_id, oi.quantity, oi.price, b.title 
+    "SELECT o.*, oi.book_id, oi.quantity, oi.price, b.title 
      FROM orders o 
      LEFT JOIN order_items oi ON o.id = oi.order_id 
      LEFT JOIN books b ON oi.book_id = b.isbn 
@@ -30,7 +29,11 @@ while ($row = $result->fetch_assoc()) {
         $order = [
             'total' => $row['total'],
             'shipping_address' => $row['shipping_address'],
-            'payment_method' => $row['payment_method']
+            'payment_method' => $row['payment_method'],
+            'email' => $row['email'],
+            'first_name' => $row['first_name'],
+            'last_name' => $row['last_name'],
+            'mobile' => $row['mobile']
         ];
     }
     if ($row['book_id']) {
@@ -74,8 +77,6 @@ $conn->close();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="icon" href="./images/Readscape.png">
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: 'Courier', monospace;
@@ -194,26 +195,24 @@ $conn->close();
             background-color: #e9ecef;
         }
 
-        .footer div {
-            margin-top: 15px;
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
         }
 
         .footer a {
+            color: #000;
             text-decoration: none;
             padding: 8px 16px;
+            background-color: #f1f1f1;
             border-radius: 5px;
             display: inline-block;
-            transition: all 0.3s ease;
+            margin-top: 10px;
         }
 
-        .footer a:first-child {
-            background-color: #f1f1f1;
-            color: #000;
-        }
-
-        .footer a:last-child:hover {
-            background-color: #007bff;
-            color: white;
+        .footer a:hover {
+            background-color: #ddd;
         }
     </style>
 </head>
@@ -234,17 +233,13 @@ $conn->close();
         <div class="section">
             <h2>Shipping Information</h2>
             <?php
-            $full_name = trim($_SESSION['fname'] . ' ' . ($_SESSION['lname'] ?? ''));
-            $email = $_SESSION['email'] ?? '';
-            $mobile = $_SESSION['mobile'] ?? '';
-
-            if (empty($full_name) || empty($email) || empty($mobile)) {
-                echo "<p><strong>Warning:</strong> Some shipping information is missing. Please contact support.</p>";
-            }
+            $full_name = $order['first_name'] . ' ' . $order['last_name'];
+            $email = $order['email'];
+            $mobile = $order['mobile'];
             ?>
-            <p><strong>Full Name:</strong> <?php echo htmlspecialchars($full_name) ?: 'Not available'; ?></p>
-            <p><strong>Email:</strong> <?php echo htmlspecialchars($email) ?: 'Not available'; ?></p>
-            <p><strong>Contact Number:</strong> <?php echo htmlspecialchars($mobile) ?: 'Not available'; ?></p>
+            <p><strong>Full Name:</strong> <?php echo htmlspecialchars($full_name); ?></p>
+            <p><strong>Email:</strong> <?php echo htmlspecialchars($email); ?></p>
+            <p><strong>Contact Number:</strong> <?php echo htmlspecialchars($mobile); ?></p>
             <p><strong>Address:</strong> <?php echo htmlspecialchars($address); ?></p>
             <p><strong>City:</strong> <?php echo htmlspecialchars($city); ?></p>
             <p><strong>State/Province:</strong> <?php echo htmlspecialchars($state); ?></p>
@@ -292,12 +287,7 @@ $conn->close();
 
         <div class="footer">
             <p>Thank you for your order!</p>
-            <div style="display: flex; gap: 10px; justify-content: center;">
-                <a href="dashboard.php">Back to Home</a>
-                <a href="#" onclick="downloadReceipt(event)" style="background-color: white; color: #007bff; border: 1px solid #007bff;">
-                    <i class="fas fa-download"></i> Download Receipt
-                </a>
-            </div>
+            <p><a href="dashboard.php">Back to Home</a></p>
         </div>
     </div>
 
@@ -309,37 +299,6 @@ $conn->close();
             void checkmark.offsetWidth; // Trigger reflow
             checkmark.style.animation = 'drawCheck 0.5s ease forwards 0.5s'; // Restart animation
         };
-
-        // Replace the existing downloadReceipt function
-        function downloadReceipt(event) {
-            event.preventDefault();
-            const receiptElement = document.querySelector('.receipt');
-
-            html2canvas(receiptElement, {
-                backgroundColor: '#ffffff',
-                scale: 2,
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
-                // Initialize jsPDF
-                const {
-                    jsPDF
-                } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-
-                // Calculate dimensions to fit the receipt on the PDF
-                const imgWidth = 210; // A4 width in mm
-                const pageHeight = 297; // A4 height in mm
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-
-                // Add the image to PDF
-                const imgData = canvas.toDataURL('image/png');
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-
-                // Save the PDF
-                pdf.save('ReadScape_Order_<?php echo $order_id; ?>.pdf');
-            });
-        }
     </script>
 </body>
 
