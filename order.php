@@ -486,6 +486,10 @@ mysqli_close($conn);
                                         <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
                                         <button type="submit" class="cancel-btn">Cancel Order</button>
                                     </form>
+                                    <a href="pay_now.php?order_id=<?php echo $order['order_id']; ?>"
+                                        class="btn btn-primary" style="margin-left: 10px;">
+                                        Pay Now
+                                    </a>
                                 </div>
                             <?php endif; ?>
                         </div>

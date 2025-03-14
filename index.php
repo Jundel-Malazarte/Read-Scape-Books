@@ -35,137 +35,66 @@ if (isset($_POST["submit"])) {
     } else {
         // Hash the password before storing it
         $hashed_pass = password_hash($pass, PASSWORD_BCRYPT);
-    
+
         // Insert user into the database
         $stmt = $conn->prepare("INSERT INTO users (fname, lname, email, pass, phone, address, profile_image) VALUES (?, ?, ?, ?, ?, ?, ?)");
-    
+
         if ($stmt === false) {
             die("Error preparing statement: " . $conn->error);
         }
-    
+
         $stmt->bind_param("sssssss", $fname, $lname, $email, $hashed_pass, $phone, $address, $profile_image);
-    
+
         if ($stmt->execute()) {
             echo "<script>alert('Registration successful!'); window.location.href='sign-in.php';</script>";
         } else {
             die("Error executing query: " . $stmt->error);
         }
-    
+
         $stmt->close(); // Only close if it was initialized
     }
-    
+
     $check_email->close();
     $conn->close();
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign up</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="icon" href="./images/Readscape.png">
     <style>
-    
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap');
-        /** Google fonts */
-        .poppins-thin {
-            font-family: "Poppins", sans-serif;
-            font-weight: 100;
-            font-style: normal;
-        }
-
         body {
-            margin: auto;
-            background-color: #cfd8dc;
-            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
             display: flex;
+            align-items: center;
             justify-content: center;
-            height: 100vh;
-            font-family: Arial, sans-serif;
         }
 
-        #container {
+        .container {
+            max-width: 450px;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        .form-container {
             background-color: white;
-            border-radius: 20px;
-            width: 450px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .preview-container {
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        #form-box {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .input-text {
-            width: 85%;
-            margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .input-text input {
-            width: calc(100% - 20px);
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-
-        #button-submit {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        #button-add #sign-up {
-            width: calc(150% - 20px);
-            padding: 10px;
-            background-color: #212121;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-
-        #button-add #sign-up:hover {
-            background-color: #212121;
-            opacity: 0.8;
-        }
-
-        .sign-in a {
-            margin-top: 10px;
-            color: #212121;
-            text-decoration: none;
-        }
-
-        #preview-container {
-            margin-top: 10px;
-            text-align: center;
-            /* Center the image */
+            margin-bottom: 1.5rem;
         }
 
         #image_preview {
@@ -173,47 +102,75 @@ if (isset($_POST["submit"])) {
             height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            display: none;
-            /* Initially hidden */
-            border: 2px solid #ccc;
-            padding: 5px;
+            border: 2px solid #dee2e6;
+            padding: 3px;
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+        }
+
+        .btn-signup {
+            background-color: #212121;
+            color: white;
+            padding: 0.75rem;
+            width: 100%;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-signup:hover {
+            background-color: #424242;
+            color: white;
+        }
+
+        .signin-link {
+            text-align: center;
+        }
+
+        .signin-link a {
+            color: #212121;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .signin-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 
 <body>
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-4">User Registration</h2>
 
-    <!-- Container box -->
-    <div id="container">
-        <form action="" id="form-box" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
-            <h1>Users Registration</h1>
-
-            <div class="input-text">
-                <!-- Image Preview (Now Below the Label) -->
-                <div id="preview-container">
-                    <img id="image_preview" src="default.jpg" alt="Profile Preview">
+            <form action="" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                <div class="preview-container">
+                    <img id="image_preview" src="uploads/default.jpg" alt="Profile Preview">
+                    <input type="file" class="form-control" id="profile_image" name="profile_image"
+                        accept="image/*" onchange="previewImage(event)">
                 </div>
 
-                <!-- Profile Picture Input -->
-                <label for="profile_image"><strong></strong></label>
-                <input type="file" id="profile_image" name="profile_image" accept="image/*" onchange="previewImage(event)"><br>
+                <input type="text" class="form-control" id="fname" name="fname" placeholder="First Name" required>
+                <input type="text" class="form-control" id="lname" name="lname" placeholder="Last Name" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                <input type="password" class="form-control" id="pass" name="pass" placeholder="Password" required>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone" required>
+                <input type="text" class="form-control" id="address" name="address" placeholder="Address" required>
 
-                <input type="text" id="fname" name="fname" placeholder="First Name" required><br>
-                <input type="text" id="lname" name="lname" placeholder="Last Name" required><br>
-                <input type="email" id="email" name="email" placeholder="Email" required><br>
-                <input type="password" id="pass" name="pass" placeholder="Password" required><br>
-                <input type="text" id="phone" name="phone" placeholder="Phone" required><br>
-                <input type="text" id="address" name="address" placeholder="Address" required><br>
-                <div id="button-add">
-                    <input type="submit" id="sign-up" name="submit" value="Sign up">
+                <button type="submit" name="submit" class="btn btn-signup">Sign up</button>
+
+                <div class="signin-link">
+                    <a href="./sign-in.php">Already have an account? Sign in</a>
                 </div>
-                <div class="sign-in">
-                    <a href="./sign-in.php">Have already an account? Sign in</a>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function previewImage(event) {
             var input = event.target;
