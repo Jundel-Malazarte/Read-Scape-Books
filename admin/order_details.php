@@ -43,7 +43,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $order_id = intval($_GET['id']);
 
 // Fetch order details
-$sql = "SELECT o.id AS order_id, o.order_date, o.shipping_address, o.status, 
+$sql = "SELECT o.id AS order_id, o.order_date, o.shipping_address, o.status, o.payment_receipt,
         u.fname, u.lname, u.email, 
         (SELECT SUM(oi.price * oi.quantity) FROM order_items oi WHERE oi.order_id = o.id) AS total
         FROM orders o
@@ -62,6 +62,7 @@ if ($order = mysqli_fetch_assoc($result)) {
     $customer_name = htmlspecialchars($order['fname'] . ' ' . $order['lname']);
     $customer_email = htmlspecialchars($order['email']);
     $total = number_format($order['total'], 2);
+    $payment_receipt = $order['payment_receipt'];
 } else {
     header("Location: view_orders.php");
     exit();
@@ -196,6 +197,96 @@ mysqli_stmt_close($stmt);
             align-items: center;
             gap: 0.5rem;
         }
+
+        /* Receipt button styles */
+        .receipt-btn {
+            background-color: #198754;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .receipt-btn:hover {
+            background-color: #157347;
+            transform: translateY(-2px);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-primary,
+        .receipt-btn {
+            padding: 0.5rem 1.2rem;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            padding: 0.5rem 1.2rem;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            background-color: transparent;
+            border: 1px solid #0d6efd;
+            color: #0d6efd;
+        }
+
+        .btn-primary:hover {
+            background-color: transparent;
+            color: #0a58ca;
+            border-color: #0a58ca;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .receipt-btn {
+            padding: 0.5rem 1.2rem;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            background-color: #198754;
+            color: white;
+            text-decoration: none;
+            border: none;
+        }
+
+        .receipt-btn:hover {
+            background-color: #157347;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 
@@ -303,8 +394,18 @@ mysqli_stmt_close($stmt);
             </div>
         </div>
 
-        <div class="text-center mt-4">
-            <a href="view_orders.php" class="btn btn-primary">Back to Orders</a>
+        <div class="text-center mt-4 btn-group">
+            <a href="view_orders.php" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i>Back
+            </a>
+            <?php if (!empty($order['payment_receipt']) && file_exists("../uploads/receipts/" . $order['payment_receipt'])): ?>
+                <a href="../uploads/receipts/<?php echo $order['payment_receipt']; ?>"
+                    class="receipt-btn"
+                    target="_blank"
+                    title="View payment receipt">
+                    <i class="fas fa-file-invoice"></i>Receipt
+                </a>
+            <?php endif; ?>
         </div>
     </div>
 

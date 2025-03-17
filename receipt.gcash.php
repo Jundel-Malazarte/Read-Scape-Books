@@ -1,5 +1,6 @@
 <?php
 session_start();
+date_default_timezone_set('Asia/Manila'); // Adjust for Philippines timezone
 include 'db_connect.php';
 
 // Ensure user is logged in
@@ -22,6 +23,7 @@ $payment_time = date('Y-m-d H:i:s');
 
 // Process payment and order if confirmed
 if (isset($_POST['confirm_payment'])) {
+    $_SESSION['payment_time'] = $payment_time;
     // Verify GCash balance
     $stmt = $conn->prepare("SELECT balance FROM gcash_users2 WHERE mobile_number = ?");
     $stmt->bind_param("s", $gcash_number);
@@ -198,52 +200,59 @@ $total_formatted = number_format($total_with_shipping, 2);
                 <img src="./images/gcash.png" alt="gcash" class="h-60 object-contain" />
                 <div class="container-box">
                     <div class="flex flex-col gap-4">
-                        <div class="text-center">
-                            <i class="fas fa-check-circle" style="color: blue; font-size: 3rem; margin-bottom: 10px;"></i>
-                        </div>
-                        <span class="text-black font-bold text-xl text-center" style="color: #283593;">ReadScape Payment</span>
-                        <span class="text-black font-xl text-xl text-center"
-                            style="background-color: #e0f2f1; 
-                                     color: #283593; 
-                                     font-weight: bold; 
-                                     border-radius: 10px; 
-                                     padding: 5px 10px; 
-                                     display: inline-block; 
-                                     line-height: 1.5;
-                                     margin: 5px 0;">
-                            <?php echo htmlspecialchars($gcash_number); ?>
-                        </span>
-                        <span class="text-black font-2xl text-center">Confirm Payment via GCash</span>
+                        <div class="receipt-content">
+                            <div class="text-center">
+                                <i class="fas fa-check-circle" style="color: blue; font-size: 3rem; margin-bottom: 10px;"></i>
+                            </div>
+                            <span class="text-black font-bold text-xl text-center" style="color: #283593; display: block; text-align: center;">ReadScape Payment</span>
+                            <br>
+                            <div style="text-align: center;">
+                                <span class="text-black font-xl text-xl text-center"
+                                    style="background-color: #e0f2f1; 
+                                            color: #283593; 
+                                            font-weight: bold; 
+                                            border-radius: 10px; 
+                                            padding: 5px 10px; 
+                                            display: inline-block; 
+                                            line-height: 1.5;
+                                            margin: 5px auto;">
+                                    <?php echo htmlspecialchars($gcash_number); ?>
+                                </span>
+                            </div>
+                            <span class="text-black font-2xl text-center">Confirm Payment via GCash</span>
 
-                        <!-- Amount Details -->
-                        <div class="flex justify-between items-center py-2">
-                            <span class="font-bold" style="color: #283593;">Subtotal</span>
-                            <span class="font-bold text-black" style="color: #283593;">PHP <?php echo $subtotal_formatted; ?></span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="font-bold" style="color: #283593;">Shipping Fee</span>
-                            <span class="font-bold text-black" style="color: #283593;">PHP <?php echo $shipping_formatted; ?></span>
-                        </div>
-                        <hr style="margin: 10px 0px;">
-                        <div class="flex justify-between items-center py-2">
-                            <span class="font-bold" style="color: #283593;">Total Amount</span>
-                            <span class="font-bold text-black" style="color: #283593;">PHP <?php echo $total_formatted; ?></span>
+                            <!-- Amount Details -->
+                            <div class="flex justify-between items-center py-2">
+                                <span class="font-bold" style="color: #283593;">Subtotal</span>
+                                <span class="font-bold text-black" style="color: #283593;">PHP <?php echo $subtotal_formatted; ?></span>
+                            </div>
+                            <div class="flex justify-between items-center py-2">
+                                <span class="font-bold" style="color: #283593;">Shipping Fee</span>
+                                <span class="font-bold text-black" style="color: #283593;">PHP <?php echo $shipping_formatted; ?></span>
+                            </div>
+                            <hr style="margin: 10px 0px;">
+                            <div class="flex justify-between items-center py-2">
+                                <span class="font-bold" style="color: #283593;">Total Amount</span>
+                                <span class="font-bold text-black" style="color: #283593;">PHP <?php echo $total_formatted; ?></span>
+                            </div>
+
+                            <!-- Reference and Time -->
+                            <div style="display: flex; justify-content: space-between; width: 100%;">
+                                <span style="color: #283593; padding: 10px; text-align: left; width: 50%;">Reference ID: <?php echo $reference_id; ?></span>
+                                <span style="color: #283593; padding: 10px; text-align: left; width: 50%;">
+                                    <?php
+                                    // Use the stored payment time if available, otherwise use current time
+                                    $display_time = isset($_SESSION['payment_time'])
+                                        ? date('M d, Y h:ia', strtotime($_SESSION['payment_time']))
+                                        : date('M d, Y h:ia', strtotime($payment_time));
+                                    echo $display_time;
+                                    ?>
+                                </span>
+                            </div>
                         </div>
 
-                        <!-- Reference and Time -->
-                        <div style="display: flex; justify-content: space-between; width: 100%;">
-                            <span style="color: #283593; padding: 10px; text-align: left; width: 50%;">Reference ID: <?php echo $reference_id; ?></span>
-                            <span style="color: #283593; padding: 10px; text-align: left; width: 50%;"><?php echo date('M d, Y h:ia'); ?></span>
-                        </div>
-
-                        <!-- Confirm Payment Button -->
+                        <!-- Separate button container -->
                         <div class="button-container" style="display: flex; justify-content: center; gap: 20px; width: 100%;">
-                            <form method="POST" action="" style="display: flex; justify-content: center;">
-                                <!-- <button type="submit" name="confirm_payment" class="pay-button">
-                                    Confirm Payment
-                                </button> -->
-                            </form>
-
                             <button onclick="downloadReceipt()" class="pay-button" style="background-color: white; color: #007cff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); width: 200px;">
                                 <i class="fas fa-download"></i> Download Receipt
                             </button>
@@ -251,26 +260,48 @@ $total_formatted = number_format($total_with_shipping, 2);
                                 <i class="fas fa-arrow-left"></i> Back to dashboard
                             </button>
                         </div>
+                    </div>
+                    <div class="fixed bottom-0 w-full left-0 px-6 py-2">
+                        <div class="flex justify-between items-center">
+                            <a class="text-black text-xs" href="">Help Center</a>
+                            <span class="text-gcash-secondary-blue text-xs">v5.56.0:595</span>
                         </div>
-                            <div class="fixed bottom-0 w-full left-0 px-6 py-2">
-                                <div class="flex justify-between items-center">
-                                      <a class="text-black text-xs" href="">Help Center</a>
-                                      <span class="text-gcash-secondary-blue text-xs">v5.56.0:595</span>
-                                 </div>
-                            </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 </body>
 <script>
+    // Replace the existing downloadReceipt function
     function downloadReceipt() {
-        const receiptBox = document.querySelector('.container-box');
+        // Clone the container box
+        const receiptBox = document.querySelector('.container-box').cloneNode(true);
+
+        // Remove the button container from the clone
+        const buttonContainer = receiptBox.querySelector('.button-container');
+        if (buttonContainer) {
+            buttonContainer.remove();
+        }
+
+        // Create a temporary div to hold our receipt for capturing
+        const tempDiv = document.createElement('div');
+        tempDiv.appendChild(receiptBox);
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.left = '-9999px';
+        document.body.appendChild(tempDiv);
 
         html2canvas(receiptBox, {
             backgroundColor: '#ffffff',
             scale: 2, // For better quality
             logging: false,
+            onclone: function(clonedDoc) {
+                // Additional styling for the cloned element if needed
+                const clonedBox = clonedDoc.querySelector('.container-box');
+                clonedBox.style.padding = '20px';
+                clonedBox.style.borderRadius = '10px';
+                clonedBox.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.1)';
+            }
         }).then(canvas => {
             // Convert the canvas to a data URL
             const imageData = canvas.toDataURL('image/png');
@@ -278,12 +309,15 @@ $total_formatted = number_format($total_with_shipping, 2);
             // Create a temporary link to download the image
             const link = document.createElement('a');
             link.href = imageData;
-            link.download = 'ReadScape_Receipt_<?php echo $reference_id; ?>.png';
+            link.download = `ReadScape_Receipt_${new Date().getTime()}.png`;
 
             // Trigger the download
             document.body.appendChild(link);
             link.click();
+
+            // Cleanup
             document.body.removeChild(link);
+            document.body.removeChild(tempDiv);
         });
     }
 </script>

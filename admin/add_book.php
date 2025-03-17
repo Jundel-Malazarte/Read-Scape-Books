@@ -35,9 +35,20 @@ if ($row = mysqli_fetch_assoc($result)) {
     $profile_image = '../uploads/default.jpg';
 }
 
+// Get the last ISBN from the database
+$last_isbn_query = "SELECT MAX(CAST(isbn AS UNSIGNED)) as last_isbn FROM books";
+$result = mysqli_query($conn, $last_isbn_query);
+$row = mysqli_fetch_assoc($result);
+$next_isbn = ($row['last_isbn'] ? $row['last_isbn'] + 1 : 1000); // Start from 1000 if no books exist
+
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $isbn = mysqli_real_escape_string($conn, $_POST['isbn']);
+    // Get the next ISBN
+    $last_isbn_query = "SELECT MAX(CAST(isbn AS UNSIGNED)) as last_isbn FROM books";
+    $result = mysqli_query($conn, $last_isbn_query);
+    $row = mysqli_fetch_assoc($result);
+    $isbn = ($row['last_isbn'] ? $row['last_isbn'] + 1 : 1000);
+
     $title = mysqli_real_escape_string($conn, $_POST['title']);
     $author = mysqli_real_escape_string($conn, $_POST['author']);
     $copyright = mysqli_real_escape_string($conn, $_POST['copyright']);
@@ -175,7 +186,8 @@ mysqli_close($conn);
         <h1 class="text-center">Add New Book</h1>
         <form action="add_book.php" method="post" enctype="multipart/form-data">
             <div class="mb-3">
-                <input type="text" class="form-control" name="isbn" placeholder="ISBN" required>
+
+                <input type="number" class="form-control" name="isbn" value="<?php echo $next_isbn; ?>" readonly>
             </div>
             <div class="mb-3">
                 <input type="text" class="form-control" name="title" placeholder="Title" required>

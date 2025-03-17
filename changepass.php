@@ -33,173 +33,55 @@ ob_end_flush(); // End buffering
 
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Change Password</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="./images/Readscape.png">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            font-family: Arial, sans-serif;
-            background-color: #eceff1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
 
+        /* Navbar Styles */
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #212529;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
         }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
+        .navbar .fw-bold {
+            font-size: 1.2rem;
         }
 
-        .navbar a:hover {
-            background-color: #555;
-            border-radius: 5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 15px;
-        }
-
-        .profile-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .logout {
-            margin-left: auto;
-        }
-
-        .container {
-            background: white;
-            padding: 30px;
-            margin-top: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
-            text-align: center;
-            margin: 90px auto 0;
-            /* Adjusted margin to prevent navbar overlap */
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            font-size: 22px;
-            color: #333;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-        }
-
-        label {
-            font-size: 14px;
-            font-weight: bold;
-            text-align: left;
-            width: 100%;
-            color: #444;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        input:focus {
-            border-color: #1e88e5;
-            outline: none;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            background: #1e88e5;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            background: #1e88e5;
-            opacity: 0.8;
-        }
-
-        /*Side nav*/
-        span {
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .readscape {
-            width: 40px;
-            /* Match this size with the font-size of the menu icon */
-            height: 40px;
-            /* Keep height and width equal */
-            border-radius: 50%;
-        }
-
-        /** Slider nav */
+        /* Sidenav Styles */
         .sidenav {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1;
+            z-index: 1100;
             top: 0;
             left: 0;
-            background-color: #212121;
+            background-color: #212529;
             overflow-x: hidden;
-            transition: 0.5s;
+            transition: 0.3s;
             padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
         }
 
         .sidenav a {
-            padding: 8px 8px 8px 32px;
+            padding: 15px 25px;
             text-decoration: none;
-            font-size: 25px;
-            color: white;
+            font-size: 18px;
+            color: #f8f9fa;
             display: block;
             transition: 0.3s;
         }
 
         .sidenav a:hover {
-            color: #f1f1f1;
+            background-color: #343a40;
+            color: #fff;
         }
 
         .sidenav .closebtn {
@@ -210,67 +92,140 @@ ob_end_flush(); // End buffering
             margin-left: 50px;
         }
 
-        @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
+        /* Password Change Form */
+        .password-container {
+            max-width: 500px;
+            margin: 80px auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+        }
 
-            .sidenav a {
-                font-size: 18px;
-            }
+        .password-container h1 {
+            color: #212529;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+        }
+
+        .btn-update {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(13, 110, 253, .15);
+        }
+
+        .alert {
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div style="display: flex; align-items: center;">
-            <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong>ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <span class="navbar-toggler-icon" onclick="openNav()" style="cursor: pointer; margin-right: 1rem;"></span>
+                <img src="./images/Readscape.png" alt="ReadScape" class="rounded-circle" width="40" height="40">
+                <span class="ms-2 text-white fw-bold">ReadScape</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="position-relative me-3">
+                    <a href="cart.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-counter">0</span>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="<?php echo $profile_image; ?>" alt="Profile" class="rounded-circle me-2" width="40" height="40">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                            <?php echo $fname . " " . $lname; ?>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+                            <li><a class="dropdown-item" href="order.php">My Orders</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="profile-info">
-            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
-                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
-            </a>
-            <br>
-            <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
-            <a href="logout.php"><strong>Log Out</strong></a>
-        </div>
-    </div>
+    </nav>
 
+    <!-- Sidenav -->
     <div id="Sidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="dashboard.php">Home</a>
-        <a href="profile.php">Profile</a>
-        <a href="changepass.php">Change password</a>
-        <a href="cart.php">Cart</a>
-        <a href="order.php">My Orders</a>
-        <a href="logout.php">Log Out</a>
+        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Home</a>
+        <a href="profile.php"><i class="fas fa-user me-2"></i>Profile</a>
+        <a href="changepass.php"><i class="fas fa-key me-2"></i>Change password</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart me-2"></i>Cart</a>
+        <a href="order.php"><i class="fas fa-shopping-bag me-2"></i>My Orders</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
     </div>
 
-    <script>
-        function openNav() {
-            document.getElementById("Sidenav").style.width = "240px";
-        }
-
-        function closeNav() {
-            document.getElementById("Sidenav").style.width = "0";
-        }
-    </script>
-
-    <div class="container">
-        <h1>Change Password</h1>
+    <!-- Password Change Form -->
+    <div class="password-container">
+        <h1><i class="fas fa-key me-2"></i>Change Password</h1>
         <form action="" method="post">
-            <label for="oldpwd">Old Password</label>
-            <input type="password" id="oldpwd" name="oldpwd" required>
+            <div class="mb-3">
+                <label for="oldpwd" class="form-label">Current Password</label>
+                <input type="password" class="form-control" id="oldpwd" name="oldpwd" required>
+            </div>
 
-            <label for="newpwd">New Password</label>
-            <input type="password" id="newpwd" name="newpwd" required>
+            <div class="mb-3">
+                <label for="newpwd" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="newpwd" name="newpwd" required>
+            </div>
 
-            <label for="conpwd">Confirm Password</label>
-            <input type="password" id="conpwd" name="conpwd" required>
+            <div class="mb-3">
+                <label for="conpwd" class="form-label">Confirm New Password</label>
+                <input type="password" class="form-control" id="conpwd" name="conpwd" required>
+            </div>
 
-            <button type="submit" class="btn">Update Password</button>
+            <button type="submit" class="btn btn-primary btn-update">
+                <i class="fas fa-save me-2"></i>Update Password
+            </button>
         </form>
         <?php
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -313,20 +268,29 @@ ob_end_flush(); // End buffering
         }
         ?>
     </div>
-</body>
-<script>
-    function updateCartCounter() {
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "cart_counter.php", true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                document.getElementById("cart-counter").innerText = xhr.responseText;
-            }
-        };
-        xhr.send();
-    }
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openNav() {
+            document.getElementById("Sidenav").style.width = "240px";
+        }
 
-    document.addEventListener("DOMContentLoaded", updateCartCounter);
-</script>
+        function closeNav() {
+            document.getElementById("Sidenav").style.width = "0";
+        }
+
+        // Cart counter update
+        function updateCartCounter() {
+            fetch('cart_counter.php')
+                .then(response => response.text())
+                .then(count => {
+                    document.getElementById("cart-counter").innerText = count;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.addEventListener("DOMContentLoaded", updateCartCounter);
+    </script>
+</body>
 
 </html>

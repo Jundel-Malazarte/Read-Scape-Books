@@ -174,6 +174,17 @@ mysqli_close($conn);
             color: white;
         }
 
+        .tab-nav a:hover {
+            background-color: #e9ecef;
+            color: #212529;
+            transform: translateY(-1px);
+        }
+
+        .tab-nav a.active:hover {
+            background: #0b5ed7;
+            color: white;
+        }
+
         .order-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -249,6 +260,24 @@ mysqli_close($conn);
 
         .order-items table {
             width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: fixed;
+        }
+
+        .order-items td {
+            padding: 1rem;
+            vertical-align: top;
+        }
+
+        .order-items td.image {
+            width: 140px;
+            padding-right: 0;
+        }
+
+        .order-items td.details {
+            width: calc(100% - 140px);
+            padding-left: 1.5rem;
         }
 
         .order-items td.image img {
@@ -259,22 +288,19 @@ mysqli_close($conn);
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
         }
 
-        .order-items td.details {
-            padding-left: 1.5rem;
-            vertical-align: top;
-        }
-
         .book-title {
             font-size: 1.2rem;
             font-weight: 600;
             color: #212529;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
         }
 
         .book-info {
             font-size: 1.1rem;
             color: #6c757d;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
         }
 
         .see-more-btn {
@@ -322,6 +348,7 @@ mysqli_close($conn);
             border-radius: 8px;
             font-weight: 500;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .btn-pay {
@@ -332,12 +359,24 @@ mysqli_close($conn);
             border-radius: 8px;
             font-weight: 500;
             transition: all 0.3s ease;
+            text-decoration: none;
+            /* Remove underline */
         }
 
-        .btn-cancel:hover,
-        .btn-pay:hover {
+        .btn-cancel:hover {
+            background-color: #bb2d3b;
             transform: translateY(-2px);
-            opacity: 0.9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .btn-pay:hover {
+            background-color: #157347;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: white;
+            text-decoration: none;
+            /* Remove underline on hover */
         }
 
         @media (max-width: 768px) {
@@ -359,6 +398,22 @@ mysqli_close($conn);
             .action-buttons {
                 width: 100%;
                 justify-content: center;
+            }
+
+            .order-items td.image {
+                width: 100px;
+            }
+
+            .order-items td.details {
+                width: calc(100% - 100px);
+            }
+
+            .book-title {
+                font-size: 1.1rem;
+            }
+
+            .book-info {
+                font-size: 1rem;
             }
         }
 
@@ -508,7 +563,7 @@ mysqli_close($conn);
                                 <?php endfor; ?>
                             </table>
                         </div>
-                        <hr style="margin: 15px 0;">
+                        <!-- <hr style="margin: 15px 0;"> -->
                         <div class="order-footer">
                             <p class="order-total">Total: ₱<?php echo number_format($total_price, 2); ?></p>
                             <?php if (strtolower($order['status']) === 'pending'): ?>

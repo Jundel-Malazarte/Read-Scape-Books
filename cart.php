@@ -76,71 +76,53 @@ $total_with_shipping = $total_price + $shipping_cost;
     <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin-bottom: 100px;
         }
 
+        /* Navbar Styles */
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #212529;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
         }
 
-        .readscape {
-            border-radius: 50%;
+        .navbar .fw-bold {
+            font-size: 1.2rem;
         }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
+        .dropdown-menu {
+            font-size: 1.1rem;
         }
 
-        .navbar a:hover {
-            background-color: #555;
-            border-radius: 5px;
-        }
-
-        .profile-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
+        /* Sidenav Styles */
         .sidenav {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1;
+            z-index: 1100;
             top: 0;
             left: 0;
-            background-color: #212121;
+            background-color: #212529;
             overflow-x: hidden;
-            transition: 0.5s;
+            transition: 0.3s;
             padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
         }
 
         .sidenav a {
-            padding: 8px 8px 8px 32px;
+            padding: 15px 25px;
             text-decoration: none;
-            font-size: 25px;
-            color: white;
+            font-size: 18px;
+            color: #f8f9fa;
             display: block;
             transition: 0.3s;
         }
 
         .sidenav a:hover {
-            color: #f1f1f1;
+            background-color: #343a40;
+            color: #fff;
         }
 
         .sidenav .closebtn {
@@ -151,287 +133,376 @@ $total_with_shipping = $total_price + $shipping_cost;
             margin-left: 50px;
         }
 
-        @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
-
-            .sidenav a {
-                font-size: 18px;
-            }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
         }
 
+        /* Profile section in navbar */
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .profile-info img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid white;
+            object-fit: cover;
+        }
+
+        /* Your existing cart styles below... */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding-bottom: 2rem;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background-color: #212529;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+        }
+
+        /* Main Container Styles */
         .cart-wrapper {
-            background-color: #f9f9f9;
-            padding: 20px;
+            padding: 2rem;
+            background-color: #f8f9fa;
         }
 
         .cart-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            display: flex;
-            gap: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            padding: 1rem;
         }
 
+        /* Left Cart Section */
         .cart-left {
-            flex: 7;
             background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
         }
 
         .cart-header {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a2b49;
-            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
         }
 
+        /* Table Styles */
         .cart-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+            border-collapse: separate;
+            border-spacing: 0 1rem;
         }
 
-        .cart-table th,
-        .cart-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+        .cart-table thead th {
+            padding: 1rem;
+            color: #6c757d;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
         }
 
-        .cart-table th {
-            font-size: 14px;
-            font-weight: 700;
-            color: #666;
-            text-transform: uppercase;
+        .cart-table tbody td {
+            padding: 1.5rem 1rem;
+            vertical-align: middle;
+            background: #fff;
+            border-bottom: 1px solid #dee2e6;
         }
 
-        .cart-table td {
-            font-size: 14px;
-            color: #333;
-        }
-
-        .cart-table .item-details {
+        /* Item Details */
+        .item-details {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 1.5rem;
         }
 
-        .cart-table .item-details img {
-            width: 80px;
-            height: 80px;
+        .item-details img {
+            width: 100px;
+            height: 150px;
             object-fit: cover;
-            border-radius: 5px;
+            border-radius: 8px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
         }
 
-        .cart-table .item-details h3 {
-            font-size: 16px;
-            font-weight: 700;
+        .item-details h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #212529;
             margin: 0;
         }
 
-        .cart-table .item-details p {
-            font-size: 12px;
-            color: #666;
-            margin: 0;
-        }
-
-        .cart-table .quantity-control {
-            display: flex;
+        /* Quantity Controls */
+        .quantity-control {
+            display: inline-flex;
             align-items: center;
-            gap: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 2px 5px;
-            width: fit-content;
-        }
-
-        .cart-table .quantity-control button {
-            background-color: #f0f0f0;
-            color: #333;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 14px;
-            border-radius: 3px;
-        }
-
-        .cart-table .quantity-control button:hover {
-            background-color: #ddd;
-        }
-
-        .cart-table .quantity-control .quantity {
-            font-size: 14px;
-            min-width: 20px;
-            text-align: center;
-        }
-
-        .cart-table .remove-btn {
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .cart-table .remove-btn:hover {
-            color: #dc3545;
-        }
-
-        .cart-right {
-            flex: 3;
             background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+
+        .quantity-control button {
+            background: #e9ecef;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-control button:hover:not([disabled]) {
+            background: #dee2e6;
+        }
+
+        .quantity-control .quantity {
+            padding: 0 1rem;
+            font-weight: 600;
+        }
+
+        /* Right Cart Section */
+        .cart-right {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+            height: fit-content;
+            position: sticky;
+            top: 2rem;
         }
 
         .order-summary h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1a2b49;
-            margin-bottom: 20px;
-        }
-
-        .summary-details {
-            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
         }
 
         .summary-details p {
             display: flex;
             justify-content: space-between;
-            font-size: 14px;
-            color: #666;
-            margin: 10px 10px;
-            line-height: 1.5;
+            margin: 1rem 0;
+            color: #495057;
         }
 
         .summary-details .total {
-            font-size: 18px;
-            font-weight: 700;
-            color: #000;
-            margin: 10px 10px;
-            line-height: 1.5;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #212529;
+            padding-top: 1rem;
+            border-top: 2px solid #dee2e6;
         }
 
-        .shipping-options {
-            margin: 10px 10px;
-        }
-
-        .shipping-options select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .payment-methods {
-            margin: 10px 10px;
-        }
-
-        .payment-methods select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
+        /* Buttons */
         .checkout-btn {
             display: block;
-            max-width: 100%;
-            background-color: #000;
+            width: 100%;
+            padding: 1rem;
+            background: #0d6efd;
             color: white;
-            padding: 15px;
-            font-size: 16px;
             text-align: center;
-            border: none;
             border-radius: 8px;
+            border: none;
+            font-weight: 500;
             text-decoration: none;
-            transition: background 0.3s;
-            margin-top: 20px;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+        }
+
+        .checkout-btn:hover:not([disabled]) {
+            background: #0b5ed7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .checkout-btn[disabled] {
+            background-color: #6c757d !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+            box-shadow: none !important;
+            pointer-events: none;
+            opacity: 0.65;
+        }
+
+        .remove-btn {
+            color: #fff;
+            background-color: #dc3545;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
         }
 
-        .checkout-btn:hover {
-            background-color: #333;
+        .remove-btn:hover {
+            background-color: #bb2d3b;
+            transform: scale(1.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .checkout-btn:disabled {
-            background-color: #cccccc;
-            color: #666666;
-            cursor: not-allowed;
+        /* Select Dropdowns */
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #495057;
+            margin-top: 0.5rem;
         }
 
-        .checkout-btn:disabled:hover {
-            background-color: #cccccc;
-        }
-
+        /* Error Messages */
         .stock-error {
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
+            background: #f8d7da;
+            color: #842029;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-right {
+                position: static;
+            }
         }
 
         @media (max-width: 768px) {
-            .cart-container {
+            .item-details {
                 flex-direction: column;
+                text-align: center;
+                gap: 1rem;
             }
 
-            .cart-left,
-            .cart-right {
-                width: 100%;
+            .cart-table thead {
+                display: none;
             }
 
-            .cart-table {
+            .cart-table tbody td {
                 display: block;
-                overflow-x: auto;
+                text-align: center;
+                padding: 0.5rem;
             }
+
+            .cart-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+
+        .alert .btn-close {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            padding: 0.5rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .alert .btn-close:hover {
+            opacity: 1;
+        }
+
+        .alert {
+            position: relative;
+            padding-right: 3rem;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div id="Sidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-            <a href="dashboard.php">Home</a>
-            <a href="profile.php">Profile</a>
-            <a href="changepass.php">Change password</a>
-            <a href="cart.php">Cart</a>
-            <a href="order.php">My Orders</a>
-            <a href="logout.php">Log Out</a>
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <span class="navbar-toggler-icon" onclick="openNav()" style="cursor: pointer; margin-right: 1rem;"></span>
+                <img src="./images/Readscape.png" alt="ReadScape" class="rounded-circle" width="40" height="40">
+                <span class="ms-2 text-white fw-bold">ReadScape</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="position-relative me-3">
+                    <a href="cart.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-counter"><?php echo $cart_count; ?></span>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="<?php echo $profile_image; ?>" alt="Profile" class="rounded-circle me-2" width="40" height="40">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                            <?php echo $fname . " " . $lname; ?>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+                            <li><a class="dropdown-item" href="order.php">My Orders</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰<strong> ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
-        <div class="profile-info">
-            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
-                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
-            </a>
-            <br>
-            <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
-            <a href="logout.php"><strong>Log Out</strong></a>
-        </div>
+    </nav>
+
+    <div class="sidenav" id="Sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Home</a>
+        <a href="profile.php"><i class="fas fa-user me-2"></i>Profile</a>
+        <a href="changepass.php"><i class="fas fa-key me-2"></i>Change password</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart me-2"></i>Cart</a>
+        <a href="order.php"><i class="fas fa-shopping-bag me-2"></i>My Orders</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
     </div>
 
-    <div class="cart-wrapper">
+    <div class="cart-wrapper container-fluid">
         <div class="cart-container">
             <div class="cart-left">
                 <h2 class="cart-header">Your Cart (<?php echo $cart_count; ?> items)</h2>
+
                 <?php if (!empty($stock_errors)): ?>
-                    <div class="stock-error">
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                        <strong><i class="fas fa-exclamation-circle me-2"></i>Stock Issues Found!</strong>
                         <?php foreach ($stock_errors as $error): ?>
-                            <p><?php echo $error; ?></p>
+                            <div class="mt-2"><?php echo $error; ?></div>
                         <?php endforeach; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 <?php endif; ?>
-                <table class="cart-table">
+
+                <table class="cart-table table">
                     <thead>
                         <tr>
                             <th>Item/s</th>
@@ -462,7 +533,10 @@ $total_with_shipping = $total_price + $shipping_cost;
                                 </td>
                                 <td>₱<?php echo number_format($cart_item['price'], 2, '.', ','); ?></td>
                                 <td>
-                                    <button class="remove-btn" onclick="removeFromCart('<?php echo $cart_item['isbn']; ?>')">X</button>
+                                    <button class="remove-btn btn-close-white" onclick="removeFromCart('<?php echo $cart_item['isbn']; ?>')"
+                                        title="Remove item">
+                                        ×
+                                    </button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -551,36 +625,55 @@ $total_with_shipping = $total_price + $shipping_cost;
             document.getElementById("total-price").innerText = "₱" + totalPrice.toFixed(2);
         }
 
-        // Function to update cart state (cart count and checkout button)
+        // Add this function to handle stock validation
+        function hasStockIssues() {
+            return document.querySelector('.alert-danger') !== null;
+        }
+
+        // Update the updateCartState function
         function updateCartState() {
             const cartItems = document.querySelectorAll("#cart-items tr");
             const cartCount = cartItems.length;
             const checkoutBtn = document.getElementById("checkout-btn");
+            const stockIssues = hasStockIssues();
 
-            if (cartCount === 0) {
+            if (cartCount === 0 || stockIssues) {
                 checkoutBtn.setAttribute("disabled", "disabled");
-                checkoutBtn.setAttribute("title", "Add items to your cart to proceed to checkout");
+                checkoutBtn.style.backgroundColor = "#6c757d";
+                checkoutBtn.style.cursor = "not-allowed";
+
+                if (stockIssues) {
+                    checkoutBtn.setAttribute("title", "Please resolve stock issues before proceeding to checkout");
+                } else {
+                    checkoutBtn.setAttribute("title", "Add items to your cart to proceed to checkout");
+                }
             } else {
                 checkoutBtn.removeAttribute("disabled");
                 checkoutBtn.removeAttribute("title");
+                checkoutBtn.style.backgroundColor = "#0d6efd";
+                checkoutBtn.style.cursor = "pointer";
             }
         }
 
-        // Initial cart state and total check
+        // Update the checkout button event listener
         window.onload = function() {
             updateCartState();
-            updateTotal(); // Initialize total price with default shipping
+            updateTotal();
 
-            // Add event listener to the checkout button to prevent default behavior if disabled
             const checkoutBtn = document.getElementById("checkout-btn");
             checkoutBtn.addEventListener("click", function(event) {
                 if (checkoutBtn.hasAttribute("disabled")) {
                     event.preventDefault();
-                    alert("Cannot proceed to checkout. Please resolve stock issues or add items to your cart.");
+                    if (hasStockIssues()) {
+                        alert("Cannot proceed to checkout. Please resolve stock issues first.");
+                    } else {
+                        alert("Cannot proceed to checkout. Please add items to your cart.");
+                    }
                 }
             });
         };
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

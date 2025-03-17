@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 14, 2025 at 11:53 AM
+-- Generation Time: Mar 17, 2025 at 04:59 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,7 +68,7 @@ CREATE TABLE `cart` (
 
 INSERT INTO `cart` (`id`, `user_id`, `isbn`, `quantity`) VALUES
 (103, 1, 2, 1),
-(114, 11, 5, 1);
+(118, 11, 8, 1);
 
 -- --------------------------------------------------------
 
@@ -131,12 +131,6 @@ INSERT INTO `orders` (`id`, `user_id`, `total`, `shipping_address`, `payment_met
 (9, 11, 299.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-06 06:47:18', 'canceled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (10, 11, 330.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-06 06:52:25', 'canceled', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (11, 12, 859.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'credit_card', '2025-03-06 07:23:57', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(12, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 02:51:15', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(13, 11, 349.00, 'Cebu, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 02:51:58', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(14, 11, 349.00, 'Lorega San Miguel, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:01:50', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(15, 11, 349.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:02:07', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(16, 11, 349.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:05:20', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(17, 11, 349.00, 'Hipolito St. Sitio Sandayong, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-10 03:06:44', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (24, 11, 350.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 00:56:12', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (25, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-11 01:15:39', 'completed', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (26, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-12 00:43:29', 'canceled', 'ryan123@gmail.com', 'mario', 'hapon', '+639500146972', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000', NULL),
@@ -185,12 +179,6 @@ INSERT INTO `order_items` (`id`, `order_id`, `book_id`, `quantity`, `price`) VAL
 (12, 11, 5, 1, 249.00),
 (13, 11, 6, 1, 280.00),
 (14, 11, 7, 1, 280.00),
-(15, 12, 2, 1, 299.00),
-(16, 13, 5, 1, 249.00),
-(17, 14, 5, 1, 249.00),
-(18, 15, 5, 1, 249.00),
-(19, 16, 5, 1, 249.00),
-(20, 17, 5, 1, 249.00),
 (31, 24, 8, 1, 250.00),
 (32, 25, 7, 1, 280.00),
 (33, 26, 2, 1, 299.00),
@@ -238,7 +226,7 @@ INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `pass`, `phone`, `address`
 (8, 'manny ', 'Pacquiao', 'turyak2@gmail.com', '$2y$10$7WPCDV3nd8O5xO/QD/cG3.wqSCmANgviwfGMPDyq9RvG1mNZvyAS6', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-17 01:50:09', 'uploads/67b3e9e3bd7e1_man.jpg'),
 (9, 'test', 'test', 'test6@gmail.com', '$2y$10$HcK17YDB1gDJU5wb/4uNhehbPNc./su9uVnBTjqI1SWlFHH2dMYBy', '09428013424', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', '2025-02-18 03:28:08', 'uploads/67b3fe4889550_man.jpg'),
 (10, 'mario', 'friolo', 'mario@gmail.com', '$2y$10$Pc8sW216gFIwI7vDNN2G6OWcbXzrlUTDm9aP3sjAGwThZ72pAG/Za', '09812371239', '123 Main St, City, 1234', '2025-02-20 07:35:16', 'uploads/67b6db69e587d_book_icon.png'),
-(11, 'mario', 'hapon', 'mario1@gmail.com', '$2y$10$eNG.E5IG81V8VCbLEO4V2.BjgTIp2Z2X/JeEmvFXoB6wUik/Xj2HK', '09812371231', '312 Hipolito St. Sitio Sandayong, Cebu, Cebu 6000', '2025-02-28 04:03:49', 'uploads/67c148493dbe3_Man-PNG-Free-Download.png'),
+(11, 'mario', 'hapon', 'mario1@gmail.com', '$2y$10$eNG.E5IG81V8VCbLEO4V2.BjgTIp2Z2X/JeEmvFXoB6wUik/Xj2HK', '09812371231', '312 Hipolito St. Sitio Sandayong, Cebu, Cebu 6000', '2025-02-28 04:03:49', 'uploads/67d796730059b_book9.jpg'),
 (12, 'Manny', 'Pacs', 'manny@gmail.com', '$2y$10$SfNLIyK3i7DEFDALyMZNCO089blWCCAZuE1lD2HBQVawOAs9hZNG.', '09121231234', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', '2025-03-06 07:22:46', 'uploads/67c94d462951b_Man-PNG-Free-Download.png'),
 (13, 'Jundel', 'Malazarte', 'jundelmalazarte348@gmail.com', '$2y$10$HVIbYCfBvpprnRC367OxNOPsFr4MvqxrE3LVUf6KRE/SAEM.wJF5q', '09812371231', 'Sambag 1 Cebu City', '2025-03-10 02:03:40', 'uploads/67ce487c82fe8_default.jpg');
 
@@ -302,7 +290,7 @@ ALTER TABLE `books`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=115;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
 
 --
 -- AUTO_INCREMENT for table `gcash_users2`

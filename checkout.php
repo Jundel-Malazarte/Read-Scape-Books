@@ -101,68 +101,48 @@ mysqli_close($conn);
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link rel="icon" href="./images/Readscape.png">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-        }
-
+        /* Navbar Styles */
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #212529;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
         }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
+        .navbar .fw-bold {
+            font-size: 1.2rem;
         }
 
-        .navbar a:hover {
-            background-color: #555;
-            border-radius: 5px;
+        .dropdown-menu {
+            font-size: 1.1rem;
         }
 
-        .profile-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .profile-info img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
+        /* Sidenav Styles */
         .sidenav {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1;
+            z-index: 1100;
             top: 0;
             left: 0;
-            background-color: #212121;
+            background-color: #212529;
             overflow-x: hidden;
-            transition: 0.5s;
+            transition: 0.3s;
             padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
         }
 
         .sidenav a {
-            padding: 8px 8px 8px 32px;
+            padding: 15px 25px;
             text-decoration: none;
-            font-size: 25px;
-            color: white;
+            font-size: 18px;
+            color: #f8f9fa;
             display: block;
             transition: 0.3s;
         }
 
         .sidenav a:hover {
-            color: #f1f1f1;
+            background-color: #343a40;
+            color: #fff;
         }
 
         .sidenav .closebtn {
@@ -173,187 +153,531 @@ mysqli_close($conn);
             margin-left: 50px;
         }
 
-        @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
 
-            .sidenav a {
-                font-size: 18px;
-            }
+        /* Your existing checkout styles below... */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin-bottom: 100px;
+        }
+
+        .navbar {
+            background-color: #212529;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1100;
+            top: 0;
+            left: 0;
+            background-color: #212529;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
+        }
+
+        .sidenav a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #f8f9fa;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            background-color: #343a40;
+            color: #fff;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            display: flex;
-            gap: 20px;
-            padding: 20px;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            /* Add this */
+            grid-template-columns: 3fr 1fr;
+            /* Add this */
+            gap: 2rem;
+            /* Add this */
         }
 
-        .left-column {
-            flex: 2;
+        .left-column,
+        .right-column {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+            padding: 2rem;
+            height: fit-content;
         }
 
         .right-column {
-            flex: 1;
+            position: sticky;
+            top: 2rem;
+            align-self: start;
+        }
+
+        .shipping-form input,
+        .shipping-form textarea,
+        .shipping-form select {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #212529;
+            margin-bottom: 0.5rem;
+        }
+
+        .address-preview {
             background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 1.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
+            border: 1px solid #dee2e6;
+        }
+
+        .address-preview h3 {
+            color: #212529;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .address-preview p {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .address-preview p strong {
+            color: #495057;
+            min-width: 140px;
+        }
+
+        .address-preview p span {
+            color: #212529;
+            font-weight: 500;
+            text-align: right;
+            flex: 1;
+        }
+
+        .edit-address-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .edit-address-btn:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .edit-address-btn i {
+            font-size: 0.9rem;
+        }
+
+        .address-preview h3 {
+            color: #212529;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
         }
 
         .cart-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .cart-table th,
-        .cart-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+            margin-top: 2rem;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
         .cart-table th {
-            font-size: 14px;
-            font-weight: 700;
-            color: #666;
-            text-transform: uppercase;
+            background-color: #f8f9fa;
+            color: #212529;
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .cart-table th:not(:last-child) {
+            padding-right: 2rem;
+            /* Add space between headers */
         }
 
         .cart-table td {
-            font-size: 14px;
-            color: #333;
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        /* Column widths */
+        .cart-table th:nth-child(1) {
+            width: 35%;
+        }
+
+        /* Items column */
+        .cart-table th:nth-child(2) {
+            width: 20%;
+        }
+
+        /* Author column */
+        .cart-table th:nth-child(3) {
+            width: 15%;
+        }
+
+        /* Quantity column */
+        .cart-table th:nth-child(4) {
+            width: 15%;
+        }
+
+        /* Price column */
+        .cart-table th:nth-child(5) {
+            width: 10%;
+        }
+
+        /* Total column */
+        .cart-table th:nth-child(6) {
+            width: 5%;
+        }
+
+        /* Action column */
+
+        /* Remove button styling */
+        .remove-btn {
+            color: #fff;
+            background-color: #dc3545;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .remove-btn:hover {
+            background-color: #bb2d3b;
+            transform: scale(1.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .item-details {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 1rem;
         }
 
         .item-details img {
             width: 80px;
-            height: 80px;
+            height: 120px;
             object-fit: cover;
-            border-radius: 5px;
+            border-radius: 8px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
         }
 
         .item-details h3 {
-            font-size: 16px;
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #212529;
             margin: 0;
         }
 
-        .shipping-form,
-        .address-preview {
-            margin-top: 20px;
+        .price-summary {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
         }
 
-        .shipping-form label,
-        .address-preview p {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 14px;
+        .price-summary h3 {
+            color: #212529;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
         }
 
-        .shipping-form input,
-        .shipping-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
+        .total-price p {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            color: #6c757d;
         }
 
-        .shipping-form textarea {
-            height: 100px;
-            resize: vertical;
+        .total-price strong {
+            color: #212529;
         }
 
-        .edit-address-btn,
-        .checkout-btn {
-            background-color: #000;
+        .btn-edit {
+            background-color: #6c757d;
             color: white;
-            padding: 10px 20px;
             border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-            display: block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .checkout-btn {
+            background-color: #0d6efd;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 500;
             width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover:not([disabled]) {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+        }
+
+        .checkout-btn[disabled] {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .right-column {
+                margin-top: 2rem;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: 1fr;
+                /* Stack columns on mobile */
+            }
+
+            .right-column {
+                position: static;
+                /* Remove sticky positioning on mobile */
+                margin-top: 2rem;
+            }
+        }
+
+        /* Add these CSS rules */
+        .order-summary {
+            background: #fff;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, .075);
+            border: 1px solid #dee2e6;
+            margin-top: 2rem;
+        }
+
+        .order-summary h2 {
+            color: #212529;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-table thead th {
+            background-color: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            padding: 1.25rem 1rem;
+            border-bottom: 2px solid #dee2e6;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 0.5px;
+        }
+
+        .cart-table tbody td {
+            padding: 1.25rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .cart-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .cart-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .item-details {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .item-details img {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, .15);
+        }
+
+        .item-details h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #212529;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .item-quantity {
+            background: #e9ecef;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            min-width: 60px;
             text-align: center;
-            margin-top: 10px;
         }
 
-        .edit-address-btn:hover,
-        .checkout-btn:hover {
-            background-color: #333;
-        }
-
-        .address-preview {
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-        }
-
-        .price-summary h3,
-        .payment-methods h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1a2b49;
-            margin-bottom: 20px;
-        }
-
-        .total-price {
-            font-size: 16px;
-            margin-top: 15px;
-        }
-
-        .payment-methods select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            margin-top: 5px;
-        }
-
-        .readscape {
+        .remove-btn {
+            color: #fff;
+            background-color: #dc3545;
+            border: none;
             border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            padding: 0;
+            margin: 0 auto;
+        }
+
+        .remove-btn:hover {
+            background-color: #bb2d3b;
+            transform: scale(1.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Summary section at bottom of table */
+        .order-totals {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #dee2e6;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            font-size: 1.1rem;
+        }
+
+        .total-row.final {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #212529;
+            border-top: 2px solid #dee2e6;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div id="Sidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
-            <a href="dashboard.php">Home</a>
-            <a href="profile.php">Profile</a>
-            <a href="changepass.php">Change password</a>
-            <a href="cart.php">Cart</a>
-            <a href="order.php">My Orders</a>
-            <a href="logout.php">Log Out</a>
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <span class="navbar-toggler-icon" onclick="openNav()" style="cursor: pointer; margin-right: 1rem;"></span>
+                <img src="./images/Readscape.png" alt="ReadScape" class="rounded-circle" width="40" height="40">
+                <span class="ms-2 text-white fw-bold">ReadScape</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="position-relative me-3">
+                    <a href="cart.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-counter"><?php echo $cart_count; ?></span>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="<?php echo $profile_image; ?>" alt="Profile" class="rounded-circle me-2" width="40" height="40">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                            <?php echo $fname . " " . $lname; ?>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="profile.php">Profile</a></li>
+                            <li><a class="dropdown-item" href="order.php">My Orders</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">☰<strong> ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
-        <div class="profile-info">
-            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
-                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;"><?php echo $cart_count; ?></span>
-            </a>
-            <br>
-            <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
-            <a href="logout.php"><strong>Log Out</strong></a>
-        </div>
+    </nav>
+
+    <div class="sidenav" id="Sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Home</a>
+        <a href="profile.php"><i class="fas fa-user me-2"></i>Profile</a>
+        <a href="changepass.php"><i class="fas fa-key me-2"></i>Change password</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart me-2"></i>Cart</a>
+        <a href="order.php"><i class="fas fa-shopping-bag me-2"></i>My Orders</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
     </div>
 
     <div class="container">
@@ -362,87 +686,145 @@ mysqli_close($conn);
             <form id="checkout-form" method="POST" action="process_order.php<?php echo isset($_GET['isbn']) ? '?isbn=' . urlencode($_GET['isbn']) : ''; ?>">
                 <!-- Existing form fields -->
                 <div class="shipping-form">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
+                    </div>
 
-                    <label for="first_name">First Name</label>
-                    <input type="text" id="first_name" name="first_name" value="<?php echo $fname; ?>" required>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $fname; ?>" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $lname; ?>" required>
+                        </div>
+                    </div>
 
-                    <label for="last_name">Last Name</label>
-                    <input type="text" id="last_name" name="last_name" value="<?php echo $lname; ?>" required>
+                    <div class="mb-3">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <input type="tel" class="form-control" id="mobile" name="mobile" placeholder="+639123456789" required>
+                    </div>
 
-                    <label for="mobile">Mobile Number</label>
-                    <input type="tel" id="mobile" name="mobile" placeholder="+639123456789" required>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                    </div>
 
-                    <label for="address">Address</label>
-                    <textarea id="address" name="address" required></textarea>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control" id="city" name="city" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="state" class="form-label">State/Province</label>
+                            <input type="text" class="form-control" id="state" name="state" required>
+                        </div>
+                    </div>
 
-                    <label for="city">City</label>
-                    <input type="text" id="city" name="city" required>
+                    <div class="mb-3">
+                        <label for="zipcode" class="form-label">Zipcode</label>
+                        <input type="text" class="form-control" id="zipcode" name="zipcode" required>
+                    </div>
 
-                    <label for="state">State/Province</label>
-                    <input type="text" id="state" name="state" required>
+                    <div class="mb-3">
+                        <label for="payment_method" class="form-label">Payment Method</label>
+                        <select class="form-select" id="payment_method" name="payment_method" required>
+                            <option value="cash_on_delivery">Cash on Delivery</option>
+                            <option value="gcash">GCash</option>
+                        </select>
+                    </div>
 
-                    <label for="zipcode">Zipcode</label>
-                    <input type="text" id="zipcode" name="zipcode" required>
-
-                    <label for="payment_method">Payment Method</label>
-                    <select id="payment_method" name="payment_method" required>
-                        <option value="cash_on_delivery">Cash on Delivery</option>
-                        <option value="gcash">GCash</option>
-                    </select>
-
-                    <button type="button" class="edit-address-btn" onclick="previewAddress()">Save Address</button>
+                    <button type="button" class="btn btn-primary w-100" onclick="previewAddress()">Save Address</button>
                 </div>
 
                 <div class="address-preview" id="address-preview" style="display: none;">
-                    <h3>Shipping Address</h3>
-                    <p><strong>Email:</strong> <span id="preview-email"></span></p>
-                    <p><strong>Name:</strong> <span id="preview-name"></span></p>
-                    <p><strong>Mobile Number:</strong> <span id="preview-mobile"></span></p>
-                    <p><strong>Address:</strong> <span id="preview-address"></span></p>
-                    <p><strong>City:</strong> <span id="preview-city"></span></p>
-                    <p><strong>State/Province:</strong> <span id="preview-state"></span></p>
-                    <p><strong>Zipcode:</strong> <span id="preview-zipcode"></span></p>
-                    <p><strong>Payment Method:</strong> <span id="preview-payment-method"></span></p>
-                    <button type="button" class="edit-address-btn" onclick="editAddress()">Edit Address</button>
+                    <h3><i class="fas fa-shipping-fast me-2"></i>Shipping Address</h3>
+                    <p>
+                        <strong>Email:</strong>
+                        <span id="preview-email"></span>
+                    </p>
+                    <p>
+                        <strong>Name:</strong>
+                        <span id="preview-name"></span>
+                    </p>
+                    <p>
+                        <strong>Mobile Number:</strong>
+                        <span id="preview-mobile"></span>
+                    </p>
+                    <p>
+                        <strong>Address:</strong>
+                        <span id="preview-address"></span>
+                    </p>
+                    <p>
+                        <strong>City:</strong>
+                        <span id="preview-city"></span>
+                    </p>
+                    <p>
+                        <strong>State/Province:</strong>
+                        <span id="preview-state"></span>
+                    </p>
+                    <p>
+                        <strong>Zipcode:</strong>
+                        <span id="preview-zipcode"></span>
+                    </p>
+                    <p>
+                        <strong>Payment Method:</strong>
+                        <span id="preview-payment-method"></span>
+                    </p>
+                    <button type="button" class="edit-address-btn" onclick="editAddress()">
+                        <i class="fas fa-edit"></i>
+                        Edit Address
+                    </button>
                 </div>
             </form>
 
-            <h2 style="margin-top: 30px;">Order Summary</h2>
-            <div class="order-summary" id="order-summary">
+
+            <div class="order-summary">
+                <h2><i class="fas fa-shopping-basket me-2"></i>Order Summary</h2>
                 <?php if (!empty($items)): ?>
-                    <table class="cart-table">
-                        <thead>
-                            <tr>
-                                <th>Items</th>
-                                <th>Author Name</th>
-                                <th>Quantity</th>
-                                <th>Price Each</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($items as $item): ?>
+                    <div class="table-responsive">
+                        <table class="cart-table">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <div class="item-details">
-                                            <img src="images/<?php echo htmlspecialchars($item['book_image']); ?>" alt="Book">
-                                            <div>
+                                    <th>Items</th>
+                                    <th>Author Name</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Price Each</th>
+                                    <th class="text-end">Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($items as $item): ?>
+                                    <tr data-isbn="<?php echo htmlspecialchars($item['isbn']); ?>">
+                                        <td>
+                                            <div class="item-details">
+                                                <img src="images/<?php echo htmlspecialchars($item['book_image']); ?>" alt="Book">
                                                 <h3><?php echo htmlspecialchars($item['title']); ?></h3>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td><?php echo htmlspecialchars($item['author'] ?? 'Unknown'); ?></td>
-                                    <td><?php echo htmlspecialchars($item['quantity']); ?></td>
-                                    <td>₱<?php echo number_format($item['price'], 2, '.', ','); ?></td>
-                                    <td>₱<?php echo number_format($item['total'], 2, '.', ','); ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($item['author'] ?? 'Unknown'); ?></td>
+                                        <td class="text-center">
+                                            <span class="item-quantity"><?php echo htmlspecialchars($item['quantity']); ?></span>
+                                        </td>
+                                        <td class="text-end item-price">₱<?php echo number_format($item['price'], 2, '.', ','); ?></td>
+                                        <td class="text-end item-price">₱<?php echo number_format($item['total'], 2, '.', ','); ?></td>
+                                        <!-- <td class="text-center">
+                                            <button class="remove-btn" onclick="removeItem('<?php echo $item['isbn']; ?>')" title="Remove item">×</button>
+                                        </td> -->
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
                 <?php else: ?>
-                    <p>No items in the checkout.</p>
+                    <div class="text-center py-4">
+                        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                        <p class="h5 text-muted">No items in the checkout.</p>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -548,6 +930,63 @@ mysqli_close($conn);
                     });
             } else {
                 form.submit();
+            }
+        }
+
+        // Replace the existing removeItem function in checkout.php
+        function removeItem(isbn) {
+            if (confirm('Are you sure you want to remove this item?')) {
+                const formData = new FormData();
+                formData.append('isbn', isbn);
+
+                fetch('remove_cart_item.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Remove the item row from the table
+                            const row = document.querySelector(`tr[data-isbn="${isbn}"]`);
+                            if (row) {
+                                row.remove();
+                            }
+
+                            // Update cart counter
+                            const cartCounter = document.getElementById('cart-counter');
+                            const currentCount = parseInt(cartCounter.textContent);
+                            cartCounter.textContent = currentCount - 1;
+
+                            // Update totals
+                            let subtotal = 0;
+                            const shipping = 100;
+                            document.querySelectorAll('.cart-table tbody tr').forEach(row => {
+                                const total = parseFloat(row.querySelector('.item-price:last-child').textContent.replace('₱', '').replace(',', ''));
+                                subtotal += total;
+                            });
+
+                            // Update summary display
+                            const total = subtotal + shipping;
+                            document.querySelector('.total-price p:first-child').textContent = `Items: ${document.querySelectorAll('.cart-table tbody tr').length}`;
+                            document.querySelector('.total-price p:last-child strong').textContent = `₱${total.toFixed(2)}`;
+
+                            // If no items left, reload the page
+                            if (document.querySelectorAll('.cart-table tbody tr').length === 0) {
+                                window.location.reload();
+                            }
+                        } else {
+                            alert('Failed to remove item: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error removing item. Please try again.');
+                    });
             }
         }
     </script>

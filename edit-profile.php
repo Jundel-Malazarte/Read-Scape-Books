@@ -46,211 +46,97 @@ ob_end_flush(); // End buffering
     <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            /* Light background for better contrast */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin-bottom: 100px;
         }
 
+        /* Navbar Styles */
         .navbar {
+            background-color: #212529;
+            padding: 0.75rem 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+            height: 75px;
             display: flex;
+            align-items: center;
+        }
+
+        .navbar .container-fluid {
+            display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            height: 100%;
         }
 
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
-        }
-
-        .navbar a:hover {
-            background-color: #555;
-            border-radius: 5px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 15px;
-        }
-
-        .profile-info {
+        .navbar-brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 1rem;
         }
 
-        .profile-info img {
-            width: 40px;
+        .navbar-brand img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+        }
+
+        .navbar-brand .brand-text {
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .navbar .btn-outline-light {
             height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .logout {
-            margin-left: auto;
-        }
-
-        .container {
-            margin-left: 2rem;
-        }
-
-        /* Profile Card Styles */
-        .profile-card {
-            width: 400px;
-            margin: 10px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-        }
-
-        .profile-card img {
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 5px;
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-        }
-
-        .profile-card h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-align: center;
-            color: #333;
-        }
-
-        .profile-card p {
-            margin: 8px 0;
-            text-align: center;
-            color: #555;
-        }
-
-        .profile-card strong {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .profile-details {
-            text-align: center;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-        }
-
-        label {
-            font-size: 14px;
-            font-weight: bold;
-            text-align: left;
-            width: 100%;
-            color: #444;
-        }
-
-        input[type="text"],
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="file"]:focus {
-            border-color: #1e88e5;
-            outline: none;
-        }
-
-        .btn {
-            width: 45%;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
-            background: #1e88e5;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            background: #1e88e5;
-            opacity: 0.8;
-        }
-
-
-        .cancel,
-        .cancel a {
-            margin-top: 10px;
-            background-color: #f41304;
-        }
-
-        .cancel:hover {
-            background-color: #f41304;
-            opacity: 0.8;
-        }
-
-        .action-button {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            /* Adds space between buttons */
-            width: 100%;
-        }
-
-        span {
-            font-size: 24px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            padding: 0 1rem;
         }
 
-        .readscape {
-            width: 40px;
-            /* Match this size with the font-size of the menu icon */
-            height: 40px;
-            /* Keep height and width equal */
+        .navbar .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .navbar .profile-section img {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.5);
         }
 
+        .dropdown-menu {
+            font-size: 1.1rem;
+        }
 
-        /** Slider nav */
+        /* Sidenav Styles */
         .sidenav {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1;
+            z-index: 1100;
             top: 0;
             left: 0;
-            background-color: #212121;
+            background-color: #212529;
             overflow-x: hidden;
-            transition: 0.5s;
+            transition: 0.3s;
             padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
         }
 
         .sidenav a {
-            padding: 8px 8px 8px 32px;
+            padding: 15px 25px;
             text-decoration: none;
-            font-size: 25px;
-            color: white;
+            font-size: 18px;
+            color: #f8f9fa;
             display: block;
             transition: 0.3s;
         }
 
         .sidenav a:hover {
-            color: #f1f1f1;
+            background-color: #343a40;
+            color: #fff;
         }
 
         .sidenav .closebtn {
@@ -261,110 +147,261 @@ ob_end_flush(); // End buffering
             margin-left: 50px;
         }
 
-        @media screen and (max-height: 450px) {
-            .sidenav {
-                padding-top: 15px;
-            }
+        /* Profile Card Styles */
+        .profile-card {
+            max-width: 500px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+            padding: 2rem;
+        }
 
-            .sidenav a {
-                font-size: 18px;
-            }
+        .profile-card h2 {
+            color: #212529;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .profile-image-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 2rem;
+        }
+
+        .profile-image-container img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+        }
+
+        .image-upload-label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #0d6efd;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .image-upload-label:hover {
+            background: #0b5ed7;
+            transform: scale(1.1);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #0d6efd;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0b5ed7;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #bb2d3b;
+            transform: translateY(-2px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .action-buttons .btn {
+            flex: 1;
+        }
+
+        #profile_image {
+            display: none;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <!-- Logo here! -->
-        <div id="Sidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="dashboard.php">Home</a>
-            <a href="profile.php">Profile</a>
-            <a href="changepass.php">Change password</a>
-            <a href="cart.php">Cart</a>
-            <a href="order.php">My Orders</a>
-            <a href="logout.php">Log Out</a>
-        </div>
-        <span style="font-size:30px;cursor:pointer;color:white;" onclick="openNav()">&#9776;<strong>ReadScape</strong> <img src="./images/Readscape.png" alt="logo" class="readscape" width="50px" height="50px"></span>
+    <nav class="navbar navbar-dark">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <span class="navbar-toggler-icon" onclick="openNav()" style="cursor: pointer; margin-right: 1rem;"></span>
+                <a href="dashboard.php" class="navbar-brand">
+                    <img src="./images/Readscape.png" alt="ReadScape Logo">
+                    <span class="brand-text">ReadScape</span>
+                </a>
+            </div>
 
-        <script>
-            function openNav() {
-                document.getElementById("Sidenav").style.width = "240px";
-            }
-
-            function closeNav() {
-                document.getElementById("Sidenav").style.width = "0";
-            }
-        </script>
-        <div class="profile-info">
-            <a href="cart.php" style="position: relative; color: white; text-decoration: none;">
-                🛒 Cart <span id="cart-counter" style="background: red; color: white; border-radius: 50%; padding: 5px 10px; font-size: 14px; position: absolute; top: -5px; right: -10px;">0</span>
-            </a>
-            <br>
-            <a href="profile.php"><strong><?php echo $fname . " " . $lname; ?></strong></a>
-            <a href="logout.php"><strong>Log Out</strong></a>
+            <div class="profile-section">
+                <div class="position-relative">
+                    <a href="cart.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" id="cart-counter"><?php echo isset($cart_count) ? $cart_count : '0'; ?></span>
+                    </a>
+                </div>
+                <div class="d-flex align-items-center">
+                    <img src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile" class="me-2">
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <?php echo $fname . " " . $lname; ?>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="profile.php"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li><a class="dropdown-item" href="order.php"><i class="fas fa-shopping-bag me-2"></i>My Orders</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
+    </nav>
+
+    <div class="sidenav" id="Sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="dashboard.php"><i class="fas fa-home me-2"></i>Home</a>
+        <a href="profile.php"><i class="fas fa-user me-2"></i>Profile</a>
+        <a href="changepass.php"><i class="fas fa-key me-2"></i>Change password</a>
+        <a href="cart.php"><i class="fas fa-shopping-cart me-2"></i>Cart</a>
+        <a href="order.php"><i class="fas fa-shopping-bag me-2"></i>My Orders</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
     </div>
+
+    <script>
+        function openNav() {
+            document.getElementById("Sidenav").style.width = "240px";
+        }
+
+        function closeNav() {
+            document.getElementById("Sidenav").style.width = "0";
+        }
+
+        // Update cart counter
+        function updateCartCounter() {
+            fetch('cart_counter.php')
+                .then(response => response.text())
+                .then(count => {
+                    document.getElementById("cart-counter").innerText = count;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        document.addEventListener("DOMContentLoaded", updateCartCounter);
+    </script>
 
     <div class="profile-card">
-        <div>
-            <h2>Update Profile</h2>
-        </div>
-        <!-- Profile Image Preview -->
-        <img id="profilePreview" src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
+        <h2><i class="fas fa-user-edit me-2"></i>Edit Profile</h2>
 
-        <div class="profile-details">
-            <form action="update-profile.php" method="post" enctype="multipart/form-data">
-                <!-- Profile Image Upload -->
-                <label for="profile_image"><strong>Profile Image:</strong></label>
-                <input type="file" id="profile_image" name="profile_image" accept="uploads/*" onchange="previewImage(event)">
-                <br>
+        <form action="update-profile.php" method="post" enctype="multipart/form-data">
+            <div class="profile-image-container">
+                <img id="profilePreview" src="<?php echo $profile_image ? $profile_image : 'uploads/default.jpg'; ?>" alt="Profile Picture">
+                <label for="profile_image" class="image-upload-label">
+                    <i class="fas fa-camera"></i>
+                </label>
+                <input type="file" class="form-control" id="profile_image" name="profile_image" accept="image/*" onchange="previewImage(event)" hidden>
+            </div>
 
-                <!-- First Name Field -->
-                <label for="fname"><strong>First Name:</strong></label>
-                <input type="text" id="fname" name="fname" value="<?php echo $fname; ?>" required>
-                <br>
+            <div class="mb-3">
+                <label for="fname" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="fname" name="fname" value="<?php echo $fname; ?>" required>
+            </div>
 
-                <!-- Last Name Field -->
-                <label for="lname"><strong>Last Name:</strong></label>
-                <input type="text" id="lname" name="lname" value="<?php echo $lname; ?>" required>
-                <br>
+            <div class="mb-3">
+                <label for="lname" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="lname" name="lname" value="<?php echo $lname; ?>" required>
+            </div>
 
-                <!-- Action Buttons -->
-                <div class="action-button">
-                    <button type="submit" class="btn">Update</button>
-                    <a href="profile.php" class="btn cancel">Cancel</a>
-                </div>
-            </form>
-        </div>
-
-        <!-- JavaScript for Image Preview -->
-        <script>
-            function previewImage(event) {
-                const reader = new FileReader();
-                reader.onload = function() {
-                    const profilePreview = document.getElementById('profilePreview');
-                    profilePreview.src = reader.result;
-                };
-                reader.readAsDataURL(event.target.files[0]);
-
-            }
-
-            function updateCartCounter() {
-                let xhr = new XMLHttpRequest();
-                xhr.open("GET", "cart_counter.php", true);
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4 && xhr.status == 200) {
-                        document.getElementById("cart-counter").innerText = xhr.responseText;
-                    }
-                };
-                xhr.send();
-            }
-
-            document.addEventListener("DOMContentLoaded", updateCartCounter);
-        </script>
-
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>Update Profile
+                </button>
+                <a href="profile.php" class="btn btn-danger">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </a>
+            </div>
+        </form>
     </div>
+
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const profilePreview = document.getElementById('profilePreview');
+                profilePreview.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+
+        }
+
+        function updateCartCounter() {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "cart_counter.php", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("cart-counter").innerText = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+        document.addEventListener("DOMContentLoaded", updateCartCounter);
+    </script>
+
 </body>
 
 </html>
