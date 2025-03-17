@@ -2,6 +2,11 @@
 session_start();
 include 'db_connect.php';
 
+if (!isset($_SESSION['id'])) {
+    header("Location: sign-in.php");
+    exit();
+}
+
 // Get the mobile number from checkout data
 $mobile = isset($_SESSION['checkout_data']['mobile']) ? substr($_SESSION['checkout_data']['mobile'], 3) : '';
 

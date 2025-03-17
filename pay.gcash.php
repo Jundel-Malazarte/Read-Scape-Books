@@ -2,6 +2,11 @@
 session_start();
 include 'db_connect.php';
 
+if (!isset($_SESSION['id'])) {
+    header("Location: sign-in.php");
+    exit();
+}
+
 // Get GCash balance
 $gcash_number = $_SESSION['gcash_number'] ?? '';
 $stmt = $conn->prepare("SELECT balance FROM gcash_users2 WHERE mobile_number = ?");
