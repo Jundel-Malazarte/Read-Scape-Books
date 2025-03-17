@@ -1,12 +1,6 @@
 <?php
 @include 'db_connect.php';
 
-// Redirect to login if not logged in
-if (!isset($_SESSION['id'])) {
-    header("Location: sign-in.php");
-    exit();
-}
-
 if (isset($_POST["submit"])) {
     $fname = trim($_POST["fname"]);
     $lname = trim($_POST["lname"]);
