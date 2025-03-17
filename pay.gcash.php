@@ -214,7 +214,7 @@ if (isset($_POST['process_payment'])) {
                     <img src="./images/gcash.png" alt="gcash" class="h-60 object-contain" />
                     <div class="container-box">
                         <div class="flex flex-col gap-4">
-                            <span class="text-black text-xl font-20px text-center mt-4"  style="color: #283593;"><strong>ReadScape</strong></span>
+                            <span class="text-black text-xl font-20px text-center mt-4" style="color: #283593;"><strong>ReadScape</strong></span>
                             <div class="pay-with-row">
                                 <span class="pay-with-left font-18px text-1xl">PAY WITH</span>
                                 <span class="text-black font-20px text-xl">Balance</span>
@@ -232,10 +232,10 @@ if (isset($_POST['process_payment'])) {
                             <div class="flex flex-col items-center py-1">
                                 <span class="text-center text-sm text-black">Please review to ensure that the details are correct before you proceed.</span>
                                 <br>
-                                    <div class="flex justify-between w-full mb-3 mt-3">
-                                        <span class="text-black font-bold">Total</span>
-                                        <span class="text-black font-bold text-xl">PHP <?php echo $total_formatted; ?></span>
-                                    </div>
+                                <div class="flex justify-between w-full mb-3 mt-3">
+                                    <span class="text-black font-bold">Total</span>
+                                    <span class="text-black font-bold text-xl">PHP <?php echo $total_formatted; ?></span>
+                                </div>
                                 <form method="POST" class="w-full flex flex-col items-center gap-4 mb-3">
                                     <?php if (isset($error)): ?>
                                         <div class="text-red-500 mb-2"><?php echo $error; ?></div>
