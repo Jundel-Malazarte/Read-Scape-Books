@@ -4,39 +4,13 @@
 session_start();
 
 // Ensure session user is set
-if (!isset($_SESSION['id'])) {
-    header("Location: ../admin/admin.php", true, 302);
+if (!isset($_SESSION['admin_login']) || !$_SESSION['admin_login']) {
+    header("Location: admin.php", true, 302);
     exit();
 }
 
-$user_id = $_SESSION['id'];
-
-// Fetch user details
-$sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-if ($row = mysqli_fetch_assoc($result)) {
-    $fname = htmlspecialchars($row['fname']);
-    $lname = htmlspecialchars($row['lname']);
-    $profile_image = $row['profile_image'];
-
-    // Ensure correct path to the image
-    $default_image = '../uploads/default.jpg';
-    if (empty($profile_image) || !file_exists("../uploads/" . $profile_image)) {
-        $profile_image = $default_image;
-    } else {
-        $profile_image = '../uploads/' . $profile_image;
-    }
-} else {
-    $fname = "User";
-    $lname = "Not Found";
-    $profile_image = '../uploads/default.jpg';
-}
-
-mysqli_stmt_close($stmt);
+$admin_id = $_SESSION['admin_id'];
+$admin_username = $_SESSION['admin_username'];
 
 // Fetch total users count
 $total_users_query = mysqli_query($conn, "SELECT COUNT(*) FROM users");
@@ -173,14 +147,16 @@ mysqli_close($conn);
                 <a href="../admin/admin_dashboard.php" class="btn btn-outline-light">Home</a>
             </div>
             <div class="profile-info">
-                <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-                <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
+                <span>Welcome, <?php echo htmlspecialchars($admin_username); ?></span>
                 <a href="../admin/logout.php" class="btn btn-danger">Log Out</a>
             </div>
         </div>
     </nav>
 
     <div class="dashboard-wrapper">
+        <h1>Admin Dashboard</h1>
+        <hr>
+        <h2>Quick Stats</h2>
         <div class="dashboard-cards">
             <a href="total_users.php" class="card-link">
                 <div class="card">

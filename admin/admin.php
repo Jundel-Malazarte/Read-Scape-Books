@@ -3,45 +3,33 @@
 session_start();
 
 if (isset($_POST['submit'])) {
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
     $pass = $_POST['pass'];
 
-    // Check if user exists
-    $select = "SELECT * FROM users WHERE email = '$email'";
+    // Check if admin exists
+    $select = "SELECT * FROM admin_accounts WHERE username = '$username'";
     $result = mysqli_query($conn, $select);
 
     if (mysqli_num_rows($result) > 0) {
         $row = mysqli_fetch_array($result);
 
         // Verify hashed password
-        if (password_verify($pass, $row["pass"])) {
-            $_SESSION["login"] = true;
-            $_SESSION["id"] = $row["id"];
-            $_SESSION["fname"] = $row["fname"];
-
-            // Set cookies if "Remember Me" is checked
-            if (isset($_POST['remember'])) {
-                setcookie('email', $email, time() + (86400 * 30), "/"); // 30 days
-                setcookie('pass', $pass, time() + (86400 * 30), "/"); // 30 days
-            } else {
-                // Clear cookies if "Remember Me" is not checked
-                setcookie('email', '', time() - 3600, "/");
-                setcookie('pass', '', time() - 3600, "/");
-            }
+        if (password_verify($pass, $row["password"])) {
+            $_SESSION["admin_login"] = true;
+            $_SESSION["admin_id"] = $row["id"];
+            $_SESSION["admin_username"] = $row["username"];
 
             header("Location: admin_dashboard.php");
             exit();
         } else {
-            echo "<script>alert('Incorrect email or password!');</script>";
+            // echo password_hash('admin1234@', PASSWORD_BCRYPT);
+            echo "<script>alert('Incorrect username or password!');</script>";
+            
         }
     } else {
-        echo "<script>alert('User not found!');</script>";
+        echo "<script>alert('Admin not found!');</script>";
     }
 }
-
-// Retrieve email and password from cookies if they exist
-$email = isset($_COOKIE['email']) ? $_COOKIE['email'] : '';
-$pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -97,30 +85,6 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             box-shadow: 0 0 0 0.2rem rgba(33, 33, 33, 0.25);
         }
 
-        .options-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 1rem 0;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #212121;
-        }
-
-        .forgot-password a {
-            color: #212121;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            text-decoration: underline;
-        }
-
         .btn-login {
             background-color: #212121;
             color: white;
@@ -136,20 +100,22 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             color: white;
         }
 
-        .switch-user {
+        .links-container {
             text-align: center;
-            margin-top: 1rem;
         }
 
-        .switch-user a {
+        .links-container a {
             color: #212121;
             text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
             transition: all 0.3s ease;
         }
 
-        .switch-user a:hover {
+        .links-container a:hover {
             text-decoration: underline;
         }
+
     </style>
 </head>
 
@@ -162,30 +128,17 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
 
         <form action="" method="post" autocomplete="off">
             <div class="mb-3">
-                <input type="text" class="form-control" id="email" name="email"
-                    placeholder="Email" value="<?php echo $email; ?>" required>
+                <input type="text" class="form-control" id="username" name="username"
+                    placeholder="Username" required>
             </div>
 
             <div class="mb-3">
                 <input type="password" class="form-control" id="pass" name="pass"
-                    placeholder="Password" value="<?php echo $pass; ?>" required>
+                    placeholder="Password" required>
             </div>
-
-            <div class="options-container">
-                <div class="remember-me">
-                    <input type="checkbox" class="form-check-input" id="checkbox" name="remember"
-                        <?php if ($email && $pass) echo 'checked'; ?>>
-                    <label class="form-check-label" for="checkbox">Remember Me</label>
-                </div>
-                <div class="forgot-password">
-                    <a href="#">Forgot Password?</a>
-                </div>
-            </div>
-
             <button type="submit" name="submit" class="btn btn-login">Login</button>
-
-            <div class="switch-user">
-                <a href="../sign-in.php">Switch to User</a>
+            <div class="links-container">
+                <a href="../sign-in.php" class="text-center mt-4">Switch to user</a>
             </div>
         </form>
     </div>
