@@ -20,7 +20,7 @@
 
 ## Payment Method: 
 - Cash on delivery
--- GCash
+- GCash
 ## Receipt
 - COD receipt 
 - Gcash receipt
