@@ -35,8 +35,11 @@ ob_end_flush(); // End buffering
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Change Password</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap" rel="stylesheet">
     <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
@@ -210,19 +213,62 @@ ob_end_flush(); // End buffering
         <form action="" method="post">
             <div class="mb-3">
                 <label for="oldpwd" class="form-label">Current Password</label>
-                <input type="password" class="form-control" id="oldpwd" name="oldpwd" required>
+                <div style="position: relative;">
+                    <input type="password" class="form-control" id="oldpwd" name="oldpwd" required oninput="validateOldPassword()">
+                    <i class="fas fa-eye" id="toggleOldPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                </div>
+                <script>
+                    function validateOldPassword() {
+                        const oldPassword = document.getElementById('oldpwd').value;
+                        const oldPasswordCheck = document.getElementById('oldpassword-check');
+                        fetch('validate_old_password.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: `oldpwd=${oldPassword}`
+                        })
+                        .then(response => response.text())
+                        .then(isValid => {
+                            if (isValid === 'true') {
+                                oldPasswordCheck.style.color = 'green';
+                                oldPasswordCheck.innerHTML = '<i class="fas fa-check-circle"></i> Password correct';
+                            } else {
+                                oldPasswordCheck.style.color = 'red';
+                                oldPasswordCheck.innerHTML = '<i class="fas fa-times-circle"></i> Password is incorrect';
+                            }
+                        })
+                        .catch(error => console.error('Error:', error));
+                    }
+                </script>
             </div>
-
             <div class="mb-3">
                 <label for="newpwd" class="form-label">New Password</label>
-                <input type="password" class="form-control" id="newpwd" name="newpwd" required>
+                <div style="position: relative;">
+                    <input type="password" class="form-control" id="newpwd" name="newpwd" required oninput="validatePassword()">
+                    <i class="fas fa-eye" id="togglePassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                </div>
             </div>
-
             <div class="mb-3">
                 <label for="conpwd" class="form-label">Confirm New Password</label>
-                <input type="password" class="form-control" id="conpwd" name="conpwd" required>
+                <div style="position: relative;">
+                    <input type="password" class="form-control" id="conpwd" name="conpwd" required>
+                    <i class="fas fa-eye" id="toggleConfirmPassword" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                </div>
             </div>
-
+            <div id="uppercase-check" style="color: red;">
+                <i class="fas fa-times-circle"></i> At least 1 uppercase letter
+            </div>
+            <div id="length-check" style="color: red;">
+                <i class="fas fa-times-circle"></i> Minimum 8 characters
+            </div>
+            <div id="special-check" style="color: red;">
+                <i class="fas fa-times-circle"></i> At least 1 special character
+            </div>   
+            <div id="number-check" style="color: red;">
+                <i class="fas fa-times-circle"></i> At least 1 number
+            </div>
+            <hr>
             <button type="submit" class="btn btn-primary btn-update">
                 <i class="fas fa-save me-2"></i>Update Password
             </button>
@@ -231,9 +277,9 @@ ob_end_flush(); // End buffering
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             @include 'db_connect.php';
 
-            $old_password = $_POST['old-password'];
-            $new_password = $_POST['new-password'];
-            $confirm_password = $_POST['confirm-password'];
+            $old_password = $_POST['oldpwd'];
+            $new_password = $_POST['newpwd'];
+            $confirm_password = $_POST['conpwd'];
 
             if ($new_password !== $confirm_password) {
                 echo "<p style='color: red;'>New passwords do not match.</p>";
@@ -251,7 +297,7 @@ ob_end_flush(); // End buffering
                         $stmt = mysqli_prepare($conn, $sql);
                         mysqli_stmt_bind_param($stmt, "si", $new_password_hashed, $user_id);
                         if (mysqli_stmt_execute($stmt)) {
-                            echo "<script>alert('Password Updated Successfully!'); window.location.href='changepass.php';</script>";
+                            echo "<script>alert('Password Updated Successfully!'); window.location.href='dashboard.php';</script>";
                         } else {
                             echo "<p style='color: red;'>Error updating password.</p>";
                         }
@@ -290,6 +336,67 @@ ob_end_flush(); // End buffering
         }
 
         document.addEventListener("DOMContentLoaded", updateCartCounter);
+
+        // for password validation
+        function validatePassword() {
+            const password = document.getElementById('newpwd').value;
+            
+            const uppercaseCheck = document.getElementById('uppercase-check');
+            if (password.match(/[A-Z]/)) {
+                uppercaseCheck.style.color = 'green';
+                uppercaseCheck.innerHTML = '<i class="fas fa-check-circle"></i> At least 1 uppercase letter';
+            } else {
+                uppercaseCheck.style.color = 'red';
+                uppercaseCheck.innerHTML = '<i class="fas fa-times-circle"></i> At least 1 uppercase letter';
+            }
+
+            const lengthCheck = document.getElementById('length-check');
+            if (password.length >= 8) {
+                lengthCheck.style.color = 'green';
+                lengthCheck.innerHTML = '<i class="fas fa-check-circle"></i> Minimum 8 characters';
+            } else {
+                lengthCheck.style.color = 'red';
+                lengthCheck.innerHTML = '<i class="fas fa-times-circle"></i> Minimum 8 characters';
+            }
+            const specialCheck = document.getElementById('special-check');
+            if (password.match(/[!@#$%^&*?"{}|<>]/)) {
+                specialCheck.style.color = 'green';
+                specialCheck.innerHTML = '<i class="fas fa-check-circle"></i> At least 1 special character';
+            } else {
+                specialCheck.style.color = 'red';
+                specialCheck.innerHTML = '<i class="fas fa-times-circle"></i> At least 1 special character';
+            }
+            const numberCheck = document.getElementById('number-check');
+            if (password.match(/[0-9]/)) {
+                numberCheck.style.color = 'green';
+                numberCheck.innerHTML = '<i class="fas fa-check-circle"></i> At least 1 number';
+            } else {
+                numberCheck.style.color = 'red';
+                numberCheck.innerHTML = '<i class="fas fa-times-circle"></i> At least 1 number';
+            }
+        }
+
+        // Toggle password visibility
+        document.getElementById('toggleOldPassword').addEventListener('click', function () {
+            const oldPassword = document.getElementById('oldpwd');
+            const type = oldPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            oldPassword.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const newPassword = document.getElementById('newpwd');
+            const type = newPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            newPassword.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+            const confirmPassword = document.getElementById('conpwd');
+            const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPassword.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
     </script>
 </body>
 
