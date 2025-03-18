@@ -13,9 +13,6 @@ if (isset($_POST['submit'])) {
 
     // Debug login attempt
     error_log("Login attempt - Email: $email, Password: $pass");
-    // Check if admin exists
-    $select = "SELECT * FROM admin_accounts WHERE email = '$email'";
-    $result = mysqli_query($conn, $select);
 
     if ($email === 'admin@gmail.com' && $pass === 'admin123') {
         // Set session variables
