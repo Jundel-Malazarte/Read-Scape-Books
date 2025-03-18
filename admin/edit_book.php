@@ -1,13 +1,17 @@
 <?php
 @include '../db_connect.php';
-
 session_start();
 
 // Check if admin is logged in
-if (!isset($_SESSION['id'])) {
+if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin.php");
     exit();
 }
+
+// Get admin details from session
+$fname = $_SESSION['fname'];
+$lname = $_SESSION['lname'];
+$profile_image = '../uploads/default.jpg'; // Default admin image
 
 // Check if ISBN is provided
 if (!isset($_GET['isbn'])) {
@@ -82,91 +86,123 @@ mysqli_close($conn);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Book</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            width: 50%;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-top: 20px;
-        }
-
-        input,
-        button {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        button {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #218838;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
         }
 
         .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            padding: 10px 20px;
+            background-color: #212529;
+            padding: 1rem;
         }
 
         .navbar a {
-            color: white;
+            color: #fff;
             text-decoration: none;
-            padding: 10px 15px;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
         }
 
         .navbar a:hover {
-            background-color: #555;
+            background-color: #343a40;
             border-radius: 5px;
         }
 
-        .nav-links {
+        .profile-info {
             display: flex;
-            gap: 15px;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-top: 2rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .form-control {
+            margin-bottom: 1rem;
+        }
+
+        .btn-success {
+            width: 100%;
+            padding: 0.75rem;
+            font-weight: 500;
+        }
+
+        h1 {
+            color: #212529;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .book-image {
+            max-width: 150px;
+            margin: 0 auto 1rem;
+            display: block;
         }
     </style>
 </head>
 
 <body>
-    <div class="navbar">
-        <div class="nav-links">
-            <a href="total_books.php">Back to Books</a>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <div class="nav-links">
+                <a href="../admin/admin_dashboard.php" class="btn btn-outline-light">Home</a>
+                <a href="total_books.php" class="btn btn-outline-light">Back to Books</a>
+            </div>
+            <div class="profile-info">
+                <img src="<?php echo $profile_image; ?>" alt="Admin Profile">
+                <span class="text-white"><?php echo $fname . " " . $lname; ?></span>
+                <a href="../admin/logout.php" class="btn btn-danger">Log Out</a>
+            </div>
         </div>
-    </div>
+    </nav>
+
     <div class="container">
-        <h1>Edit Book</h1>
+        <h1 class="text-center">Edit Book</h1>
         <form action="" method="post" enctype="multipart/form-data">
-            <img src="<?php echo $book_image; ?>" width="100" height="150" alt="Book Image">
-            <input type="text" name="title" value="<?php echo $title; ?>" required>
-            <input type="text" name="author" value="<?php echo $author; ?>" required>
-            <input type="text" name="copyright" value="<?php echo $copyright; ?>" required>
-            <input type="number" name="qty" value="<?php echo $qty; ?>" required>
-            <input type="number" step="0.01" name="price" value="<?php echo $price; ?>" required>
-            <input type="file" name="book_image" accept="image/*">
-            <button type="submit">Update Book</button>
+            <img src="<?php echo $book_image; ?>" class="book-image" alt="Book Image">
+            <div class="mb-3">
+                <input type="text" class="form-control" name="title" value="<?php echo $title; ?>" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" name="author" value="<?php echo $author; ?>" required>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" name="copyright" value="<?php echo $copyright; ?>" required>
+            </div>
+            <div class="mb-3">
+                <input type="number" class="form-control" name="qty" value="<?php echo $qty; ?>" required>
+            </div>
+            <div class="mb-3">
+                <input type="number" step="0.01" class="form-control" name="price" value="<?php echo $price; ?>" required>
+            </div>
+            <div class="mb-3">
+                <input type="file" class="form-control" name="book_image" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-success">Update Book</button>
         </form>
     </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

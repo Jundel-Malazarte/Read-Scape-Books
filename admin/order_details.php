@@ -1,39 +1,17 @@
 <?php
 @include '../db_connect.php';
-
 session_start();
 
 // Check if admin is logged in
-if (!isset($_SESSION['id'])) {
+if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
     header("Location: admin.php");
     exit();
 }
 
-// Fetch logged-in admin details
-$user_id = $_SESSION['id'];
-
-$sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
-$stmt = mysqli_prepare($conn, $sql);
-mysqli_stmt_bind_param($stmt, "i", $user_id);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-
-if ($row = mysqli_fetch_assoc($result)) {
-    $fname = htmlspecialchars($row['fname']);
-    $lname = htmlspecialchars($row['lname']);
-    $profile_image = $row['profile_image'];
-    $default_image = '../uploads/default.jpg';
-    if (empty($profile_image) || !file_exists("../uploads/" . $profile_image)) {
-        $profile_image = $default_image;
-    } else {
-        $profile_image = '../uploads/' . $profile_image;
-    }
-} else {
-    $fname = "Admin";
-    $lname = "User";
-    $profile_image = '../uploads/default.jpg';
-}
-mysqli_stmt_close($stmt);
+// Get admin details from session
+$fname = $_SESSION['fname'];
+$lname = $_SESSION['lname'];
+$profile_image = '../uploads/default.jpg';
 
 // Get the order ID from the URL
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
@@ -139,6 +117,21 @@ mysqli_stmt_close($stmt);
             border: 2px solid #fff;
         }
 
+        .profile-info span {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .profile-info .btn-danger {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .profile-info .btn-danger:hover {
+            background-color: #bb2d3b;
+            border-color: #b02a37;
+        }
+
         .container {
             max-width: 800px;
             margin-top: 2rem;
@@ -225,6 +218,7 @@ mysqli_stmt_close($stmt);
             gap: 1rem;
             justify-content: center;
             margin-top: 2rem;
+            align-items: center;
         }
 
         .btn-primary,
@@ -256,6 +250,9 @@ mysqli_stmt_close($stmt);
             background-color: transparent;
             border: 1px solid #0d6efd;
             color: #0d6efd;
+            width: 400px;
+            min-width: 120px;
+            justify-content: center;
         }
 
         .btn-primary:hover {
@@ -295,11 +292,11 @@ mysqli_stmt_close($stmt);
         <div class="container-fluid">
             <div class="nav-links">
                 <a href="../admin/admin_dashboard.php" class="btn btn-outline-light">Home</a>
-                <a href="view_orders.php" class="btn btn-outline-light">View Orders</a>
+                <a href="view_orders.php" class="btn btn-outline-light">Back to Orders</a>
             </div>
             <div class="profile-info">
-                <img src="<?php echo $profile_image; ?>" alt="Profile Image">
-                <a href="profile.php"><?php echo $fname . " " . $lname; ?></a>
+                <img src="<?php echo $profile_image; ?>" alt="Admin Profile">
+                <span class="text-white"><?php echo $fname . " " . $lname; ?></span>
                 <a href="../admin/logout.php" class="btn btn-danger">Log Out</a>
             </div>
         </div>

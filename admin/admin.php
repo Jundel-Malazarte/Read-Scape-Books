@@ -2,44 +2,50 @@
 @include '../db_connect.php';
 session_start();
 
+// Add error logging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('error_log', 'C:/xampp/htdocs/Registration/admin/admin_error.log');
+
 if (isset($_POST['submit'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $pass = $_POST['pass'];
 
-    // Check if user exists
-    $select = "SELECT * FROM users WHERE email = '$email'";
-    $result = mysqli_query($conn, $select);
+    // Debug login attempt
+    error_log("Login attempt - Email: $email, Password: $pass");
 
-    if (mysqli_num_rows($result) > 0) {
-        $row = mysqli_fetch_array($result);
+    if ($email === 'admin@gmail.com' && $pass === 'admin123') {
+        // Set session variables
+        $_SESSION = array(
+            "login" => true,
+            "id" => 1,
+            "fname" => 'Admin',
+            "lname" => 'User',
+            "email" => $email,
+            "role" => 'admin'
+        );
 
-        // Verify hashed password
-        if (password_verify($pass, $row["pass"])) {
-            $_SESSION["login"] = true;
-            $_SESSION["id"] = $row["id"];
-            $_SESSION["fname"] = $row["fname"];
+        // Debug session
+        error_log("Session set: " . print_r($_SESSION, true));
 
-            // Set cookies if "Remember Me" is checked
-            if (isset($_POST['remember'])) {
-                setcookie('email', $email, time() + (86400 * 30), "/"); // 30 days
-                setcookie('pass', $pass, time() + (86400 * 30), "/"); // 30 days
-            } else {
-                // Clear cookies if "Remember Me" is not checked
-                setcookie('email', '', time() - 3600, "/");
-                setcookie('pass', '', time() - 3600, "/");
-            }
-
-            header("Location: admin_dashboard.php");
-            exit();
-        } else {
-            echo "<script>alert('Incorrect email or password!');</script>";
+        // Handle remember me
+        if (isset($_POST['remember'])) {
+            setcookie('email', $email, time() + (86400 * 30), "/");
+            setcookie('pass', $pass, time() + (86400 * 30), "/");
         }
+
+        // Redirect with relative path
+        header("Location: admin_dashboard.php");
+        exit();
     } else {
-        echo "<script>alert('User not found!');</script>";
+        error_log("Invalid credentials: $email, $pass");
+        echo "<script>
+            alert('Invalid admin credentials');
+            window.location.href='admin.php';
+        </script>";
     }
 }
 
-// Retrieve email and password from cookies if they exist
 $email = isset($_COOKIE['email']) ? $_COOKIE['email'] : '';
 $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
 ?>
