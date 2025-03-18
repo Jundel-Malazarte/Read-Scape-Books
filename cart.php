@@ -48,7 +48,7 @@ $stock_errors = []; // Array to store stock-related errors
 $cart_items = []; // Array to store cart items for display
 while ($cart_item = mysqli_fetch_assoc($result)) {
     if ($cart_item['quantity'] > $cart_item['stock']) {
-        $stock_errors[] = "Not enough stock for '" . htmlspecialchars($cart_item['title']) . "'. Available: " . $cart_item['stock'] . ", Requested: " . $cart_item['quantity'];
+        $stock_errors[] = "Not enough stock for '" . htmlspecialchars($cart_item['title']) . "'. Available: " . $cart_item['stock'];
     }
     $total_price += $cart_item['item_total']; // Sum the item totals
     $cart_items[] = $cart_item; // Store items for display
