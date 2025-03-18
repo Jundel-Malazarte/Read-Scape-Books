@@ -3,20 +3,27 @@
 - CRUD APPLICATION
 - Online Ordering System with cart 
 
-## Implementing
+## Implementing:
 
 - Users Login
 - Users Sign Up
-- Dashboard
+- Dashboard | Home
+- Profile
 - Cart System
 - My Orders
 - Logout
 
-### Other: 
-## Profile Settings
+## Profile Settings:
 - Update Profile
 - Deactivate an account
 - Change pass
+
+## Payment Method: 
+- Cash on delivery
+-- GCash
+## Receipt
+- COD receipt 
+- Gcash receipt
 
 ## Admin 
 
@@ -25,4 +32,8 @@
 - Admin Dashboard
 - Admin View Total User
 - Admin View Total Books
+- Admin View Total Orders
 
+## Other
+- Forgot password
+- Send code via email reset password
