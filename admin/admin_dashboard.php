@@ -1,6 +1,5 @@
 <?php
 session_start();
-include '../db_connect.php';
 
 // Single session check
 if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
@@ -8,10 +7,34 @@ if (!isset($_SESSION['login']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-// Get admin details from session
-$fname = $_SESSION['fname'];
-$lname = $_SESSION['lname'];
-$profile_image = '../uploads/default.jpg';
+$user_id = $_SESSION['id'];
+
+// Fetch user details
+$sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
+$stmt = mysqli_prepare($conn, $sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+
+if ($row = mysqli_fetch_assoc($result)) {
+    $fname = htmlspecialchars($row['fname']);
+    $lname = htmlspecialchars($row['lname']);
+    $profile_image = $row['profile_image'];
+
+    // Ensure correct path to the image
+    $default_image = '../uploads/default.jpg';
+    if (empty($profile_image) || !file_exists("../uploads/" . $profile_image)) {
+        $profile_image = $default_image;
+    } else {
+        $profile_image = '../uploads/' . $profile_image;
+    }
+} else {
+    $fname = "User";
+    $lname = "Not Found";
+    $profile_image = '../uploads/default.jpg';
+}
+
+mysqli_stmt_close($stmt);
 
 // Fetch total users count
 $total_users_query = mysqli_query($conn, "SELECT COUNT(*) FROM users");
@@ -148,14 +171,21 @@ mysqli_close($conn);
                 <a href="../admin/admin_dashboard.php" class="btn btn-outline-light">Home</a>
             </div>
             <div class="profile-info">
-                <img src="<?php echo $profile_image; ?>" alt="Admin Profile">
-                <span class="text-white"><?php echo $fname . " " . $lname; ?></span>
-                <a href="../admin/logout.php" class="btn btn-danger">Log Out</a>
+                <<<<<<< HEAD
+                    <img src="<?php echo $profile_image; ?>" alt="Admin Profile">
+                    <span class="text-white"><?php echo $fname . " " . $lname; ?></span>
+                    =======
+                    <span>Welcome, <?php echo htmlspecialchars($admin_username); ?></span>
+                    >>>>>>> cd2251df6e6ee6d5d9ac3cd5cc9d3dbde44d2feb
+                    <a href="../admin/logout.php" class="btn btn-danger">Log Out</a>
             </div>
         </div>
     </nav>
 
     <div class="dashboard-wrapper">
+        <h1>Admin Dashboard</h1>
+        <hr>
+        <h2>Quick Stats</h2>
         <div class="dashboard-cards">
             <a href="total_users.php" class="card-link">
                 <div class="card">

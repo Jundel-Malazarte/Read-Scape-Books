@@ -13,6 +13,9 @@ if (isset($_POST['submit'])) {
 
     // Debug login attempt
     error_log("Login attempt - Email: $email, Password: $pass");
+    // Check if admin exists
+    $select = "SELECT * FROM admin_accounts WHERE email = '$email'";
+    $result = mysqli_query($conn, $select);
 
     if ($email === 'admin@gmail.com' && $pass === 'admin123') {
         // Set session variables
@@ -103,30 +106,6 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             box-shadow: 0 0 0 0.2rem rgba(33, 33, 33, 0.25);
         }
 
-        .options-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 1rem 0;
-        }
-
-        .remember-me {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #212121;
-        }
-
-        .forgot-password a {
-            color: #212121;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .forgot-password a:hover {
-            text-decoration: underline;
-        }
-
         .btn-login {
             background-color: #212121;
             color: white;
@@ -142,18 +121,19 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             color: white;
         }
 
-        .switch-user {
+        .links-container {
             text-align: center;
-            margin-top: 1rem;
         }
 
-        .switch-user a {
+        .links-container a {
             color: #212121;
             text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
             transition: all 0.3s ease;
         }
 
-        .switch-user a:hover {
+        .links-container a:hover {
             text-decoration: underline;
         }
     </style>
@@ -168,30 +148,17 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
 
         <form action="" method="post" autocomplete="off">
             <div class="mb-3">
-                <input type="text" class="form-control" id="email" name="email"
-                    placeholder="Email" value="<?php echo $email; ?>" required>
+                <input type="email" class="form-control" id="email" name="email"
+                    placeholder="Email" required>
             </div>
 
             <div class="mb-3">
                 <input type="password" class="form-control" id="pass" name="pass"
-                    placeholder="Password" value="<?php echo $pass; ?>" required>
+                    placeholder="Password" required>
             </div>
-
-            <div class="options-container">
-                <div class="remember-me">
-                    <input type="checkbox" class="form-check-input" id="checkbox" name="remember"
-                        <?php if ($email && $pass) echo 'checked'; ?>>
-                    <label class="form-check-label" for="checkbox">Remember Me</label>
-                </div>
-                <div class="forgot-password">
-                    <a href="#">Forgot Password?</a>
-                </div>
-            </div>
-
             <button type="submit" name="submit" class="btn btn-login">Login</button>
-
-            <div class="switch-user">
-                <a href="../sign-in.php">Switch to User</a>
+            <div class="links-container">
+                <a href="../sign-in.php" class="text-center mt-4">Switch to user</a>
             </div>
         </form>
     </div>

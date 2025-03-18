@@ -23,7 +23,19 @@ SET time_zone = "+00:00";
 
 -- --------------------------------------------------------
 
---
+-- Table structure for Admin Account
+CREATE TABLE `admin_accounts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Insert the admin account
+INSERT INTO `admin_accounts` (`id`, `username`, `password`) VALUES
+('1', 'admin@gmail.com', '$2y$10$Ejqk34qMnAqhPmv/OljKK.gFu9GucgpBqSPG/YYhQ.V3lp8urq9SK'); -- Password: admin1234@
+
+-- --------------------------------------------------------
 -- Table structure for table `books`
 --
 

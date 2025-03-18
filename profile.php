@@ -96,28 +96,31 @@ mysqli_close($conn);
         .profile-header {
             background-color: #212529;
             color: white;
-            padding: 2rem;
+            padding: 1.5rem;
             text-align: center;
         }
 
         .profile-image {
             width: 180px;
             height: 180px;
+            overflow: hidden;
             border-radius: 50%;
             border: 5px solid #fff;
             margin: -90px auto 1rem;
+            margin-top: -0px;
             position: relative;
             z-index: 1;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
             object-fit: cover;
+            display: block;
         }
 
         .profile-body {
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         .profile-info {
-            margin-top: 1rem;
+            margin-top: 0.5rem;
             font-size: 1.1rem;
         }
 
