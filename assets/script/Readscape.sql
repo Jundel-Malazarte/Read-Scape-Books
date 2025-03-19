@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2025 at 02:46 AM
+-- Generation Time: Mar 19, 2025 at 08:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,11 +43,11 @@ CREATE TABLE `books` (
 --
 
 INSERT INTO `books` (`isbn`, `title`, `book_image`, `author`, `copyright`, `qty`, `price`, `total`) VALUES
-(2, 'The Hacienda', '1740032179_book2.jpg', 'Isabel Cañas', 2002, 0, 299, 2990),
-(5, 'El filibusterismo', '1740450422_book4.jpg', 'José Rizal', 1891, 0, 249, 2490),
-(6, 'Legend of Mariang Makiling', '1740701783_book6.jpg', 'Nick Joaquin', 1997, 0, 280, 2800),
-(7, 'Alamat ng Sampalok', '1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 3, 280, 3360),
-(8, 'Alamat ng Bahaghari', '1740703364_book8.png', 'Rene O. Villanueva', 2003, 5, 250, 2500);
+(2, 'The Hacienda', '../images/../images/../images/1740032179_book2.jpg', 'Isabel Cañas', 2002, 10, 299, 2990),
+(5, 'El filibusterismo', '../images/1740450422_book4.jpg', 'José Rizal', 1891, 9, 249, 2490),
+(6, 'Legend of Mariang Makiling', '../images/1740701783_book6.jpg', 'Nick Joaquin', 1997, 9, 280, 2800),
+(7, 'Alamat ng Sampalok', '../images/1740702817_book7.jpg', 'Virgilio S. Almario', 2008, 10, 280, 2800),
+(8, 'Alamat ng Bahaghari', '../images/../images/../images/1740703364_book8.png', 'Rene O. Villanueva', 2003, 10, 250, 2500);
 
 -- --------------------------------------------------------
 
@@ -67,8 +67,8 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`id`, `user_id`, `isbn`, `quantity`) VALUES
-(103, 1, 2, 1),
-(125, 11, 7, 1);
+(125, 11, 7, 1),
+(131, 15, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -88,7 +88,8 @@ CREATE TABLE `gcash_users2` (
 --
 
 INSERT INTO `gcash_users2` (`id`, `mobile_number`, `email`, `balance`) VALUES
-(1, '981237123', 'test1@gmail.com', 1000000.00);
+(1, '981237123', 'test1@gmail.com', 1000000.00),
+(2, '9123456789', 'jundel@gmail.com', 1000000.00);
 
 -- --------------------------------------------------------
 
@@ -146,7 +147,9 @@ INSERT INTO `orders` (`id`, `user_id`, `total`, `shipping_address`, `payment_met
 (36, 11, 399.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-13 03:24:55', 'pending', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000', NULL),
 (37, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-14 05:25:24', 'completed', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000', 'receipt_37_1741933349.png'),
 (38, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-17 06:33:52', 'completed', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000', 'receipt_38_1742193265.png'),
-(39, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-18 01:43:01', 'completed', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000', 'receipt_39_1742262305.png');
+(39, 11, 380.00, '123 Hipolito St. Sitio Sandayong, Cebu City, 6000, Cebu, CEBU, 6000', 'cash_on_delivery', '2025-03-18 01:43:01', 'completed', 'test1@gmail.com', 'mario', 'hapon', '+63981237123', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', 'Cebu', 'CEBU', '6000', 'receipt_39_1742262305.png'),
+(40, 13, 1630.00, 'Sambag 1 Cebu City, Cebu CIty, Cebu, 6000', 'cash_on_delivery', '2025-03-18 02:33:43', 'completed', 'jundel@gmail.com', 'Jundel', 'Malazarte', '639123456789', 'Sambag 1 Cebu City', 'Cebu CIty', 'Cebu', '6000', 'receipt_40_1742265283.png'),
+(42, 16, 380.00, 'Don Juan Climaco Sr. Toledo City, Toledo, Cebu, 6038', 'cash_on_delivery', '2025-03-19 07:10:49', 'canceled', 'heroship@gmail.com', 'Heroshi', 'Paro', '09055565546', 'Don Juan Climaco Sr. Toledo City', 'Toledo', 'Cebu', '6038', NULL);
 
 -- --------------------------------------------------------
 
@@ -196,7 +199,10 @@ INSERT INTO `order_items` (`id`, `order_id`, `book_id`, `quantity`, `price`) VAL
 (43, 36, 2, 1, 299.00),
 (44, 37, 6, 1, 280.00),
 (45, 38, 7, 1, 280.00),
-(46, 39, 7, 1, 280.00);
+(46, 39, 7, 1, 280.00),
+(47, 40, 7, 1, 280.00),
+(48, 40, 8, 5, 250.00),
+(50, 42, 6, 1, 280.00);
 
 -- --------------------------------------------------------
 
@@ -222,19 +228,14 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `fname`, `lname`, `email`, `pass`, `phone`, `address`, `created_at`, `profile_image`, `role`) VALUES
-(1, 'ryan', 'gabutin', 'test1@gmail.com', 'ryan1234@', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-13 06:10:10', NULL, 'user'),
 (2, 'Anna Marie', 'Calvario', 'annamarie9@gmail.com', '$2y$10$fRIzvJrHn7bqkMGUjr2r5.Y3qer2QGodhioYirj.vKWdX/eDBV6Gi', '09292626010', 'Lorega San Miguel', '2025-02-13 06:12:29', NULL, 'user'),
-(3, 'Jundel', 'Malazarte', 'test3@gmail.com', '$2y$10$9lNvkCLNyYkjm/gSj5I3xOHeFaqc6fDZjl51jGl4MT/55SYl5gnTK', '09292626010', 'Sambag 1 Cebu City', '2025-02-13 06:39:24', NULL, 'user'),
-(5, 'Jundel', 'Malazarte', 'test4@gmail.com', '$2y$10$Ejqk34qMnAqhPmv/OljKK.gFu9GucgpBqSPG/YYhQ.V3lp8urq9SK', '981237123', 'Sambag 1 Cebu City', '2025-02-13 07:05:00', NULL, 'user'),
-(6, 'Ronald', 'Pacquiao', 'test5@gmail.com', '$2y$10$2JKQ82GiS9/SskNxqHEOLuv8nPTmYZp9SaXRDrzUVeyvHof1gajVK', '981237123', 'Sambag 1 Cebu City', '2025-02-14 05:31:46', NULL, 'user'),
-(7, 'jenjie', 'igot', 'igot23@gmail.com', '$2y$10$sIN.QxVxHEGBZQijoTbzxeEScqC8StI7CwIKySUzMuwbkYqofvZGW', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-17 01:43:41', 'uploads/default-profile.png', 'user'),
-(8, 'manny ', 'Pacquiao', 'turyak2@gmail.com', '$2y$10$7WPCDV3nd8O5xO/QD/cG3.wqSCmANgviwfGMPDyq9RvG1mNZvyAS6', '0975195715', 'Hipolito St. Sitio Sandayong', '2025-02-17 01:50:09', 'uploads/67b3e9e3bd7e1_man.jpg', 'user'),
-(9, 'test', 'test', 'test6@gmail.com', '$2y$10$HcK17YDB1gDJU5wb/4uNhehbPNc./su9uVnBTjqI1SWlFHH2dMYBy', '09428013424', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', '2025-02-18 03:28:08', 'uploads/67b3fe4889550_man.jpg', 'user'),
-(10, 'mario', 'friolo', 'mario@gmail.com', '$2y$10$Pc8sW216gFIwI7vDNN2G6OWcbXzrlUTDm9aP3sjAGwThZ72pAG/Za', '09812371239', '123 Main St, City, 1234', '2025-02-20 07:35:16', 'uploads/67b6db69e587d_book_icon.png', 'user'),
-(11, 'mario', 'hapon', 'mario1@gmail.com', '$2y$10$eNG.E5IG81V8VCbLEO4V2.BjgTIp2Z2X/JeEmvFXoB6wUik/Xj2HK', '09812371231', '312 Hipolito St. Sitio Sandayong, Cebu, Cebu 6000', '2025-02-28 04:03:49', 'uploads/67d796730059b_book9.jpg', 'user'),
+(6, 'Ronald Jhun', 'Pacquiao', 'test5@gmail.com', '$2y$10$2JKQ82GiS9/SskNxqHEOLuv8nPTmYZp9SaXRDrzUVeyvHof1gajVK', '981237123', 'Sambag 1 Cebu City', '2025-02-14 05:31:46', NULL, 'user'),
+(11, 'mario', 'hapon', 'mario1@gmail.com', '$2y$10$eNG.E5IG81V8VCbLEO4V2.BjgTIp2Z2X/JeEmvFXoB6wUik/Xj2HK', '09812371231', 'Hipolito St. Sitio Sandayong, Cebu, Cebu', '2025-02-28 04:03:49', 'uploads/67d796730059b_book9.jpg', 'user'),
 (12, 'Manny', 'Pacs', 'manny@gmail.com', '$2y$10$SfNLIyK3i7DEFDALyMZNCO089blWCCAZuE1lD2HBQVawOAs9hZNG.', '09121231234', '123 Hipolito St. Sitio Sandayong, Cebu City, 6000', '2025-03-06 07:22:46', 'uploads/67c94d462951b_Man-PNG-Free-Download.png', 'user'),
-(13, 'Jundel', 'Malazarte', 'jundelmalazarte348@gmail.com', '$2y$10$HVIbYCfBvpprnRC367OxNOPsFr4MvqxrE3LVUf6KRE/SAEM.wJF5q', '09812371231', 'Sambag 1 Cebu City', '2025-03-10 02:03:40', 'uploads/67ce487c82fe8_default.jpg', 'user'),
-(14, 'Admin', 'User', 'admin@gmail.com', 'admin123', '', '', '2025-03-18 00:36:04', 'uploads/67ce487c82fe8_default.jpg', 'admin');
+(13, 'Jundel', 'Malazarte', 'jundelmalazarte348@gmail.com', '$2y$10$y5zBZXOjVIze9Y4Ns0Ai5OmID9MH55JOj0AcPxSl7HrWenaDTKt6i', '09812371231', 'Sambag 1 Cebu City', '2025-03-10 02:03:40', 'uploads/67ce487c82fe8_default.jpg', 'user'),
+(14, 'Admin', 'User', 'admin@gmail.com', 'admin123', '', '', '2025-03-18 00:36:04', 'uploads/67ce487c82fe8_default.jpg', 'admin'),
+(15, 'Anna Marie', 'Calvario', 'calvarioannamarie9@gmail.com', '$2y$10$KHl6bMraFYlOWv3k6EddMespMPeraa76GMNQgP6MXYSrHB.VDrELy', '09052973120', 'Lorega San Miguel Cebu City', '2025-03-18 05:59:45', 'uploads/67d90bd102201_profile2.png', 'user'),
+(16, 'Heroshi', 'Paro', 'heroship@gmail.com', '$2y$10$DVPhs/G3GHS8PS9tzm/5PuqyIh9xVYDqBuZ4RGHLWrs0UT7da9B8m', '09055565546', 'Don Juan Climaco Sr. Toledo City', '2025-03-19 07:08:24', 'uploads/default.jpg', 'user');
 
 --
 -- Indexes for dumped tables
@@ -290,37 +291,37 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `books`
 --
 ALTER TABLE `books`
-  MODIFY `isbn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `isbn` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=133;
 
 --
 -- AUTO_INCREMENT for table `gcash_users2`
 --
 ALTER TABLE `gcash_users2`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables

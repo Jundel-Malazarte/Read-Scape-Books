@@ -1,6 +1,6 @@
 <?php
 
-$conn = mysqli_connect('localhost','root','','register1');
+$conn = mysqli_connect('localhost','root','','readscape');
 
 //check if connection
 if ($conn->connect_error) {
