@@ -26,7 +26,7 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, $_GET['page']
 $start = ($page - 1) * $items_per_page;
 
 // Fetch all users' details (excluding password)
-$sql = "SELECT id, fname, lname, email, phone, address, created_at FROM users";
+$sql = "SELECT id, fname, lname, email, phone, address, created_at, role FROM users"; // Added role column
 $conditions = [];
 $params = [];
 $types = '';
@@ -69,6 +69,7 @@ $paginated_users = array_slice($users, $start, $items_per_page);
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="./images/Readscape.png">
     <style>
         body {
@@ -156,6 +157,18 @@ $paginated_users = array_slice($users, $start, $items_per_page);
             background-color: #f8f9fa;
             font-weight: 600;
         }
+
+        .gap-2 {
+            gap: 0.5rem;
+        }
+
+        .text-primary {
+            color: #0d6efd !important;
+        }
+
+        .text-secondary {
+            color: #6c757d !important;
+        }
     </style>
 </head>
 
@@ -199,6 +212,7 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                             <th>Phone</th>
                             <th>Address</th>
                             <th>Registration Date</th>
+                            <th>Role</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -211,6 +225,19 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                                 <td><?php echo htmlspecialchars($user['address']); ?></td>
                                 <td><?php echo date('d/m/Y', strtotime($user['created_at'])); ?></td>
                                 <td>
+                                    <?php if ($user['role'] === 'admin'): ?>
+                                        <span class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-user-shield text-primary"></i>
+                                            <?php echo ucfirst(htmlspecialchars($user['role'])); ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="d-flex align-items-center gap-2">
+                                            <i class="fas fa-user text-secondary"></i>
+                                            <?php echo ucfirst(htmlspecialchars($user['role'] ?? 'user')); ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
                                     <a href="../admin/delete_user.php?id=<?php echo $user['id']; ?>"
                                         class="btn btn-danger btn-sm delete-btn"
                                         onclick="return confirm('Are you sure you want to delete this user?');">
@@ -219,6 +246,7 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                                 </td>
                             </tr>
                         <?php endforeach; ?>
+                    </tbody>
                     </tbody>
                 </table>
             </div>

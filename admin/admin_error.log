@@ -1,0 +1,22 @@
+[18-Mar-2025 02:50:46 Europe/Berlin] Login attempt - Email: admin@gmail.com, Password: admin123
+[18-Mar-2025 02:50:46 Europe/Berlin] Session set: Array
+(
+    [login] => 1
+    [id] => 1
+    [fname] => Admin
+    [lname] => User
+    [email] => admin@gmail.com
+    [role] => admin
+)
+
+[19-Mar-2025 07:36:38 Europe/Berlin] Login attempt - Email: admin@gmail.com, Password: admin123
+[19-Mar-2025 07:36:38 Europe/Berlin] Session set: Array
+(
+    [login] => 1
+    [id] => 1
+    [fname] => Admin
+    [lname] => User
+    [email] => admin@gmail.com
+    [role] => admin
+)
+
