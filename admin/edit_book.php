@@ -86,9 +86,10 @@ mysqli_close($conn);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Book</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="icon" href="./images/Readscape.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">  
+    <link rel="icon" href="../images/Readscape.png">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -110,6 +111,42 @@ mysqli_close($conn);
         .navbar a:hover {
             background-color: #343a40;
             border-radius: 5px;
+        }
+
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1100;
+            top: 0;
+            left: 0;
+            background-color: #212529;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .2);
+        }
+
+        .sidenav a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #f8f9fa;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidenav a:hover {
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
         }
 
         .profile-info {
@@ -160,12 +197,32 @@ mysqli_close($conn);
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-dark">
         <div class="container-fluid">
-            <div class="nav-links">
-                <a href="../admin/admin_dashboard.php" class="btn btn-outline-light">Home</a>
-                <a href="total_books.php" class="btn btn-outline-light">Back to Books</a>
-            </div>
+        <div class="d-flex align-items-center">
+                <span class="navbar-toggler-icon" onclick="openNav()" style="cursor: pointer; margin-right: 1rem;"></span>
+                    <img src="../images/Readscape.png" alt="ReadScape" class="rounded-circle" width="40" height="40">
+                    <span class="ms-2 text-white fw-bold">ReadScape</span>
+                    <div class="sidenav" id="Sidenav">
+                    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                            <a href="../admin/admin_dashboard.php"><i class="fas fa-dashboard me-2"></i>Dashboard</a>
+                            <a href="../admin/total_books.php"><i class="fas fa-book me-2"></i>Books</a>
+                            <a href="../admin/customers.php"><i class="fas fa-users me-2"></i>Customers</a>
+                            <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
+                            <a href="#"><i class="fas fa-question-circle me-2"></i>Help</a>
+                            <a href="../admin/manage_user.php"><i class="fas fa-user-cog me-2"></i>Manage Users</a>
+                            <a href="./admin.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
+                    </div>
+                        <script>
+                            function openNav() {
+                                document.getElementById("Sidenav").style.width = "240px";
+                            }
+
+                            function closeNav() {
+                                document.getElementById("Sidenav").style.width = "0";
+                            }
+                        </script>
+                    </div>
             <div class="profile-info">
                 <img src="<?php echo $profile_image; ?>" alt="Admin Profile">
                 <span class="text-white"><?php echo $fname . " " . $lname; ?></span>

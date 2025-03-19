@@ -26,7 +26,7 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? max(1, $_GET['page']
 $start = ($page - 1) * $items_per_page;
 
 // Fetch all users' details (excluding password)
-$sql = "SELECT id, fname, lname, email, phone, address, created_at, role FROM users"; // Added role column
+$sql = "SELECT id, fname, lname, email, phone, address, created_at FROM users";
 $conditions = [];
 $params = [];
 $types = '';
@@ -65,12 +65,11 @@ $paginated_users = array_slice($users, $start, $items_per_page);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Total Users</title>
+    <title>Manage Users</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" href="./images/Readscape.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="../images/Readscape.png">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -160,12 +159,22 @@ $paginated_users = array_slice($users, $start, $items_per_page);
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin-top: 2rem;
             padding: 2rem;
             background: white;
             border-radius: 10px;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .update-btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background-color: #0d6efd;
+            color: #fff;
         }
 
         .delete-btn {
@@ -193,48 +202,36 @@ $paginated_users = array_slice($users, $start, $items_per_page);
             background-color: #f8f9fa;
             font-weight: 600;
         }
-
-        .gap-2 {
-            gap: 0.5rem;
-        }
-
-        .text-primary {
-            color: #0d6efd !important;
-        }
-
-        .text-secondary {
-            color: #6c757d !important;
-        }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-dark">
+<nav class="navbar navbar-dark">
         <div class="container-fluid">
             <div class="d-flex align-items-center">
                 <span class="navbar-toggler-icon" onclick="openNav()" style="cursor: pointer; margin-right: 1rem;"></span>
-                <img src="../images/Readscape.png" alt="ReadScape" class="rounded-circle" width="40" height="40">
-                <span class="ms-2 text-white fw-bold">ReadScape</span>
-                <div class="sidenav" id="Sidenav">
-                    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-                    <a href="../admin/admin_dashboard.php"><i class="fas fa-dashboard me-2"></i>Dashboard</a>
-                    <a href="../admin/total_books.php"><i class="fas fa-book me-2"></i>Books</a>
-                    <a href="../admin/customers.php"><i class="fas fa-users me-2"></i>Customers</a>
-                    <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
-                    <a href="#"><i class="fas fa-question-circle me-2"></i>Help</a>
-                    <a href="#"><i class="fas fa-user-cog me-2"></i>Manage Users</a>
-                    <a href="./admin.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
-                </div>
-                <script>
-                    function openNav() {
-                        document.getElementById("Sidenav").style.width = "240px";
-                    }
+                    <img src="../images/Readscape.png" alt="ReadScape" class="rounded-circle" width="40" height="40">
+                    <span class="ms-2 text-white fw-bold">ReadScape</span>
+                        <div class="sidenav" id="Sidenav">
+                            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+                            <a href="../admin/admin_dashboard.php"><i class="fas fa-dashboard me-2"></i>Dashboard</a>
+                            <a href="../admin/total_books.php"><i class="fas fa-book me-2"></i>Books</a>
+                            <a href="../admin/customers.php"><i class="fas fa-users me-2"></i>Customers</a>
+                            <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
+                            <a href="#"><i class="fas fa-question-circle me-2"></i>Help</a>
+                            <a href="../admin/manage_user.php"><i class="fas fa-user-cog me-2"></i>Manage Users</a>
+                            <a href="./admin.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
+                        </div>
+                        <script>
+                            function openNav() {
+                                document.getElementById("Sidenav").style.width = "240px";
+                            }
 
-                    function closeNav() {
-                        document.getElementById("Sidenav").style.width = "0";
-                    }
-                </script>
-            </div>
+                            function closeNav() {
+                                document.getElementById("Sidenav").style.width = "0";
+                            }
+                        </script>
+                    </div>
             <div class="profile-info">
                 <img src="<?php echo $profile_image; ?>" alt="Admin Profile">
                 <span class="text-white"><?php echo $fname . " " . $lname; ?></span>
@@ -244,13 +241,13 @@ $paginated_users = array_slice($users, $start, $items_per_page);
     </nav>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Total Users: <?php echo $total_users; ?></h2>
+            <h2>Manage Users: <?php echo $total_users; ?></h2>
             <div class="d-flex gap-2">
                 <form method="GET" class="d-flex gap-2">
                     <input type="text" class="form-control" name="search" placeholder="Search by Full Name"
                         value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                     <button type="submit" class="btn btn-primary">Search</button>
-                    <a href="total_users.php" class="btn btn-danger">Reset</a>
+                    <a href="manage_user.php" class="btn btn-danger">Reset</a>
                 </form>
             </div>
         </div>
@@ -267,7 +264,6 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                             <th>Phone</th>
                             <th>Address</th>
                             <th>Registration Date</th>
-                            <th>Role</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -280,28 +276,13 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                                 <td><?php echo htmlspecialchars($user['address']); ?></td>
                                 <td><?php echo date('d/m/Y', strtotime($user['created_at'])); ?></td>
                                 <td>
-                                    <?php if ($user['role'] === 'admin'): ?>
-                                        <span class="d-flex align-items-center gap-2">
-                                            <i class="fas fa-user-shield text-primary"></i>
-                                            <?php echo ucfirst(htmlspecialchars($user['role'])); ?>
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="d-flex align-items-center gap-2">
-                                            <i class="fas fa-user text-secondary"></i>
-                                            <?php echo ucfirst(htmlspecialchars($user['role'] ?? 'user')); ?>
-                                        </span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <a href="../admin/delete_user.php?id=<?php echo $user['id']; ?>"
-                                        class="btn btn-danger btn-sm delete-btn"
-                                        onclick="return confirm('Are you sure you want to delete this user?');">
+                                    <a href="./edit_user.php?id=<?php echo $user['id']; ?>" class="btn btn-primary btn-sm update-btn" style="width: 60px;">Edit</a>
+                                    <button onclick="confirmDelete(<?php echo $user['id']; ?>)" class="btn btn-danger btn-sm delete-btn" style="width: 70px;">
                                         Delete
-                                    </a>
+                                    </button>    
                                 </td>
                             </tr>
                         <?php endforeach; ?>
-                    </tbody>
                     </tbody>
                 </table>
             </div>
@@ -328,6 +309,26 @@ $paginated_users = array_slice($users, $start, $items_per_page);
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        async function confirmDelete(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                try {
+                    const response = await fetch('./delete_user.php?id=' + userId);
+                    const data = await response.text();
+                    
+                    if (data.includes('successfully')) {
+                        alert('User deleted successfully.');
+                        window.location.reload(); // Refresh the page
+                    } else {
+                        alert('Error deleting user: ' + data);
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+            return false;
+        }
+    </script>
 </body>
 
 </html>

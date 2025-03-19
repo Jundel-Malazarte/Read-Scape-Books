@@ -67,7 +67,7 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
         }
 
         .container {
-            max-width: 450px;
+            max-width: 500px;
             width: 100%;
             padding: 2rem;
         }

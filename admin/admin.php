@@ -103,6 +103,19 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             box-shadow: 0 0 0 0.2rem rgba(33, 33, 33, 0.25);
         }
 
+        .options-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         .btn-login {
             background-color: #212121;
             color: white;
@@ -153,6 +166,13 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
                 <input type="password" class="form-control" id="pass" name="pass"
                     placeholder="Password" required>
             </div>
+            <div class="options-container">
+                    <div class="remember-me">
+                        <input type="checkbox" class="form-check-input" id="checkbox" name="remember"
+                            <?php if ($email && $pass) echo 'checked'; ?>>
+                        <label class="form-check-label" for="checkbox">Remember Me</label>
+                    </div>
+                </div>
             <button type="submit" name="submit" class="btn btn-login">Login</button>
             <div class="links-container">
                 <a href="../sign-in.php" class="text-center mt-4">Switch to user</a>

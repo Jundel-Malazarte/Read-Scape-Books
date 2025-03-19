@@ -144,8 +144,8 @@ mysqli_close($conn);
         .book-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-            padding: 20px;
+            gap: 0.5rem;
+            padding: 5px;
             max-width: 1600px;
             margin: 0 auto;
             width: 95%;
@@ -156,7 +156,7 @@ mysqli_close($conn);
         .book-card {
             width: 100%;
             /* Fill the available space */
-            max-width: 280px;
+            max-width: 350px;
             /* Maximum width for consistency */
             background: white;
             border-radius: 10px;
@@ -175,7 +175,7 @@ mysqli_close($conn);
 
         .book-card img {
             width: 100%;
-            height: 300px;
+            height: 250px;
             object-fit: cover;
             border-bottom: 1px solid #dee2e6;
         }
@@ -186,7 +186,7 @@ mysqli_close($conn);
             flex-direction: column;
             flex-grow: 1;
             /* Allow info section to grow */
-            gap: 0.5rem;
+            gap: 0.1rem; /* adjust the gap */
             /* Add consistent spacing between elements */
         }
 
