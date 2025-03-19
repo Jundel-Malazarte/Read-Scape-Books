@@ -144,19 +144,18 @@ mysqli_close($conn);
         .book-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 0.5rem;
             padding: 5px;
             max-width: 1600px;
             margin: 0 auto;
             width: 95%;
             justify-items: center;
-            /* Center items horizontally */
+            gap: 1rem;
         }
 
         .book-card {
             width: 100%;
             /* Fill the available space */
-            max-width: 350px;
+            max-width: 400px;
             /* Maximum width for consistency */
             background: white;
             border-radius: 10px;
@@ -320,6 +319,12 @@ mysqli_close($conn);
                         <span class="cart-badge" id="cart-counter">0</span>
                     </a>
                 </div>
+                <div class="postion-relative me-3">
+                        <a href="order.php" class="btn btn-outline-light">
+                            <i class="fas fa-shopping-bag"></i>
+                            <span class="cart-badge order-badge" id="order-counter">0</span>
+                        </a>
+                    </div>
                 <div class="d-flex align-items-center">
                     <img src="<?php echo $profile_image; ?>" alt="Profile" class="rounded-circle me-2" width="40" height="40">
                     <div class="dropdown">
