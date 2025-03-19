@@ -120,7 +120,6 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
             background-color: #212121;
             color: white;
             padding: 0.75rem;
-            border-radius: 8px;
             width: 100%;
             font-weight: 500;
             transition: all 0.3s ease;

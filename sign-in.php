@@ -140,7 +140,7 @@ $pass = isset($_COOKIE['pass']) ? $_COOKIE['pass'] : '';
         }
 
         .admin-link a {
-            color: #3498db;
+            color: #212121;
         }
     </style>
 </head>

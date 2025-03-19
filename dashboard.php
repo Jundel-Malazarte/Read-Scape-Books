@@ -464,10 +464,10 @@ mysqli_close($conn);
                 <strong>ReadScape</strong>
             </div>
             <div class="footer-links">
-                <a href="about.php">About Us</a>
-                <a href="contact.php">Contact</a>
-                <a href="privacy.php">Privacy Policy</a>
-                <a href="terms.php">Terms of Service</a>
+                <a href="./pages/footer/about.php">About Us</a>
+                <a href="./pages/footer/contact.php">Contact</a>
+                <a href="./pages/footer/privacy.php">Privacy Policy</a>
+                <a href="./pages/footer/terms.php">Terms of Service</a>
             </div>
             <div class="footer-social">
                 <a href="#"><i class="fab fa-facebook-f"></i></a>
