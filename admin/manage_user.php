@@ -247,7 +247,7 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                     <input type="text" class="form-control" name="search" placeholder="Search by Full Name"
                         value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                     <button type="submit" class="btn btn-primary">Search</button>
-                    <a href="total_users.php" class="btn btn-danger">Reset</a>
+                    <a href="manage_user.php" class="btn btn-danger">Reset</a>
                 </form>
             </div>
         </div>
@@ -276,10 +276,10 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                                 <td><?php echo htmlspecialchars($user['address']); ?></td>
                                 <td><?php echo date('d/m/Y', strtotime($user['created_at'])); ?></td>
                                 <td>
-                                    <a href="../admin/delete_user.php?id=<?php echo $user['id']; ?>" class="btn btn-danger btn-sm delete-btn"
-                                        onclick="return confirm('Are you sure you want to delete this user?');">
+                                    <a href="./edit_user.php?id=<?php echo $user['id']; ?>" class="btn btn-primary btn-sm update-btn" style="width: 60px;">Edit</a>
+                                    <button onclick="confirmDelete(<?php echo $user['id']; ?>)" class="btn btn-danger btn-sm delete-btn" style="width: 70px;">
                                         Delete
-                                    </a>
+                                    </button>    
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -309,6 +309,26 @@ $paginated_users = array_slice($users, $start, $items_per_page);
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        async function confirmDelete(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                try {
+                    const response = await fetch('./delete_user.php?id=' + userId);
+                    const data = await response.text();
+                    
+                    if (data.includes('successfully')) {
+                        alert('User deleted successfully.');
+                        window.location.reload(); // Refresh the page
+                    } else {
+                        alert('Error deleting user: ' + data);
+                    }
+                } catch (error) {
+                    alert('Error: ' + error.message);
+                }
+            }
+            return false;
+        }
+    </script>
 </body>
 
 </html>
