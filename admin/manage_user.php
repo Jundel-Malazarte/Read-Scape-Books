@@ -65,7 +65,7 @@ $paginated_users = array_slice($users, $start, $items_per_page);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Total Users</title>
+    <title>Manage Users</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -159,12 +159,22 @@ $paginated_users = array_slice($users, $start, $items_per_page);
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin-top: 2rem;
             padding: 2rem;
             background: white;
             border-radius: 10px;
             box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .update-btn {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background-color: #0d6efd;
+            color: #fff;
         }
 
         .delete-btn {
@@ -209,7 +219,7 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                             <a href="../admin/customers.php"><i class="fas fa-users me-2"></i>Customers</a>
                             <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
                             <a href="#"><i class="fas fa-question-circle me-2"></i>Help</a>
-                            <a href="#"><i class="fas fa-user-cog me-2"></i>Manage Users</a>
+                            <a href="../admin/manage_user.php"><i class="fas fa-user-cog me-2"></i>Manage Users</a>
                             <a href="./admin.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
                         </div>
                         <script>
@@ -231,7 +241,7 @@ $paginated_users = array_slice($users, $start, $items_per_page);
     </nav>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Total Users: <?php echo $total_users; ?></h2>
+            <h2>Manage Users: <?php echo $total_users; ?></h2>
             <div class="d-flex gap-2">
                 <form method="GET" class="d-flex gap-2">
                     <input type="text" class="form-control" name="search" placeholder="Search by Full Name"
@@ -266,8 +276,7 @@ $paginated_users = array_slice($users, $start, $items_per_page);
                                 <td><?php echo htmlspecialchars($user['address']); ?></td>
                                 <td><?php echo date('d/m/Y', strtotime($user['created_at'])); ?></td>
                                 <td>
-                                    <a href="../admin/delete_user.php?id=<?php echo $user['id']; ?>"
-                                        class="btn btn-danger btn-sm delete-btn"
+                                    <a href="../admin/delete_user.php?id=<?php echo $user['id']; ?>" class="btn btn-danger btn-sm delete-btn"
                                         onclick="return confirm('Are you sure you want to delete this user?');">
                                         Delete
                                     </a>

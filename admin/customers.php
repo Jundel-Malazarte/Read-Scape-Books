@@ -97,7 +97,7 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Orders</title>
+    <title>View Customers</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -289,10 +289,10 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
                             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
                             <a href="../admin/admin_dashboard.php"><i class="fas fa-dashboard me-2"></i>Dashboard</a>
                             <a href="../admin/total_books.php"><i class="fas fa-book me-2"></i>Books</a>
-                            <a href="#"><i class="fas fa-users me-2"></i>Customers</a>
+                            <a href="../admin/customers.php"><i class="fas fa-users me-2"></i>Customers</a>
                             <a href="#"><i class="fas fa-cog me-2"></i>Settings</a>
                             <a href="#"><i class="fas fa-question-circle me-2"></i>Help</a>
-                            <a href="#"><i class="fas fa-user-cog me-2"></i>Manage Users</a>
+                            <a href="../admin/manage_user.php"><i class="fas fa-user-cog me-2"></i>Manage Users</a>
                             <a href="./admin.php"><i class="fas fa-sign-out-alt me-2"></i>Log Out</a>
                         </div>
                         <script>
@@ -314,7 +314,7 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
     </nav>
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>Orders (<?php echo $total_orders; ?>)</h2>
+            <h2>Customers: <?php echo $total_orders; ?></h2>
             <div class="search-bar">
                 <form method="GET" class="d-flex gap-2">
                     <input type="hidden" name="status" value="<?php echo htmlspecialchars($status_filter); ?>">
@@ -341,12 +341,6 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
         <div class="tab-nav">
             <a href="view_orders.php?status=all&search=<?php echo htmlspecialchars($search); ?>"
                 class="<?php echo $status_filter === 'all' ? 'active' : ''; ?>">All Orders</a>
-            <a href="view_orders.php?status=completed&search=<?php echo htmlspecialchars($search); ?>"
-                class="<?php echo $status_filter === 'completed' ? 'active' : ''; ?>">Completed</a>
-            <a href="view_orders.php?status=pending&search=<?php echo htmlspecialchars($search); ?>"
-                class="<?php echo $status_filter === 'pending' ? 'active' : ''; ?>">Pending</a>
-            <a href="view_orders.php?status=canceled&search=<?php echo htmlspecialchars($search); ?>"
-                class="<?php echo $status_filter === 'canceled' ? 'active' : ''; ?>">Canceled</a>
         </div>
 
         <?php if (empty($paginated_orders)): ?>
@@ -362,7 +356,6 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
                         <th>Date</th>
                         <th>Price</th>
                         <th>Status</th>
-                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -384,12 +377,11 @@ $paginated_orders = array_slice($orders, $start, $items_per_page);
                                 <?php endfor; ?>
     </div>
     </td>
-    <td><?php echo htmlspecialchars($order['shipping_address']); ?></td>
-    <td><?php echo htmlspecialchars($order['fname'] . ' ' . $order['lname']); ?></td>
-    <td><?php echo date('d/m/Y', strtotime($order['order_date'])); ?></td>
-    <td>₱<?php echo number_format($order['total'], 2); ?></td>
-    <td><span class="status <?php echo strtolower($order['status']); ?>"><?php echo ucfirst($order['status']); ?></span></td>
-    <td class="actions"><a href="order_details.php?id=<?php echo $order['order_id']; ?>"><i class="fas fa-eye"></i></a></td>
+        <td><?php echo htmlspecialchars($order['shipping_address']); ?></td>
+        <td><?php echo htmlspecialchars($order['fname'] . ' ' . $order['lname']); ?></td>
+        <td><?php echo date('d/m/Y', strtotime($order['order_date'])); ?></td>
+        <td>₱<?php echo number_format($order['total'], 2); ?></td>
+        <td><span class="status <?php echo strtolower($order['status']); ?>"><?php echo ucfirst($order['status']); ?></span></td>
     </tr>
 <?php endforeach; ?>
 </tbody>
