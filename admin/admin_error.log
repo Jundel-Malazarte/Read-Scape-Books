@@ -20,3 +20,40 @@
     [role] => admin
 )
 
+[19-Mar-2025 08:23:08 Europe/Berlin] Login attempt - Email: admin@gmail.com, Password: 1234
+[19-Mar-2025 08:23:08 Europe/Berlin] Invalid credentials: admin@gmail.com, 1234
+[19-Mar-2025 08:23:26 Europe/Berlin] Login attempt - Email: admin@gmail.com, Password: 1234
+[19-Mar-2025 08:23:26 Europe/Berlin] Invalid credentials: admin@gmail.com, 1234
+[19-Mar-2025 08:24:02 Europe/Berlin] Login attempt - Email: admin@gmail.com, Password: admin123
+[19-Mar-2025 08:24:02 Europe/Berlin] Session set: Array
+(
+    [login] => 1
+    [id] => 1
+    [fname] => Admin
+    [lname] => User
+    [email] => admin@gmail.com
+    [role] => admin
+)
+
+[20-Mar-2025 04:12:14 Europe/Berlin] Login attempt - Email: admin@gmail.com, Password: admin123
+[20-Mar-2025 04:12:14 Europe/Berlin] Session set: Array
+(
+    [login] => 1
+    [id] => 1
+    [fname] => Admin
+    [lname] => User
+    [email] => admin@gmail.com
+    [role] => admin
+)
+
+[20-Mar-2025 04:14:45 Europe/Berlin] Login attempt - Email: admin@gmail.com, Password: admin123
+[20-Mar-2025 04:14:45 Europe/Berlin] Session set: Array
+(
+    [login] => 1
+    [id] => 1
+    [fname] => Admin
+    [lname] => User
+    [email] => admin@gmail.com
+    [role] => admin
+)
+

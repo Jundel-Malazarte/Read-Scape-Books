@@ -10,6 +10,15 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
+// Get pending orders count
+$pending_orders_sql = "SELECT COUNT(*) FROM orders WHERE user_id = ? AND status = 'pending'";
+$stmt = mysqli_prepare($conn, $pending_orders_sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$pending_result = mysqli_stmt_get_result($stmt);
+$pending_orders_count = mysqli_fetch_row($pending_result)[0];
+mysqli_stmt_close($stmt);
+
 $sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -272,6 +281,17 @@ ob_end_flush(); // End buffering
             padding: 0.25rem 0.5rem;
             font-size: 0.75rem;
         }
+
+        .order-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
     </style>
 </head>
 
@@ -293,10 +313,16 @@ ob_end_flush(); // End buffering
                         <span class="cart-badge" id="cart-counter"><?php echo isset($cart_count) ? $cart_count : '0'; ?></span>
                     </a>
                 </div>
+                <div class="position-relative me-3">
+                    <a href="order.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="cart-badge order-badge" id="order-counter"><?php echo $pending_orders_count; ?></span>
+                    </a>
+                </div>
                 <div class="d-flex align-items-center">
                     <img src="<?php echo $profile_image; ?>" alt="Profile" class="rounded-circle me-2" width="40" height="40">
                     <div class="dropdown">
-                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                             <?php echo $fname . " " . $lname; ?>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
@@ -400,8 +426,32 @@ ob_end_flush(); // End buffering
             xhr.send();
         }
 
+        function updateOrderCounter() {
+            fetch('order_counter.php')
+                .then(response => response.text())
+                .then(count => {
+                    document.getElementById("order-counter").innerText = count;
+                })
+                .catch(error => console.error('Error updating order counter:', error));
+        }
+
+        // Update the DOMContentLoaded event listener
+        document.addEventListener("DOMContentLoaded", function() {
+            updateCartCounter();
+            updateOrderCounter();
+        });
+
+        // Update counters periodically
+        setInterval(function() {
+            updateCartCounter();
+            updateOrderCounter();
+        }, 30000); // Update every 30 seconds
+
         document.addEventListener("DOMContentLoaded", updateCartCounter);
     </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

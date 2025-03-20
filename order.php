@@ -10,6 +10,15 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
+// Get pending orders count
+$pending_orders_sql = "SELECT COUNT(*) FROM orders WHERE user_id = ? AND status = 'pending'";
+$stmt = mysqli_prepare($conn, $pending_orders_sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$pending_result = mysqli_stmt_get_result($stmt);
+$pending_orders_count = mysqli_fetch_row($pending_result)[0];
+mysqli_stmt_close($stmt);
+
 // Fetch user details
 $sql = "SELECT fname, lname, profile_image FROM users WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql);
@@ -459,6 +468,17 @@ mysqli_close($conn);
             font-size: 36px;
             margin-left: 50px;
         }
+
+        .order-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
     </style>
 </head>
 
@@ -475,6 +495,12 @@ mysqli_close($conn);
                     <a href="cart.php" class="btn btn-outline-light">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-badge" id="cart-counter">0</span>
+                    </a>
+                </div>
+                <div class="position-relative me-3">
+                    <a href="order.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="cart-badge order-badge" id="order-counter"><?php echo $pending_orders_count; ?></span>
                     </a>
                 </div>
                 <div class="d-flex align-items-center">
@@ -613,6 +639,27 @@ mysqli_close($conn);
 
         // Call updateCartCounter() when page loads
         document.addEventListener("DOMContentLoaded", updateCartCounter);
+
+
+        function updateOrderCounter() {
+            fetch('order_counter.php')
+                .then(response => response.text())
+                .then(count => {
+                    document.getElementById("order-counter").innerText = count;
+                })
+                .catch(error => console.error('Error updating order counter:', error));
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateCartCounter(); // If this exists
+            updateOrderCounter();
+        });
+
+        // Update counters periodically
+        setInterval(function() {
+            updateCartCounter();
+            updateOrderCounter();
+        }, 30000); // Update every 30 seconds
     </script>
 </body>
 

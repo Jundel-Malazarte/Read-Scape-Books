@@ -10,6 +10,15 @@ if (!isset($_SESSION['id'])) {
 
 $user_id = $_SESSION['id'];
 
+// Get pending orders count
+$pending_orders_sql = "SELECT COUNT(*) FROM orders WHERE user_id = ? AND status = 'pending'";
+$stmt = mysqli_prepare($conn, $pending_orders_sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$pending_result = mysqli_stmt_get_result($stmt);
+$pending_orders_count = mysqli_fetch_row($pending_result)[0];
+mysqli_stmt_close($stmt);
+
 $sql = "SELECT fname, lname, profile_image FROM `users` WHERE id = ?";
 $stmt = mysqli_prepare($conn, $sql);
 mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -157,6 +166,17 @@ ob_end_flush(); // End buffering
             padding: 0.25rem 0.5rem;
             font-size: 0.75rem;
         }
+
+        .order-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
     </style>
 </head>
 
@@ -174,6 +194,12 @@ ob_end_flush(); // End buffering
                     <a href="cart.php" class="btn btn-outline-light">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-badge" id="cart-counter">0</span>
+                    </a>
+                </div>
+                <div class="position-relative me-3">
+                    <a href="order.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="cart-badge order-badge" id="order-counter"><?php echo $pending_orders_count; ?></span>
                     </a>
                 </div>
                 <div class="d-flex align-items-center">
@@ -222,23 +248,23 @@ ob_end_flush(); // End buffering
                         const oldPassword = document.getElementById('oldpwd').value;
                         const oldPasswordCheck = document.getElementById('oldpassword-check');
                         fetch('validate_old_password.php', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: `oldpwd=${oldPassword}`
-                        })
-                        .then(response => response.text())
-                        .then(isValid => {
-                            if (isValid === 'true') {
-                                oldPasswordCheck.style.color = 'green';
-                                oldPasswordCheck.innerHTML = '<i class="fas fa-check-circle"></i> Password correct';
-                            } else {
-                                oldPasswordCheck.style.color = 'red';
-                                oldPasswordCheck.innerHTML = '<i class="fas fa-times-circle"></i> Password is incorrect';
-                            }
-                        })
-                        .catch(error => console.error('Error:', error));
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded'
+                                },
+                                body: `oldpwd=${oldPassword}`
+                            })
+                            .then(response => response.text())
+                            .then(isValid => {
+                                if (isValid === 'true') {
+                                    oldPasswordCheck.style.color = 'green';
+                                    oldPasswordCheck.innerHTML = '<i class="fas fa-check-circle"></i> Password correct';
+                                } else {
+                                    oldPasswordCheck.style.color = 'red';
+                                    oldPasswordCheck.innerHTML = '<i class="fas fa-times-circle"></i> Password is incorrect';
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
                     }
                 </script>
             </div>
@@ -264,7 +290,7 @@ ob_end_flush(); // End buffering
             </div>
             <div id="special-check" style="color: red;">
                 <i class="fas fa-times-circle"></i> At least 1 special character
-            </div>   
+            </div>
             <div id="number-check" style="color: red;">
                 <i class="fas fa-times-circle"></i> At least 1 number
             </div>
@@ -335,12 +361,33 @@ ob_end_flush(); // End buffering
                 .catch(error => console.error('Error:', error));
         }
 
+        function updateOrderCounter() {
+            fetch('order_counter.php')
+                .then(response => response.text())
+                .then(count => {
+                    document.getElementById("order-counter").innerText = count;
+                })
+                .catch(error => console.error('Error updating order counter:', error));
+        }
+
+        // Update the DOMContentLoaded event listener
+        document.addEventListener("DOMContentLoaded", function() {
+            updateCartCounter();
+            updateOrderCounter();
+        });
+
+        // Update counters periodically
+        setInterval(function() {
+            updateCartCounter();
+            updateOrderCounter();
+        }, 30000); // Update every 30 seconds
+
         document.addEventListener("DOMContentLoaded", updateCartCounter);
 
         // for password validation
         function validatePassword() {
             const password = document.getElementById('newpwd').value;
-            
+
             const uppercaseCheck = document.getElementById('uppercase-check');
             if (password.match(/[A-Z]/)) {
                 uppercaseCheck.style.color = 'green';
@@ -377,21 +424,21 @@ ob_end_flush(); // End buffering
         }
 
         // Toggle password visibility
-        document.getElementById('toggleOldPassword').addEventListener('click', function () {
+        document.getElementById('toggleOldPassword').addEventListener('click', function() {
             const oldPassword = document.getElementById('oldpwd');
             const type = oldPassword.getAttribute('type') === 'password' ? 'text' : 'password';
             oldPassword.setAttribute('type', type);
             this.classList.toggle('fa-eye-slash');
         });
 
-        document.getElementById('togglePassword').addEventListener('click', function () {
+        document.getElementById('togglePassword').addEventListener('click', function() {
             const newPassword = document.getElementById('newpwd');
             const type = newPassword.getAttribute('type') === 'password' ? 'text' : 'password';
             newPassword.setAttribute('type', type);
             this.classList.toggle('fa-eye-slash');
         });
 
-        document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
             const confirmPassword = document.getElementById('conpwd');
             const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
             confirmPassword.setAttribute('type', type);

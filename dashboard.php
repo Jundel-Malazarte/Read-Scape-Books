@@ -185,7 +185,8 @@ mysqli_close($conn);
             flex-direction: column;
             flex-grow: 1;
             /* Allow info section to grow */
-            gap: 0.1rem; /* adjust the gap */
+            gap: 0.1rem;
+            /* adjust the gap */
             /* Add consistent spacing between elements */
         }
 
@@ -278,6 +279,17 @@ mysqli_close($conn);
             font-size: 0.75rem;
         }
 
+        .order-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+
         @media (max-width: 768px) {
             .book-list {
                 grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -319,12 +331,12 @@ mysqli_close($conn);
                         <span class="cart-badge" id="cart-counter">0</span>
                     </a>
                 </div>
-                <div class="postion-relative me-3">
-                        <a href="order.php" class="btn btn-outline-light">
-                            <i class="fas fa-shopping-bag"></i>
-                            <span class="cart-badge order-badge" id="order-counter">0</span>
-                        </a>
-                    </div>
+                <div class="position-relative me-3">
+                    <a href="order.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="cart-badge order-badge" id="order-counter">0</span>
+                    </a>
+                </div>
                 <div class="d-flex align-items-center">
                     <img src="<?php echo $profile_image; ?>" alt="Profile" class="rounded-circle me-2" width="40" height="40">
                     <div class="dropdown">
@@ -458,8 +470,23 @@ mysqli_close($conn);
             xhr.send();
         }
 
-        // Call updateCartCounter() when page loads to show correct count
-        document.addEventListener("DOMContentLoaded", updateCartCounter);
+        // Add this function before the DOMContentLoaded event
+        function updateOrderCounter() {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "order_counter.php", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("order-counter").innerText = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+        // Update the DOMContentLoaded event listener
+        document.addEventListener("DOMContentLoaded", function() {
+            updateCartCounter();
+            updateOrderCounter();
+        });
     </script>
 
     <div class="footer">

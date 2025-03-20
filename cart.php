@@ -43,6 +43,15 @@ $cart_count_result = mysqli_stmt_get_result($stmt);
 $cart_count = mysqli_fetch_row($cart_count_result)[0];
 mysqli_stmt_close($stmt);
 
+// Get pending orders count
+$pending_orders_sql = "SELECT COUNT(*) FROM orders WHERE user_id = ? AND status = 'pending'";
+$stmt = mysqli_prepare($conn, $pending_orders_sql);
+mysqli_stmt_bind_param($stmt, "i", $user_id);
+mysqli_stmt_execute($stmt);
+$pending_result = mysqli_stmt_get_result($stmt);
+$pending_orders_count = mysqli_fetch_row($pending_result)[0];
+mysqli_stmt_close($stmt);
+
 $total_price = 0;
 $stock_errors = []; // Array to store stock-related errors
 $cart_items = []; // Array to store cart items for display
@@ -439,6 +448,17 @@ $total_with_shipping = $total_price + $shipping_cost;
             position: relative;
             padding-right: 3rem;
         }
+
+        .order-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
     </style>
 </head>
 
@@ -455,6 +475,12 @@ $total_with_shipping = $total_price + $shipping_cost;
                     <a href="cart.php" class="btn btn-outline-light">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-badge" id="cart-counter"><?php echo $cart_count; ?></span>
+                    </a>
+                </div>
+                <div class="position-relative me-3">
+                    <a href="order.php" class="btn btn-outline-light">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span class="cart-badge order-badge" id="order-counter"><?php echo $pending_orders_count; ?></span>
                     </a>
                 </div>
                 <div class="d-flex align-items-center">
@@ -654,6 +680,23 @@ $total_with_shipping = $total_price + $shipping_cost;
                 checkoutBtn.style.cursor = "pointer";
             }
         }
+
+        function updateOrderCounter() {
+            let xhr = new XMLHttpRequest();
+            xhr.open("GET", "order_counter.php", true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    document.getElementById("order-counter").innerText = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+
+        // Update the DOMContentLoaded event listener
+        document.addEventListener("DOMContentLoaded", function() {
+            updateCartCounter(); // If this exists
+            updateOrderCounter();
+        });
 
         // Update the checkout button event listener
         window.onload = function() {
