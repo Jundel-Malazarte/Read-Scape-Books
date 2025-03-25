@@ -57,3 +57,5 @@
     [role] => admin
 )
 
+[25-Mar-2025 06:30:16 Europe/Berlin] Login attempt - Email: mario1@gmail.com, Password: ryan1234@
+[25-Mar-2025 06:30:16 Europe/Berlin] Invalid credentials: mario1@gmail.com, ryan1234@
