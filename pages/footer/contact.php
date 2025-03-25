@@ -146,8 +146,8 @@
                         <h2>Get in Touch</h2>
                         <p><i class="fas fa-envelope"></i> Email: jundelmalazarte348@gmail.com</p>
                         <p><i class="fas fa-phone"></i> Phone: +63 912 345 6789</p>
-                        <p><i class="fas fa-map-marker-alt"></i> Address: Urdaneta City, Pangasinan, Philippines</p>
-                        <p><i class="fas fa-clock"></i> Business Hours: 9:00 AM - 6:00 PM (Monday - Saturday)</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Address: Sanciangko S Cebu City, Cebu, Philippines</p>
+                        <p><i class="fas fa-clock"></i> Business Hours: 8:00 AM - 5:00 PM (Monday - Saturday)</p>
                     </div>
                 </div>
 
